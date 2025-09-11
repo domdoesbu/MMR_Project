@@ -1,5 +1,10 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#define GLM_ENABLE_EXPERIMENTAL
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
+#include <glm/gtx/string_cast.hpp>
+#include "Camera.h"
 
 #include <iostream>
 #include <fstream>
@@ -91,6 +96,35 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 	return program;
 }
 
+void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
+{
+	int wState = glfwGetKey(window, GLFW_KEY_W);
+	bool wDown = wState == GLFW_PRESS || wState == GLFW_REPEAT;
+
+	int sState = glfwGetKey(window, GLFW_KEY_S);
+	bool sDown = sState == GLFW_PRESS || sState == GLFW_REPEAT;
+
+	int aState = glfwGetKey(window, GLFW_KEY_A);
+	bool aDown = aState == GLFW_PRESS || aState == GLFW_REPEAT;
+
+	int dState = glfwGetKey(window, GLFW_KEY_D);
+	bool dDown = dState == GLFW_PRESS || dState == GLFW_REPEAT;
+
+	int qState = glfwGetKey(window, GLFW_KEY_Q);
+	bool qDown = qState == GLFW_PRESS || qState == GLFW_REPEAT;
+
+	int eState = glfwGetKey(window, GLFW_KEY_E);
+	bool eDown = eState == GLFW_PRESS || eState == GLFW_REPEAT;
+
+	if (wDown) { camera.position += deltaTime * camera.GetForward(); }
+	if (sDown) { camera.position -= deltaTime * camera.GetForward(); }
+	if (aDown) { camera.position -= deltaTime * camera.GetRight(); }
+	if (dDown) { camera.position += deltaTime * camera.GetRight(); }
+	if (qDown) { camera.position += deltaTime * camera.GetUp(); }
+	if (eDown) { camera.position -= deltaTime * camera.GetUp(); }
+}
+
+Camera camera(glm::vec3(0,0,-4), glm::vec3(0), 60.0f, 16/9);
 
 // fragment shader is the pixel shader. ran once for each pixel: colour of specific pixel
 // vertex shader is ran once for each vertex, so with a triangle, its ran 3 times
@@ -125,10 +159,10 @@ int main(void)
 	}
 
 	float positions[] = {
-		-0.5f, -0.5f,
-		0.5f, -0.5f,
-		0.5f, 0.5f,
-		-0.5f, 0.5f,
+		-0.5f, -0.5f, 0.0f,
+		0.5f, -0.5f, 0.0f,
+		0.5f, 0.5f, 0.0f,
+		-0.5f, 0.5f, 0.0f,
 
     };
 
@@ -141,18 +175,16 @@ int main(void)
     glGenBuffers(1, &buffer);
     // This is whats being drawn since its bound
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 6 * 3 * sizeof(float), positions, GL_STATIC_DRAW);
 
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
 	// index buffer obejct
 	unsigned int ibo;
 	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
-
-
 
 	ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
 	
@@ -162,14 +194,28 @@ int main(void)
 	glUniform4f(glGetUniformLocation(shader, "u_Color"), 0.2f, 0.3f, 0.8f, 1.0f);
 	float r = 0.0f;
 	float incrememnt = 0.05f;
+	
+	float previousTime = glfwGetTime();
+	float currentTime = glfwGetTime();
+
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+		glfwPollEvents();
+		currentTime = glfwGetTime();
+		HandleInput(window, camera, currentTime - previousTime);
+		glm::mat4 viewMatrix = camera.GetViewMatrix();
+		glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
+		glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
+
+		// glClearColor(1, 0, 0, 1);
+
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
 		glUniform4f(glGetUniformLocation(shader, "u_Color"), r, 0.3f, 0.8f, 1.0f);
-
+		glUniformMatrix4fv(glGetUniformLocation(shader, "u_ViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(viewProjectionMatrix));
+		
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 		if (r > 1.0f)
 			incrememnt = -0.05f;
@@ -181,6 +227,7 @@ int main(void)
 
         /* Poll for and process events */
         glfwPollEvents();
+		previousTime = currentTime;
     }
 
 	glDeleteProgram(shader);
