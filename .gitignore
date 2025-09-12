@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+
+.vs/
+./MMR_Project/x64
+x64/
