@@ -6,7 +6,7 @@
 class Camera
 {
 public:
-	Camera(const glm::vec3& position, const glm::vec3& rotation, float verticalFov, float aspectRatio):
+	Camera(const glm::vec3& position, const glm::vec3& rotation, float verticalFov, float aspectRatio) :
 		position{ position }, rotation{ rotation }, verticalFov{ verticalFov }, aspectRatio{ aspectRatio }, firstPerson{ false } {
 	}
 

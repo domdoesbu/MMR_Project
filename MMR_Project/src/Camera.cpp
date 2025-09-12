@@ -6,8 +6,8 @@ glm::mat4 Camera::GetTransformMatrix()
 	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1), glm::radians(rotation.x), glm::vec3(1, 0, 0));
 	rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0, 1, 0));
 	rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0, 0, 1));
-    
-    return rotationMatrix * translationMatrix;
+
+	return rotationMatrix * translationMatrix;
 }
 
 glm::mat4 Camera::GetViewMatrix()
