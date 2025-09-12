@@ -1,12 +1,15 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#define TINYOBJLOADER_IMPLEMENTATION
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include <glm/gtx/string_cast.hpp>
+#include "tiny_obj_loader.h"
 #include "Camera.h"
 
 #include <iostream>
+#include <direct.h>
 #include <fstream>
 #include <string>
 #include <sstream>
@@ -126,6 +129,54 @@ void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
 
 Camera camera(glm::vec3(0,0,-4), glm::vec3(0), 60.0f, 16/9);
 
+static bool LoadObj(const char* inputFile)
+{
+	/* Load object */
+	// current working directory is MMR_Project/MMR_Project/
+	tinyobj::ObjReaderConfig readerConfig;
+	readerConfig.mtl_search_path = "./test_objs/";
+	tinyobj::ObjReader reader;
+
+	if (!reader.ParseFromFile(inputFile, readerConfig))
+	{
+		if (!reader.Error().empty())
+		{
+			std::cerr << "TinyObjReader: " << reader.Error() << std::endl;
+		}
+		exit(1);
+	}
+
+	if (!reader.Warning().empty()) {
+		std::cout << "TinyObjReader: " << reader.Warning();
+	}
+
+	tinyobj::attrib_t inattrib;
+	std::vector<tinyobj::shape_t> inshapes;
+	std::vector<tinyobj::material_t> materials = reader.GetMaterials();
+	std::string warn;
+	std::string err;
+	bool success = tinyobj::LoadObj(&inattrib, &inshapes, &materials, &warn, &err, inputFile, readerConfig.mtl_search_path.c_str());
+
+	if (!warn.empty()) {
+		std::cout << "WARN: " << warn << std::endl;
+	}
+	if (!err.empty()) {
+		std::cerr << err << std::endl;
+	}
+	if (!success) {
+		std::cerr << "Failed to load " << inputFile << std::endl;
+		return false;
+	}
+
+	printf("# of vertices  = %d\n", (int)(inattrib.vertices.size()) / 3);
+	printf("# of normals   = %d\n", (int)(inattrib.normals.size()) / 3);
+	printf("# of texcoords = %d\n", (int)(inattrib.texcoords.size()) / 2);
+	printf("# of materials = %d\n", (int)materials.size());
+	printf("# of shapes    = %d\n", (int)inshapes.size());
+
+	// TODO: put the vertex positions in the buffer and draw? maybe more complex
+}
+
 // fragment shader is the pixel shader. ran once for each pixel: colour of specific pixel
 // vertex shader is ran once for each vertex, so with a triangle, its ran 3 times
 
@@ -137,6 +188,11 @@ int main(void)
     /* Initialize the library */
     if (!glfwInit())
         return -1;
+
+	// Load Obj
+	std::string inputFile = "./test_objs/cornell_box.obj";
+
+	LoadObj(inputFile.c_str()); // Not finished sorryy
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -201,9 +257,11 @@ int main(void)
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
-		glfwPollEvents();
-		currentTime = glfwGetTime();
+		// Get input from user keyboard
+		currentTime = glfwGetTime(); // Get the time to regulate how fast the movement speed is
 		HandleInput(window, camera, currentTime - previousTime);
+
+		// Calculate camera angle
 		glm::mat4 viewMatrix = camera.GetViewMatrix();
 		glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
 		glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
