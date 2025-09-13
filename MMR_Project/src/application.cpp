@@ -99,8 +99,20 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 	return program;
 }
 
+bool drawWireframe = false;
+ 
 void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
 {
+	bool togglePan = false;
+
+	int oState = glfwGetKey(window, GLFW_KEY_O);
+	bool oDown = oState == GLFW_PRESS;
+
+	if (oDown) {
+		togglePan = !togglePan;
+	}
+
+	
 	int wState = glfwGetKey(window, GLFW_KEY_W);
 	bool wDown = wState == GLFW_PRESS || wState == GLFW_REPEAT;
 
@@ -122,191 +134,121 @@ void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
 	int pState = glfwGetKey(window, GLFW_KEY_P);
 	bool pDown = pState == GLFW_PRESS;
 
-	int oState = glfwGetKey(window, GLFW_KEY_O);
-	bool oDown = oState == GLFW_PRESS;
+	if (togglePan) {
+		camera.firstPerson = true;
+		if (wDown) { camera.position += deltaTime * camera.GetForward(); }
+		if (sDown) { camera.position -= deltaTime * camera.GetForward(); }
+		if (aDown) { camera.position -= deltaTime * camera.GetRight(); }
+		if (dDown) { camera.position += deltaTime * camera.GetRight(); }
+		if (qDown) { camera.position += deltaTime * camera.GetUp(); }
+		if (eDown) { camera.position -= deltaTime * camera.GetUp(); }
+	}
+	else {
+		camera.firstPerson = false;
+		if (wDown) { camera.position.y += deltaTime * 0.5f; }
+		if (sDown) { camera.position.y -= deltaTime * 0.5f;}
+		if (aDown) { camera.position.x -= deltaTime * 0.5f; }
+		if (dDown) { camera.position.x += deltaTime * 0.5f;}
+		if (qDown) { camera.position.z += deltaTime * 0.5f; }
+		if (eDown) { camera.position.z -= deltaTime * 0.5f;}
+	}
+	
 
+	if (pDown) { drawWireframe = !drawWireframe; }
 
-	if (wDown) { camera.position += deltaTime * camera.GetForward(); }
-	if (sDown) { camera.position -= deltaTime * camera.GetForward(); }
-	if (aDown) { camera.position -= deltaTime * camera.GetRight(); }
-	if (dDown) { camera.position += deltaTime * camera.GetRight(); }
-	if (qDown) { camera.position += deltaTime * camera.GetUp(); }
-	if (eDown) { camera.position -= deltaTime * camera.GetUp(); }
-
-	if (pDown) { glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); }
-	if (oDown) { glPolygonMode(GL_FRONT_AND_BACK, GL_FILL); }
 }
 
 Camera camera(glm::vec3(0,0,-4), glm::vec3(0), 60.0f, 16/9);
 
-static bool LoadObj(const char* inputFile, std::vector<float>& outPositions, std::vector<unsigned int>& outIndices)
-{
-	///* Load object */
-	//// current working directory is MMR_Project/MMR_Project/
-	//tinyobj::ObjReaderConfig readerConfig;
-	//readerConfig.mtl_search_path = "./test_objs/";
-	//tinyobj::ObjReader reader;
+struct Vertex {
+	float position[3];
+	float normal[3];
+	float texcoord[2];
+};
 
-	//if (!reader.ParseFromFile(inputFile, readerConfig))
-	//{
-	//	if (!reader.Error().empty())
-	//	{
-	//		std::cerr << "TinyObjReader: " << reader.Error() << std::endl;
-	//	}
-	//	exit(1);
-	//}
-
-	//if (!reader.Warning().empty()) {
-	//	std::cout << "TinyObjReader: " << reader.Warning();
-	//}
-
-	//tinyobj::attrib_t inattrib;
-	//std::vector<tinyobj::shape_t> inshapes;
-	//std::vector<tinyobj::material_t> materials = reader.GetMaterials();
-	//std::string warn;
-	//std::string err;
-	//bool success = tinyobj::LoadObj(&inattrib, &inshapes, &materials, &warn, &err, inputFile, readerConfig.mtl_search_path.c_str());
-
-	//if (!warn.empty()) {
-	//	std::cout << "WARN: " << warn << std::endl;
-	//}
-	//if (!err.empty()) {
-	//	std::cerr << err << std::endl;
-	//}
-	//if (!success) {
-	//	std::cerr << "Failed to load " << inputFile << std::endl;
-	//	return false;
-	//}
-
-	//printf("# of vertices  = %d\n", (int)(inattrib.vertices.size()) / 3);
-	//printf("# of normals   = %d\n", (int)(inattrib.normals.size()) / 3);
-	//printf("# of texcoords = %d\n", (int)(inattrib.texcoords.size()) / 2);
-	//printf("# of materials = %d\n", (int)materials.size());
-	//printf("# of shapes    = %d\n", (int)inshapes.size());
-
-	//// TODO: put the vertex positions in the buffer and draw? maybe more complex
-	//outPositions.clear();
-	//outIndices.clear();
-
-	//for (size_t s = 0; s < inshapes.size(); s++)
-	//{
-	//	size_t index_offset = 0;
-	//	// For each face
-	//	for (size_t f = 0; f < inshapes[s].mesh.num_face_vertices.size(); f++)
-	//	{
-	//		int fv = inshapes[s].mesh.num_face_vertices[f];
-	//		// For each vertex in the face
-	//		for (size_t v = 0; v < fv; v++)
-	//		{
-	//			// access to vertex
-	//			tinyobj::index_t idx = inshapes[s].mesh.indices[index_offset + v];
-	//			tinyobj::real_t vx = inattrib.vertices[3 * idx.vertex_index + 0];
-	//			tinyobj::real_t vy = inattrib.vertices[3 * idx.vertex_index + 1];
-	//			tinyobj::real_t vz = inattrib.vertices[3 * idx.vertex_index + 2];
-	//			outPositions.push_back(vx);
-	//			outPositions.push_back(vy);
-	//			outPositions.push_back(vz);
-	//			outIndices.push_back((unsigned int)(outIndices.size()));
-	//		}
-	//		index_offset += fv;
-	//	}
-	//}
-
-	//return true;
-	tinyobj::ObjReaderConfig readerConfig;
-	readerConfig.mtl_search_path = "./test_objs/";
-	tinyobj::ObjReader reader;
-
-	if (!reader.ParseFromFile(inputFile, readerConfig)) {
-		if (!reader.Error().empty()) {
-			std::cerr << "TinyObjReader: " << reader.Error() << std::endl;
-		}
+bool LoadObj(const std::string& filepath,std::vector<float>& outVertices) {
+	tinyobj::attrib_t attrib;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string warn, err;
+	std::vector<glm::vec3> normals;
+	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str());
+	if (!warn.empty()) {
+		std::cerr << "tinyobj warning: " << warn << std::endl;
+	}
+	if (!err.empty()) {
+		std::cerr << "tinyobj error: " << err << std::endl;
+	}
+	if (!ret) {
 		return false;
 	}
 
-	if (!reader.Warning().empty()) {
-		std::cout << "TinyObjReader: " << reader.Warning();
-	}
+	outVertices.clear();
 
-	const tinyobj::attrib_t& inattrib = reader.GetAttrib();
-	const std::vector<tinyobj::shape_t>& inshapes = reader.GetShapes();
-
-	outPositions.clear();
-	outIndices.clear();
-
-	// Temporary arrays for per-vertex positions and normals
-	std::vector<glm::vec3> positions;
-	std::vector<glm::vec3> normals;
-
-	// First collect all positions as glm::vec3
-	positions.reserve(inattrib.vertices.size() / 3);
-	for (size_t i = 0; i < inattrib.vertices.size(); i += 3) {
-		positions.emplace_back(
-			inattrib.vertices[i + 0],
-			inattrib.vertices[i + 1],
-			inattrib.vertices[i + 2]);
-	}
-
-	normals.resize(positions.size(), glm::vec3(0.0f)); // initialize to zero
-
-	// Generate normals manually
-	for (const auto& shape : inshapes) {
-		size_t index_offset = 0;
+	for (const auto& shape : shapes) {
+		size_t indexOffset = 0;
 		for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) {
 			int fv = shape.mesh.num_face_vertices[f];
+
+			// We want to force triangulation
 			if (fv != 3) {
-				std::cerr << "Warning: non-triangle face detected. Skipping.\n";
-				index_offset += fv;
+				std::cerr << "Warning: Non-triangle face detected. Skipping." << std::endl;
+				indexOffset += fv;
 				continue;
 			}
 
-			// Get three vertices of the face
-			tinyobj::index_t idx0 = shape.mesh.indices[index_offset + 0];
-			tinyobj::index_t idx1 = shape.mesh.indices[index_offset + 1];
-			tinyobj::index_t idx2 = shape.mesh.indices[index_offset + 2];
+			glm::vec3 v0;
+			glm::vec3 v1;
+			glm::vec3 v2;
 
-			glm::vec3 v0 = positions[idx0.vertex_index];
-			glm::vec3 v1 = positions[idx1.vertex_index];
-			glm::vec3 v2 = positions[idx2.vertex_index];
+			for (int v = 0; v < fv; v++) {
+				tinyobj::index_t idx = shape.mesh.indices[indexOffset + v];
 
-			// Compute face normal
+				glm::vec3 vertexPos = glm::vec3(attrib.vertices[3 * idx.vertex_index + 0], attrib.vertices[3 * idx.vertex_index + 1], attrib.vertices[3 * idx.vertex_index + 2]);
+				switch(v)
+				{
+				case 0:
+					v0 = vertexPos;
+					break;
+				case 1:
+					v1 = vertexPos;
+					break;
+				case 2:
+					v2 = vertexPos;
+					break;
+				}
+			}
 			glm::vec3 edge1 = v1 - v0;
 			glm::vec3 edge2 = v2 - v0;
 			glm::vec3 faceNormal = glm::normalize(glm::cross(edge1, edge2));
 
-			// Accumulate to vertex normals
-			normals[idx0.vertex_index] += faceNormal;
-			normals[idx1.vertex_index] += faceNormal;
-			normals[idx2.vertex_index] += faceNormal;
+			outVertices.push_back(v0.x);
+			outVertices.push_back(v0.y);
+			outVertices.push_back(v0.z);
+			outVertices.push_back(faceNormal.x);
+			outVertices.push_back(faceNormal.y);
+			outVertices.push_back(faceNormal.z);
 
-			// Add indices
-			outIndices.push_back(idx0.vertex_index);
-			outIndices.push_back(idx1.vertex_index);
-			outIndices.push_back(idx2.vertex_index);
+			outVertices.push_back(v1.x);
+			outVertices.push_back(v1.y);
+			outVertices.push_back(v1.z);
+			outVertices.push_back(faceNormal.x);
+			outVertices.push_back(faceNormal.y);
+			outVertices.push_back(faceNormal.z);
 
-			index_offset += fv;
+			outVertices.push_back(v2.x);
+			outVertices.push_back(v2.y);
+			outVertices.push_back(v2.z);
+			outVertices.push_back(faceNormal.x);
+			outVertices.push_back(faceNormal.y);
+			outVertices.push_back(faceNormal.z);
+
+			indexOffset += fv;
 		}
 	}
-
-	// Normalize all vertex normals
-	for (auto& n : normals) {
-		n = glm::normalize(n);
-	}
-
-	// Interleave position + normal into one array
-	outPositions.reserve(positions.size() * 6);
-	for (size_t i = 0; i < positions.size(); i++) {
-		outPositions.push_back(positions[i].x);
-		outPositions.push_back(positions[i].y);
-		outPositions.push_back(positions[i].z);
-
-		outPositions.push_back(normals[i].x);
-		outPositions.push_back(normals[i].y);
-		outPositions.push_back(normals[i].z);
-	}
-
 	return true;
 }
+
 
 // fragment shader is the pixel shader. ran once for each pixel: colour of specific pixel
 // vertex shader is ran once for each vertex, so with a triangle, its ran 3 times
@@ -319,9 +261,6 @@ int main(void)
     /* Initialize the library */
     if (!glfwInit())
         return -1;
-
-
-
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -346,13 +285,17 @@ int main(void)
 	// Load Obj
 	std::string inputFile = "./test_objs/D00174.obj";
 
-	std::vector<float> positions;
+	std::vector<float> positions = std::vector<float> ();
 	std::vector<unsigned int> indices;
 
-	if (!LoadObj(inputFile.c_str(), positions, indices))
+	if (!LoadObj(inputFile.c_str(), positions))
 	{
 		std::cerr << "Failed to load obj" << std::endl;
 		return -1;
+	}
+
+	for (int i = 0; i < positions.size() / 6; i++) {
+		indices.push_back(i);
 	}
 
     unsigned int buffer;
@@ -392,8 +335,9 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
 
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -406,7 +350,7 @@ int main(void)
 		glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
 		glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1, 0, 0));
+		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1, 0, 0));
 		glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -414,12 +358,15 @@ int main(void)
 		glUniform3f(glGetUniformLocation(shader, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
 		glUniform3f(glGetUniformLocation(shader, "objectColor"), 0.2f, 0.3f, 0.8f);
 		glUniform3f(glGetUniformLocation(shader, "lightPos"), 0.0f, 4.0f, 0.0f);
+
+		glUniform1i(glGetUniformLocation(shader, "toggleWireframe"), drawWireframe ? 1 : 0);
+
 		// Update
 
-		// glClearColor(1, 0, 0, 1);
+		glClearColor(0.2, 0.2, 0.2, 1);
 
         /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glUniformMatrix4fv(glGetUniformLocation(shader, "u_ViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(viewProjectionMatrix));
 		
