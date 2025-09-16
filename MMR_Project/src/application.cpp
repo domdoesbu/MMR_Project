@@ -100,18 +100,18 @@ static unsigned int CreateShader(const std::string& vertexShader, const std::str
 }
 
 bool drawWireframe = false;
+bool togglePan = false;
  
 void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
 {
-	bool togglePan = false;
 
 	int oState = glfwGetKey(window, GLFW_KEY_O);
 	bool oDown = oState == GLFW_PRESS;
 
 	if (oDown) {
 		togglePan = !togglePan;
+		camera.GetViewMatrix();
 	}
-
 	
 	int wState = glfwGetKey(window, GLFW_KEY_W);
 	bool wDown = wState == GLFW_PRESS || wState == GLFW_REPEAT;
@@ -134,25 +134,13 @@ void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
 	int pState = glfwGetKey(window, GLFW_KEY_P);
 	bool pDown = pState == GLFW_PRESS;
 
-	if (togglePan) {
-		camera.firstPerson = true;
-		if (wDown) { camera.position += deltaTime * camera.GetForward(); }
-		if (sDown) { camera.position -= deltaTime * camera.GetForward(); }
-		if (aDown) { camera.position -= deltaTime * camera.GetRight(); }
-		if (dDown) { camera.position += deltaTime * camera.GetRight(); }
-		if (qDown) { camera.position += deltaTime * camera.GetUp(); }
-		if (eDown) { camera.position -= deltaTime * camera.GetUp(); }
-	}
-	else {
-		camera.firstPerson = false;
-		if (wDown) { camera.position.y += deltaTime * 0.5f; }
-		if (sDown) { camera.position.y -= deltaTime * 0.5f;}
-		if (aDown) { camera.position.x -= deltaTime * 0.5f; }
-		if (dDown) { camera.position.x += deltaTime * 0.5f;}
-		if (qDown) { camera.position.z += deltaTime * 0.5f; }
-		if (eDown) { camera.position.z -= deltaTime * 0.5f;}
-	}
-	
+	camera.firstPerson = togglePan;
+	if (wDown) { camera.position += deltaTime * camera.GetForward(); }
+	if (sDown) { camera.position -= deltaTime * camera.GetForward(); }
+	if (aDown) { camera.position -= deltaTime * camera.GetRight(); }
+	if (dDown) { camera.position += deltaTime * camera.GetRight(); }
+	if (qDown) { camera.position += deltaTime * camera.GetUp(); }
+	if (eDown) { camera.position -= deltaTime * camera.GetUp(); }
 
 	if (pDown) { drawWireframe = !drawWireframe; }
 
@@ -283,7 +271,7 @@ int main(void)
 	}
 
 	// Load Obj
-	std::string inputFile = "./test_objs/D00174.obj";
+	std::string inputFile = "./test_objs/m53.obj";
 
 	std::vector<float> positions = std::vector<float> ();
 	std::vector<unsigned int> indices;
@@ -356,14 +344,14 @@ int main(void)
 		glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		
 		glUniform3f(glGetUniformLocation(shader, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
-		glUniform3f(glGetUniformLocation(shader, "objectColor"), 0.2f, 0.3f, 0.8f);
+		glUniform3f(glGetUniformLocation(shader, "objectColor"), 0.5f, 0.5f, 0.5f);
 		glUniform3f(glGetUniformLocation(shader, "lightPos"), 0.0f, 4.0f, 0.0f);
 
 		glUniform1i(glGetUniformLocation(shader, "toggleWireframe"), drawWireframe ? 1 : 0);
 
 		// Update
 
-		glClearColor(0.2, 0.2, 0.2, 1);
+		glClearColor(1.0, 1.0, 1.0, 1);
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
