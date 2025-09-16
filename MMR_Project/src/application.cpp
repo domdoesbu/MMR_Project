@@ -7,6 +7,7 @@
 #include <glm/gtx/string_cast.hpp>
 #include "./include/tiny_obj_loader.h"
 #include "Camera.h"
+#include "Shader.h"
 
 #include <iostream>
 #include <direct.h>
@@ -55,48 +56,6 @@ static ShaderProgramSource ParseShader(const std::string& filepath)
 	}
 
 	return { ss[0].str(), ss[1].str() };
-}
-
-static unsigned int CompileShader(unsigned int type, const std::string& source)
-{
-	unsigned int id = glCreateShader(type);
-	const char* src = source.c_str();
-	glShaderSource(id, 1, &src, nullptr);
-	glCompileShader(id);
-	int result;
-	// iv: i --> integer :: v --> vector, basically it wants a pointer
-	glGetShaderiv(id, GL_COMPILE_STATUS, &result);
-	if (result == GL_FALSE)
-	{
-		int length;
-		glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-		char* message = (char*)alloca(length * sizeof(char));
-		glGetShaderInfoLog(id, length, &length, message);
-		std::cout << "Failed to compile " << (type == GL_VERTEX_SHADER ? "vertex" : "fragment") << " shader!" << std::endl;
-		std::cout << message << std::endl;
-		glDeleteShader(id);
-		return 0;
-	}
-	return id;
-}
-
-static unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader) 
-{
-    unsigned int program = glCreateProgram();
-	unsigned int vs = CompileShader(GL_VERTEX_SHADER, vertexShader);
-	unsigned int fs = CompileShader(GL_FRAGMENT_SHADER, fragmentShader);
-
-	glAttachShader(program, vs);
-	glAttachShader(program, fs);
-
-	glLinkProgram(program);
-	glValidateProgram(program);
-
-	// Can delete because they've already been linked to the program
-	glDeleteShader(vs);
-	glDeleteShader(fs);
-
-	return program;
 }
 
 bool drawWireframe = false;
@@ -154,86 +113,101 @@ struct Vertex {
 	float texcoord[2];
 };
 
-bool LoadObj(const std::string& filepath,std::vector<float>& outVertices) {
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-	std::string warn, err;
-	std::vector<glm::vec3> normals;
-	bool ret = tinyobj::LoadObj(&attrib, &shapes, &materials, &warn, &err, filepath.c_str());
-	if (!warn.empty()) {
-		std::cerr << "tinyobj warning: " << warn << std::endl;
-	}
-	if (!err.empty()) {
-		std::cerr << "tinyobj error: " << err << std::endl;
-	}
-	if (!ret) {
+static bool LoadObj(const char* inputFile, std::vector<float>& outPositions, std::vector<unsigned int>& outIndices)
+{
+	//return true;
+	tinyobj::ObjReaderConfig readerConfig;
+	readerConfig.mtl_search_path = "./test_objs/";
+	tinyobj::ObjReader reader;
+
+	if (!reader.ParseFromFile(inputFile, readerConfig)) {
+		if (!reader.Error().empty()) {
+			std::cerr << "TinyObjReader: " << reader.Error() << std::endl;
+		}
 		return false;
 	}
 
-	outVertices.clear();
+	if (!reader.Warning().empty()) {
+		std::cout << "TinyObjReader: " << reader.Warning();
+	}
 
-	for (const auto& shape : shapes) {
-		size_t indexOffset = 0;
+	const tinyobj::attrib_t& inattrib = reader.GetAttrib();
+	const std::vector<tinyobj::shape_t>& inshapes = reader.GetShapes();
+
+	outPositions.clear();
+	outIndices.clear();
+
+	// Temporary arrays for per-vertex positions and normals
+	std::vector<glm::vec3> positions;
+	std::vector<glm::vec3> normals;
+
+	// First collect all positions as glm::vec3
+	positions.reserve(inattrib.vertices.size() / 3);
+	for (size_t i = 0; i < inattrib.vertices.size(); i += 3) {
+		positions.emplace_back(
+			inattrib.vertices[i + 0],
+			inattrib.vertices[i + 1],
+			inattrib.vertices[i + 2]);
+	}
+
+	normals.resize(positions.size(), glm::vec3(0.0f)); // initialize to zero
+
+	// Generate normals manually
+	for (const auto& shape : inshapes) {
+		size_t index_offset = 0;
 		for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) {
 			int fv = shape.mesh.num_face_vertices[f];
-
-			// We want to force triangulation
 			if (fv != 3) {
-				std::cerr << "Warning: Non-triangle face detected. Skipping." << std::endl;
-				indexOffset += fv;
+				std::cerr << "Warning: non-triangle face detected. Skipping.\n";
+				index_offset += fv;
 				continue;
 			}
 
-			glm::vec3 v0;
-			glm::vec3 v1;
-			glm::vec3 v2;
+			// Get three vertices of the face
+			tinyobj::index_t idx0 = shape.mesh.indices[index_offset + 0];
+			tinyobj::index_t idx1 = shape.mesh.indices[index_offset + 1];
+			tinyobj::index_t idx2 = shape.mesh.indices[index_offset + 2];
 
-			for (int v = 0; v < fv; v++) {
-				tinyobj::index_t idx = shape.mesh.indices[indexOffset + v];
+			glm::vec3 v0 = positions[idx0.vertex_index];
+			glm::vec3 v1 = positions[idx1.vertex_index];
+			glm::vec3 v2 = positions[idx2.vertex_index];
 
-				glm::vec3 vertexPos = glm::vec3(attrib.vertices[3 * idx.vertex_index + 0], attrib.vertices[3 * idx.vertex_index + 1], attrib.vertices[3 * idx.vertex_index + 2]);
-				switch(v)
-				{
-				case 0:
-					v0 = vertexPos;
-					break;
-				case 1:
-					v1 = vertexPos;
-					break;
-				case 2:
-					v2 = vertexPos;
-					break;
-				}
-			}
+			// Compute face normal
 			glm::vec3 edge1 = v1 - v0;
 			glm::vec3 edge2 = v2 - v0;
 			glm::vec3 faceNormal = glm::normalize(glm::cross(edge1, edge2));
 
-			outVertices.push_back(v0.x);
-			outVertices.push_back(v0.y);
-			outVertices.push_back(v0.z);
-			outVertices.push_back(faceNormal.x);
-			outVertices.push_back(faceNormal.y);
-			outVertices.push_back(faceNormal.z);
+			// Accumulate to vertex normals
+			normals[idx0.vertex_index] += faceNormal;
+			normals[idx1.vertex_index] += faceNormal;
+			normals[idx2.vertex_index] += faceNormal;
 
-			outVertices.push_back(v1.x);
-			outVertices.push_back(v1.y);
-			outVertices.push_back(v1.z);
-			outVertices.push_back(faceNormal.x);
-			outVertices.push_back(faceNormal.y);
-			outVertices.push_back(faceNormal.z);
+			// Add indices
+			outIndices.push_back(idx0.vertex_index);
+			outIndices.push_back(idx1.vertex_index);
+			outIndices.push_back(idx2.vertex_index);
 
-			outVertices.push_back(v2.x);
-			outVertices.push_back(v2.y);
-			outVertices.push_back(v2.z);
-			outVertices.push_back(faceNormal.x);
-			outVertices.push_back(faceNormal.y);
-			outVertices.push_back(faceNormal.z);
-
-			indexOffset += fv;
+			index_offset += fv;
 		}
 	}
+
+	// Normalize all vertex normals
+	for (auto& n : normals) {
+		n = glm::normalize(n);
+	}
+
+	// Interleave position + normal into one array
+	outPositions.reserve(positions.size() * 6);
+	for (size_t i = 0; i < positions.size(); i++) {
+		outPositions.push_back(positions[i].x);
+		outPositions.push_back(positions[i].y);
+		outPositions.push_back(positions[i].z);
+
+		outPositions.push_back(normals[i].x);
+		outPositions.push_back(normals[i].y);
+		outPositions.push_back(normals[i].z);
+	}
+
 	return true;
 }
 
@@ -276,7 +250,7 @@ int main(void)
 	std::vector<float> positions = std::vector<float> ();
 	std::vector<unsigned int> indices;
 
-	if (!LoadObj(inputFile.c_str(), positions))
+	if (!LoadObj(inputFile.c_str(), positions, indices))
 	{
 		std::cerr << "Failed to load obj" << std::endl;
 		return -1;
@@ -306,10 +280,15 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-	ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
-	
-	unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
-	glUseProgram(shader);
+	Shader solidShader("res/shaders/Vertex.shader", "res/shaders/Fragment.shader");
+	Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
+
+	solidShader.use();
+
+	if (drawWireframe) 
+	{
+		wireframeShader.use();
+	}
 	
 	float previousTime = glfwGetTime();
 	float currentTime = glfwGetTime();
@@ -339,15 +318,15 @@ int main(void)
 		glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1, 0, 0));
-		glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(model));
-		glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
-		glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
 		
-		glUniform3f(glGetUniformLocation(shader, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
-		glUniform3f(glGetUniformLocation(shader, "objectColor"), 0.5f, 0.5f, 0.5f);
-		glUniform3f(glGetUniformLocation(shader, "lightPos"), 0.0f, 4.0f, 0.0f);
+		glUniform3f(glGetUniformLocation(solidShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
+		glUniform3f(glGetUniformLocation(solidShader.ID, "objectColor"), 0.5f, 0.5f, 0.5f);
+		glUniform3f(glGetUniformLocation(solidShader.ID, "lightPos"), 0.0f, 4.0f, 0.0f);
 
-		glUniform1i(glGetUniformLocation(shader, "toggleWireframe"), drawWireframe ? 1 : 0);
+		glUniform1i(glGetUniformLocation(solidShader.ID, "toggleWireframe"), drawWireframe ? 1 : 0);
 
 		// Update
 
@@ -356,7 +335,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glUniformMatrix4fv(glGetUniformLocation(shader, "u_ViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(viewProjectionMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "u_ViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(viewProjectionMatrix));
 		
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
 
@@ -368,7 +347,7 @@ int main(void)
 		previousTime = currentTime;
     }
 
-	glDeleteProgram(shader);
+	glDeleteProgram(solidShader.ID);
 
     glfwTerminate();
     return 0;
