@@ -21,43 +21,6 @@ struct ShaderProgramSource
 	std::string FragmentSource;
 };
 
-static ShaderProgramSource ParseShader(const std::string& filepath) 
-{
-	std::ifstream stream(filepath);
-
-	enum class ShaderType 
-	{
-		NONE = -1, VERTEX = 0, FRAGMENT = 1
-	};
-	ShaderType type = ShaderType::NONE;
-	std::string line;
-	std::stringstream ss[2];
-
-	while (getline(stream, line)) 
-	{
-		if (line.find("#shader") != std::string::npos)
-		{
-			if (line.find("vertex") != std::string::npos)
-			{
-				// Vertex shader
-				type = ShaderType::VERTEX;
-
-			}
-			else if (line.find("fragment") != std::string::npos)
-			{
-				// Fragment shader
-				type = ShaderType::FRAGMENT;
-			}
-		}
-		else 
-		{
-			ss[(int)type] << line << '\n';
-		}
-	}
-
-	return { ss[0].str(), ss[1].str() };
-}
-
 bool drawWireframe = false;
 bool togglePan = false;
  
@@ -113,102 +76,111 @@ struct Vertex {
 	float texcoord[2];
 };
 
-static bool LoadObj(const char* inputFile, std::vector<float>& outPositions, std::vector<unsigned int>& outIndices)
+
+static bool LoadObj(const char* inputFile, std::vector<float>&outVertices, std::vector<unsigned int>&outIndices)
 {
-	//return true;
-	tinyobj::ObjReaderConfig readerConfig;
-	readerConfig.mtl_search_path = "./test_objs/";
-	tinyobj::ObjReader reader;
+    tinyobj::ObjReaderConfig readerConfig;
+    readerConfig.mtl_search_path = "./test_objs/";
+    tinyobj::ObjReader reader;
 
-	if (!reader.ParseFromFile(inputFile, readerConfig)) {
-		if (!reader.Error().empty()) {
-			std::cerr << "TinyObjReader: " << reader.Error() << std::endl;
-		}
-		return false;
-	}
+    if (!reader.ParseFromFile(inputFile, readerConfig)) {
+        if (!reader.Error().empty()) {
+            std::cerr << "TinyObjReader: " << reader.Error() << std::endl;
+        }
+        return false;
+    }
 
-	if (!reader.Warning().empty()) {
-		std::cout << "TinyObjReader: " << reader.Warning();
-	}
+    if (!reader.Warning().empty()) {
+        std::cout << "TinyObjReader: " << reader.Warning() << std::endl;
+    }
 
-	const tinyobj::attrib_t& inattrib = reader.GetAttrib();
-	const std::vector<tinyobj::shape_t>& inshapes = reader.GetShapes();
+    const tinyobj::attrib_t& attrib = reader.GetAttrib();
+    const std::vector<tinyobj::shape_t>& shapes = reader.GetShapes();
 
-	outPositions.clear();
-	outIndices.clear();
+    outVertices.clear();
+    outIndices.clear();
 
-	// Temporary arrays for per-vertex positions and normals
-	std::vector<glm::vec3> positions;
-	std::vector<glm::vec3> normals;
+    // Temporary arrays
+    std::vector<glm::vec3> positions(attrib.vertices.size() / 3);
+    for (size_t i = 0; i < positions.size(); i++) {
+        positions[i] = glm::vec3(
+            attrib.vertices[3 * i + 0],
+            attrib.vertices[3 * i + 1],
+            attrib.vertices[3 * i + 2]
+        );
+    }
 
-	// First collect all positions as glm::vec3
-	positions.reserve(inattrib.vertices.size() / 3);
-	for (size_t i = 0; i < inattrib.vertices.size(); i += 3) {
-		positions.emplace_back(
-			inattrib.vertices[i + 0],
-			inattrib.vertices[i + 1],
-			inattrib.vertices[i + 2]);
-	}
+    std::vector<glm::vec3> normals;
+    bool hasNormals = !attrib.normals.empty();
+    if (hasNormals) {
+        normals.resize(attrib.normals.size() / 3);
+        for (size_t i = 0; i < normals.size(); i++) {
+            normals[i] = glm::vec3(
+                attrib.normals[3 * i + 0],
+                attrib.normals[3 * i + 1],
+                attrib.normals[3 * i + 2]
+            );
+        }
+    }
+    else {
+        normals.resize(positions.size(), glm::vec3(0.0f));
+    }
 
-	normals.resize(positions.size(), glm::vec3(0.0f)); // initialize to zero
+    for (const auto& shape : shapes) {
+        size_t index_offset = 0;
+        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) {
+            int fv = shape.mesh.num_face_vertices[f];
+            if (fv != 3) {
+                std::cerr << "Warning: non-triangle face detected. Skipping.\n";
+                index_offset += fv;
+                continue;
+            }
 
-	// Generate normals manually
-	for (const auto& shape : inshapes) {
-		size_t index_offset = 0;
-		for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) {
-			int fv = shape.mesh.num_face_vertices[f];
-			if (fv != 3) {
-				std::cerr << "Warning: non-triangle face detected. Skipping.\n";
-				index_offset += fv;
-				continue;
-			}
+            glm::vec3 faceNormal(0.0f);
 
-			// Get three vertices of the face
-			tinyobj::index_t idx0 = shape.mesh.indices[index_offset + 0];
-			tinyobj::index_t idx1 = shape.mesh.indices[index_offset + 1];
-			tinyobj::index_t idx2 = shape.mesh.indices[index_offset + 2];
+            for (int v = 0; v < fv; v++) {
+                tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
+                outIndices.push_back(idx.vertex_index);
 
-			glm::vec3 v0 = positions[idx0.vertex_index];
-			glm::vec3 v1 = positions[idx1.vertex_index];
-			glm::vec3 v2 = positions[idx2.vertex_index];
+                // If normals are missing, compute face normal
+                if (!hasNormals) {
+                    glm::vec3 v0 = positions[shape.mesh.indices[index_offset + 0].vertex_index];
+                    glm::vec3 v1 = positions[shape.mesh.indices[index_offset + 1].vertex_index];
+                    glm::vec3 v2 = positions[shape.mesh.indices[index_offset + 2].vertex_index];
+                    faceNormal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
+                }
+            }
 
-			// Compute face normal
-			glm::vec3 edge1 = v1 - v0;
-			glm::vec3 edge2 = v2 - v0;
-			glm::vec3 faceNormal = glm::normalize(glm::cross(edge1, edge2));
+            if (!hasNormals) {
+                // Accumulate face normal into vertex normals
+                for (int v = 0; v < fv; v++) {
+                    tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
+                    normals[idx.vertex_index] += faceNormal;
+                }
+            }
 
-			// Accumulate to vertex normals
-			normals[idx0.vertex_index] += faceNormal;
-			normals[idx1.vertex_index] += faceNormal;
-			normals[idx2.vertex_index] += faceNormal;
+            index_offset += fv;
+        }
+    }
 
-			// Add indices
-			outIndices.push_back(idx0.vertex_index);
-			outIndices.push_back(idx1.vertex_index);
-			outIndices.push_back(idx2.vertex_index);
+    if (!hasNormals) {
+        for (auto& n : normals) {
+            n = glm::normalize(n);
+        }
+    }
 
-			index_offset += fv;
-		}
-	}
+    // Interleave position + normal
+    outVertices.reserve(positions.size() * 6);
+    for (size_t i = 0; i < positions.size(); i++) {
+        outVertices.push_back(positions[i].x);
+        outVertices.push_back(positions[i].y);
+        outVertices.push_back(positions[i].z);
+        outVertices.push_back(normals[i].x);
+        outVertices.push_back(normals[i].y);
+        outVertices.push_back(normals[i].z);
+    }
 
-	// Normalize all vertex normals
-	for (auto& n : normals) {
-		n = glm::normalize(n);
-	}
-
-	// Interleave position + normal into one array
-	outPositions.reserve(positions.size() * 6);
-	for (size_t i = 0; i < positions.size(); i++) {
-		outPositions.push_back(positions[i].x);
-		outPositions.push_back(positions[i].y);
-		outPositions.push_back(positions[i].z);
-
-		outPositions.push_back(normals[i].x);
-		outPositions.push_back(normals[i].y);
-		outPositions.push_back(normals[i].z);
-	}
-
-	return true;
+    return true;
 }
 
 
@@ -256,9 +228,9 @@ int main(void)
 		return -1;
 	}
 
-	for (int i = 0; i < positions.size() / 6; i++) {
-		indices.push_back(i);
-	}
+    unsigned int vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
     unsigned int buffer;
     glGenBuffers(1, &buffer);
@@ -280,15 +252,15 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-	Shader solidShader("res/shaders/Vertex.shader", "res/shaders/Fragment.shader");
 	Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
+	Shader solidShader("res/shaders/Vertex.shader", "res/shaders/Fragment.shader");
 
 	solidShader.use();
 
-	if (drawWireframe) 
-	{
-		wireframeShader.use();
-	}
+	//if (drawWireframe) 
+	//{
+	//	wireframeShader.use();
+	//}
 	
 	float previousTime = glfwGetTime();
 	float currentTime = glfwGetTime();
@@ -315,7 +287,6 @@ int main(void)
 		// Calculate camera angle
 		glm::mat4 viewMatrix = camera.GetViewMatrix();
 		glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
-		glm::mat4 viewProjectionMatrix = projectionMatrix * viewMatrix;
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1, 0, 0));
 		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -330,13 +301,12 @@ int main(void)
 
 		// Update
 
-		glClearColor(1.0, 1.0, 1.0, 1);
+		glClearColor(0.0, 0.0, 0.0, 1.0);
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "u_ViewProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(viewProjectionMatrix));
-		
+        glBindVertexArray(vao);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
 
         /* Swap front and back buffers */
