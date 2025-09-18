@@ -252,15 +252,10 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-	Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
+	// Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
 	Shader solidShader("res/shaders/Vertex.shader", "res/shaders/Fragment.shader");
 
 	solidShader.use();
-
-	//if (drawWireframe) 
-	//{
-	//	wireframeShader.use();
-	//}
 	
 	float previousTime = glfwGetTime();
 	float currentTime = glfwGetTime();
@@ -301,7 +296,7 @@ int main(void)
 
 		// Update
 
-		glClearColor(0.0, 0.0, 0.0, 1.0);
+		glClearColor(1.0, 1.0, 1.0, 1.0);
 
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
