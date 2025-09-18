@@ -22,7 +22,7 @@ void main()
 	gl_Position = projection * view * model * vec4(position, 1.0);
 
 	// To get Gouraud shading lighting calculations are done per vertex
-	float ambientStrength = 0.1;
+	float ambientStrength = 0.5;
 	vec3 ambient = ambientStrength * lightColor;
 	
 	vec3 norm = normalize(normal);

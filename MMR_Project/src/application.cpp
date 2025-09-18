@@ -196,6 +196,12 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+    // Request object to user
+    std::cout << "Specify path for the desired object:" << std::endl;
+    std::string userInput;
+    std::cin >> userInput;
+    std::string inputFile = "./test_objs/" + userInput;
+
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
     if (!window)
@@ -215,11 +221,8 @@ int main(void)
 	{
 		std::cout << "Error!" << std::endl;
 	}
-
-	// Load Obj
-	std::string inputFile = "./test_objs/m53.obj";
-
-	std::vector<float> positions = std::vector<float> ();
+    // Load Obj
+ 	std::vector<float> positions = std::vector<float> ();
 	std::vector<unsigned int> indices;
 
 	if (!LoadObj(inputFile.c_str(), positions, indices))
@@ -290,7 +293,7 @@ int main(void)
 		
 		glUniform3f(glGetUniformLocation(solidShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z);
 		glUniform3f(glGetUniformLocation(solidShader.ID, "objectColor"), 0.5f, 0.5f, 0.5f);
-		glUniform3f(glGetUniformLocation(solidShader.ID, "lightPos"), 0.0f, 4.0f, 0.0f);
+		glUniform3f(glGetUniformLocation(solidShader.ID, "lightPos"), 1.0f, 4.0f, 0.0f);
 
 		glUniform1i(glGetUniformLocation(solidShader.ID, "toggleWireframe"), drawWireframe ? 1 : 0);
 
