@@ -1,5 +1,2 @@
-﻿  Camera.cpp
-glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
-LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+﻿  Preprocessing.cpp
   MMR_Project.vcxproj -> C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Debug\MMR_Project.exe

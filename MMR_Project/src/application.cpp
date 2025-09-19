@@ -8,6 +8,7 @@
 #include "./include/tiny_obj_loader.h"
 #include "Camera.h"
 #include "Shader.h"
+#include "Preprocessing.h"
 
 #include <iostream>
 #include <direct.h>
@@ -200,6 +201,11 @@ int main(void)
     /* Initialize the library */
     if (!glfwInit())
         return -1;
+
+
+	Preprocessing prep;
+	std::string databsePath = "./test_objs/";
+	prep.AnalyzeShapes(databsePath);
 
     // Request object to user
     std::cout << "Specify path for the desired object:" << std::endl;

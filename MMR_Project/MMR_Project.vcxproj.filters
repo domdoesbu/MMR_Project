@@ -21,12 +21,27 @@
     <ClCompile Include="src\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Preprocessing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
+    <None Include="res\shaders\Fragment.shader" />
+    <None Include="res\shaders\Vertex.shader" />
+    <None Include="res\shaders\wireframeFragment.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Preprocessing.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
