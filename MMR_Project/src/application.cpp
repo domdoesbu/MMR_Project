@@ -24,17 +24,24 @@ struct ShaderProgramSource
 bool drawWireframe = false;
 bool togglePan = false;
  
-void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
+void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    if (action == GLFW_PRESS)
+    {
+        switch (key)
+        {
+        case GLFW_KEY_O:
+            togglePan = !togglePan;
+            break;
+        case GLFW_KEY_P:
+            drawWireframe = !drawWireframe;
+            break;
+        }
+    }
+}
 
-	int oState = glfwGetKey(window, GLFW_KEY_O);
-	bool oDown = oState == GLFW_PRESS;
-
-	if (oDown) {
-		togglePan = !togglePan;
-		camera.GetViewMatrix();
-	}
-	
+void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
+{	
 	int wState = glfwGetKey(window, GLFW_KEY_W);
 	bool wDown = wState == GLFW_PRESS || wState == GLFW_REPEAT;
 
@@ -63,8 +70,6 @@ void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
 	if (dDown) { camera.position += deltaTime * camera.GetRight(); }
 	if (qDown) { camera.position += deltaTime * camera.GetUp(); }
 	if (eDown) { camera.position -= deltaTime * camera.GetUp(); }
-
-	if (pDown) { drawWireframe = !drawWireframe; }
 
 }
 
@@ -210,6 +215,8 @@ int main(void)
         return -1;
     }
 
+    glfwSetKeyCallback(window, KeyCallback);
+
     glewInit();
 
     /* Make the window's context current */
@@ -255,7 +262,7 @@ int main(void)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-	// Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
+	Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
 	Shader solidShader("res/shaders/Vertex.shader", "res/shaders/Fragment.shader");
 
 	solidShader.use();
@@ -287,6 +294,9 @@ int main(void)
 		glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1, 0, 0));
+
+        solidShader.use();
+
 		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -296,7 +306,7 @@ int main(void)
 		glUniform3f(glGetUniformLocation(solidShader.ID, "lightPos"), 1.0f, 4.0f, 0.0f);
 
 		glUniform1i(glGetUniformLocation(solidShader.ID, "toggleWireframe"), drawWireframe ? 1 : 0);
-
+		
 		// Update
 
 		glClearColor(1.0, 1.0, 1.0, 1.0);
@@ -305,14 +315,32 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glBindVertexArray(vao);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+    
+        if (drawWireframe) {
+			glEnable(GL_POLYGON_OFFSET_LINE);
+			glPolygonOffset(-1.0f, -1.0f);
+			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glLineWidth(1.0f);
+			wireframeShader.use();
+            glUniformMatrix4fv(glGetUniformLocation(wireframeShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+            glUniformMatrix4fv(glGetUniformLocation(wireframeShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
+            glUniformMatrix4fv(glGetUniformLocation(wireframeShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+            glUniform3f(glGetUniformLocation(wireframeShader.ID, "wireColor"), 0.0f, 0.0f, 0.0f);
 
+            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
+        }
+        
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
-
+        
         /* Poll for and process events */
         glfwPollEvents();
 		previousTime = currentTime;
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        glDisable(GL_POLYGON_OFFSET_LINE);
     }
 
 	glDeleteProgram(solidShader.ID);
