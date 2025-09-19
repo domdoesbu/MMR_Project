@@ -13,11 +13,23 @@ namespace fs = std::filesystem;
 
 void Preprocessing::AnalyzeShapes(const std::string& databasePath)
 {
+	std::cout << "Analyzing shapes in database: " << databasePath << std::endl;
+    // Excel file for all the data
+    std::string outputCsv = "shape_analysis.csv";
+
     // Check if database actually exists
     if (!fs::exists(databasePath) || !fs::is_directory(databasePath)) {
         std::cerr << "Database folder does not exist: " << databasePath << std::endl;
         return;
     }
+
+	std::ofstream csvFile(outputCsv);
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open output CSV file: " << outputCsv << std::endl;
+        return;
+    }
+
+    csvFile << "Class,File,Vertices,Faces,FaceType,Minx,Miny,Minz,Maxx,Maxy,Maxz\n";
 
     // loop over every sub folder, aka the class itself
     for (const auto& classDir : fs::directory_iterator(databasePath)) {
@@ -106,16 +118,16 @@ void Preprocessing::AnalyzeShapes(const std::string& databasePath)
             else if (hasQuad) faceType = "Quads";
             else faceType = "Unknown";
 
-            // Print results, we might want to just run this once and export it to an csv or something
-            std::cout << "Class: " << className
-                << " :: File: " << file.path().filename().string()
-                << "\n  Vertices: " << vertexCount
-                << "\n  Faces: " << faceCount
-                << "\n  Face type: " << faceType
-                << "\n  Bounding box: [("
-                << minX << ", " << minY << ", " << minZ << ") - ("
-                << maxX << ", " << maxY << ", " << maxZ << ")]"
-                << "\n\n";
+            csvFile << className << ","
+                << file.path().filename().string() << ","
+                << vertexCount << ","
+                << faceCount << ","
+                << "\"" << faceType << "\"" << ","
+                << minX << "," << minY << "," << minZ << ","
+                << maxX << "," << maxY << "," << maxZ
+                << "\n";
         }
     }
+    std::cout << "Finsihed Analyzing shapes in database: " << std::endl;
+	csvFile.close();
 }
