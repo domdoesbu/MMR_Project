@@ -236,8 +236,8 @@ int main(void)
 
 	Preprocessing prep;
 	std::string databsePath = "./test_objs/";
-	prep.AnalyzeShapes(databsePath);
-
+	//prep.AnalyzeShapes(databsePath);
+	prep.DatabaseStatistics("./shape_analysis.csv");
     // Request object to user
     std::cout << "Specify path for the desired object:" << std::endl;
     std::string userInput;

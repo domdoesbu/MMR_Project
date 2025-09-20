@@ -131,3 +131,90 @@ void Preprocessing::AnalyzeShapes(const std::string& databasePath)
     std::cout << "Finsihed Analyzing shapes in database: " << std::endl;
 	csvFile.close();
 }
+
+void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
+    /*
+    2.2: Statisitcs
+        1. Average shape in the database (in terms of number of vertices and faces)
+        2. Significant Outliers from the average
+        3. Show as a hisogram counting how many shapes in the database for every range of possible interest
+            a. Number of vertices
+            b. Number of faces
+            c. Shape class
+    */
+
+    std::cout << "Generating statistics from file: " << shapeAnalysisFile << std::endl;
+    std::ifstream csvFile(shapeAnalysisFile);
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open input CSV file: " << shapeAnalysisFile << std::endl;
+        return;
+    }
+    struct ShapeInfo {
+        std::string className;
+        std::string fileName;
+        size_t vertices;
+        size_t faces;
+        std::string faceType;
+        float minX, minY, minZ;
+        float maxX, maxY, maxZ;
+    };
+    std::vector<ShapeInfo> shapes;
+    std::string line;
+    // Skip header
+    std::getline(csvFile, line);
+    while (std::getline(csvFile, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        ShapeInfo info;
+        std::getline(iss, info.className, ',');
+        std::getline(iss, info.fileName, ',');
+        std::getline(iss, token, ','); info.vertices = std::stoul(token);
+        std::getline(iss, token, ','); info.faces = std::stoul(token);
+        std::getline(iss, info.faceType, ',');
+        std::getline(iss, token, ','); info.minX = std::stof(token);
+        std::getline(iss, token, ','); info.minY = std::stof(token);
+        std::getline(iss, token, ','); info.minZ = std::stof(token);
+        std::getline(iss, token, ','); info.maxX = std::stof(token);
+        std::getline(iss, token, ','); info.maxY = std::stof(token);
+        std::getline(iss, token, ','); info.maxZ = std::stof(token);
+        shapes.push_back(info);
+    }
+    
+    if (shapes.empty()) {
+        std::cerr << "No shape data found in file." << std::endl;
+        return;
+    }
+    // Calculate averages
+    double totalVertices = 0.0;
+    double totalFaces = 0.0;
+    for (const auto& shape : shapes) {
+        totalVertices += shape.vertices;
+        totalFaces += shape.faces;
+    }
+    double avgVertices = totalVertices / shapes.size();
+	double avgFaces = totalFaces / shapes.size();
+
+    // Re-go over
+    float minimumDistanceAvgVert = avgVertices;
+    float minimumDistanceAvgFace = avgFaces;
+    std::string averageShapeFileVert = "";
+    std::string averageShapeFileFace = "";
+
+    float minDistanceAvg = avgVertices;
+
+    for (const auto& shape : shapes) {
+
+		float currentDistance = sqrt(pow(avgVertices - shape.vertices, 2) + pow(avgFaces - shape.faces, 2));
+		if (currentDistance < minDistanceAvg) {
+			minDistanceAvg = currentDistance;
+			averageShapeFileVert = shape.fileName;
+		}
+    }
+
+	std::cout << "Average shape by vertices: " << averageShapeFileVert << " with " << (avgVertices - minimumDistanceAvgVert) << " vertices." << std::endl;
+
+    float largestDistance = 0.0f;
+    float smallestDistance = 0.0f;
+
+    csvFile.close();
+}
