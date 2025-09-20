@@ -6,6 +6,7 @@ layout(location = 1) in vec3 normal;
 uniform vec3 lightPos;
 uniform vec3 lightColor;
 uniform vec3 objectColor;
+uniform vec3 barycenter;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -50,6 +51,7 @@ void main()
     vec3 diffuse = diff * lightColor;
 
     // Final vertex color (ambient + diffuse)
+	if(position == barycenter)
     vertexColor = clamp((ambient + diffuse) * objectColor, 0.0, 1.0);
 
 

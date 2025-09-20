@@ -82,6 +82,37 @@ struct Vertex {
 	float texcoord[2];
 };
 
+static void findBarycenter(std::vector<float> positions, std::vector<unsigned int> indices, std::vector<float>&outBarycenter)
+{
+    float sumX = 0.0, sumY = 0.0, sumZ = 0.0;
+    for (int i = 0; i < positions.size() - 3; ++i) 
+    {
+        sumX += positions[i + 0];
+        sumY += positions[i + 1];
+        sumZ += positions[i + 2];
+    }
+    unsigned int size = positions.size()/3;
+
+    float avgX = sumX / size;
+    float avgY = sumY / size;
+    float avgZ = sumZ / size;
+
+    std::vector<float> distX, distY, distZ;
+    for (int i = 0; i < positions.size() - 3; ++i)
+    {
+        distX.push_back(abs(avgX - positions[i + 0]));
+        distY.push_back(abs(avgY - positions[i + 1]));
+        distZ.push_back(abs(avgZ - positions[i + 2]));
+    }
+
+    float avgPosX = *std::min_element(distX.begin(), distX.end());
+    float avgPosY= *std::min_element(distY.begin(), distY.end());
+    float avgPosZ = *std::min_element(distZ.begin(), distZ.end());
+
+    std::cout << avgPosX << std::endl;
+
+    outBarycenter = { avgPosX, avgPosY, avgPosZ };
+}
 
 static bool LoadObj(const char* inputFile, std::vector<float>&outVertices, std::vector<unsigned int>&outIndices)
 {
@@ -244,6 +275,9 @@ int main(void)
 		return -1;
 	}
 
+    std::vector<float> outBarycenter;
+    findBarycenter(positions, indices, outBarycenter);
+
     unsigned int vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -340,6 +374,8 @@ int main(void)
         
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
+
+        
         
         /* Poll for and process events */
         glfwPollEvents();
