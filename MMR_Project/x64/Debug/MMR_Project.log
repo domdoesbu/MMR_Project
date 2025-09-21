@@ -1,6 +1,2 @@
-﻿  Preprocessing.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(200,34): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(201,34): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(205,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(209,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-  MMR_Project.vcxproj -> C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Debug\MMR_Project.exe
+﻿glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
+LINK : fatal error LNK1104: cannot open file 'python313_d.lib'

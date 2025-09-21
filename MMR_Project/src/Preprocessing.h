@@ -30,5 +30,37 @@ public:
 
 	void DatabaseStatistics(const std::string& shapeAnalysisFile);
 
+	/*
+	2.3: Resampling outliers
+		1. Find outliers
+			a. under 100 vertices/faces
+			b. very large number of vertices
+		2. Resample them
+			a. either by removing vertices/faces
+			b. or by adding vertices/facesa.
+		3. Maybe save the new shapes?
+	*/
+	
+	void ResamplingOutliers(const std::string& databasePath, const std::string& outputPath);
+
+	/*
+	2.4. Checkiung the resampling
+		1. Visualize the results of the previous steps
+			a. Show the average shape
+			b. Show the outliers
+			c. Show the histograms
+	*/
+
+	/*
+	2.5: Normalizing shapes
+		1. Read each shape
+		2. Translate to barycenter
+		3. Make sure to align with coordinate frame origin
+		1. Scale
+		
+	
+	*/
+
+
 };
 

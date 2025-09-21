@@ -8,8 +8,10 @@
 #include <vector>
 #include <regex>
 
-namespace fs = std::filesystem;
+#include "matplotlibcpp.h"
 
+namespace fs = std::filesystem;
+namespace plt = matplotlibcpp;
 
 void Preprocessing::AnalyzeShapes(const std::string& databasePath)
 {
@@ -159,8 +161,15 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
         float maxX, maxY, maxZ;
     };
     std::vector<ShapeInfo> shapes;
+    std::vector<int> vertexVals;
+	std::vector<int> faceVals;
+	std::unordered_map<std::string, int> classNames;
     std::string line;
+    
+       
+    int currentClassCount = 0;
     // Skip header
+    std::vector<std::string> classHist;
     std::getline(csvFile, line);
     while (std::getline(csvFile, line)) {
         std::istringstream iss(line);
@@ -177,8 +186,13 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
         std::getline(iss, token, ','); info.maxX = std::stof(token);
         std::getline(iss, token, ','); info.maxY = std::stof(token);
         std::getline(iss, token, ','); info.maxZ = std::stof(token);
+
+		classNames[info.className]++;
+		faceVals.push_back(info.faces);
+		vertexVals.push_back(info.vertices);
         shapes.push_back(info);
     }
+   
     
     if (shapes.empty()) {
         std::cerr << "No shape data found in file." << std::endl;
@@ -195,26 +209,149 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
 	double avgFaces = totalFaces / shapes.size();
 
     // Re-go over
-    float minimumDistanceAvgVert = avgVertices;
-    float minimumDistanceAvgFace = avgFaces;
-    std::string averageShapeFileVert = "";
-    std::string averageShapeFileFace = "";
+    std::string averageShapeFile = "";
 
     float minDistanceAvg = avgVertices;
 
+    // Average Shape
     for (const auto& shape : shapes) {
 
 		float currentDistance = sqrt(pow(avgVertices - shape.vertices, 2) + pow(avgFaces - shape.faces, 2));
 		if (currentDistance < minDistanceAvg) {
 			minDistanceAvg = currentDistance;
-			averageShapeFileVert = shape.fileName;
+			averageShapeFile = shape.fileName;
 		}
     }
 
-	std::cout << "Average shape by vertices: " << averageShapeFileVert << " with " << (avgVertices - minimumDistanceAvgVert) << " vertices." << std::endl;
+	std::cout << "Average shape by vertices: " << averageShapeFile << std::endl;
 
-    float largestDistance = 0.0f;
-    float smallestDistance = 0.0f;
+    // SD
+    int accumulator = 0;
+	for (const auto& vertex : vertexVals) {
+        accumulator += pow(vertex - avgVertices, 2);
+	}
+	float stdDev = sqrt(accumulator / vertexVals.size());
+	std::cout << "Standard Deviation of vertices: " << stdDev << std::endl;
+
+    // Outliers
+
+    // Vertices
+    std::string highVertOutlier = "";
+	std::string lowVertOutlier = "";
+
+	std::string highFaceOutlier = "";
+	std::string lowFaceOutlier = "";
+	
+	std::string highEDOutlier = "";
+	std::string lowEDOutlier = "";
+    int maxVertNumber = 0;
+    int minVertNumber = std::numeric_limits<int>::max();
+    int maxEUDistance = 0;
+	int minEUDistance = std::numeric_limits<int>::max();
+    int maxFaceDistance = 0;
+	int minFaceDistance = std::numeric_limits<int>::max();
+
+    
+    
+	for (const auto& shape : shapes) {
+		
+       
+        // Highest Number of verts
+        if (shape.vertices > maxVertNumber)
+        {
+            maxVertNumber = shape.vertices;
+            highVertOutlier = shape.fileName;
+        }
+
+        // Min number of verts
+        if (shape.vertices < minVertNumber)
+        {
+            minVertNumber = shape.vertices;
+            lowVertOutlier = shape.fileName;
+        }
+
+        // Faces
+
+		if (shape.faces < minFaceDistance)
+		{
+			minFaceDistance = shape.faces;
+			lowFaceOutlier = shape.fileName;
+		}
+		if (shape.faces > maxFaceDistance)
+		{
+			maxFaceDistance = shape.faces;
+			highFaceOutlier = shape.fileName;
+		}
+
+        // Euclidean Distance
+        float currentDistanceEU = sqrt(pow(avgVertices - shape.vertices, 2) + pow(avgFaces - shape.faces, 2));
+        if (currentDistanceEU < minEUDistance) {
+            minEUDistance = currentDistanceEU;
+            lowEDOutlier = shape.fileName;
+        }
+        if (currentDistanceEU > maxEUDistance) {
+            maxEUDistance = currentDistanceEU;
+            highEDOutlier = shape.fileName;
+        }
+	}
+
+    std::cout << "Low outlier shape by vertices: " << lowVertOutlier << " with " << (minVertNumber) << " less vertices." << std::endl;
+    std::cout << "High outlier shape by vertices: " << highVertOutlier << " with " << (maxVertNumber) << "more vertices." << std::endl;
+    std::cout << "Low shape by faces: " << lowFaceOutlier << " with " << (minFaceDistance) << " less faces." << std::endl;
+    std::cout << "High shape by faces: " << highFaceOutlier << " with " << (maxFaceDistance) << " more faces." << std::endl;
+    std::cout << "Low shape by EU: " << lowEDOutlier << " with " << (minEUDistance) << " higher EU." << std::endl;
+    std::cout << "High shape by EU: " << highEDOutlier << " with " << (maxEUDistance) << " lower EU." << std::endl;
+
+    //counts
+    // 1. Shape classes
+
+   /* std::vector<std::string> labels;
+    std::vector<int> values;
+    for (auto& p : classNames) {
+        labels.push_back(p.first);
+        values.push_back(p.second);
+    }
+
+    std::vector<size_t> idx(labels.size());
+    std::iota(idx.begin(), idx.end(), 0);
+    std::sort(idx.begin(), idx.end(), [&](size_t i, size_t j) {
+        return labels[i] < labels[j];
+        });
+
+
+    std::vector<double> x;
+    std::vector<double> y;
+    std::vector<std::string> sorted_labels;
+    for (size_t i : idx) {
+        x.push_back(static_cast<double>(x.size()));
+        y.push_back(static_cast<double>(values[i]));
+        sorted_labels.push_back(labels[i]);
+    }
+
+    plt::bar(x, y);
+	plt::xticks(x, sorted_labels, { {"rotation", "vertical"} });
+    plt::xlabel("Classes");
+    plt::ylabel("Count");
+    plt::title("Class Histogram");
+    plt::show();*/
+
+	// 2. Number of vertices
+	//plt::hist(vertexVals, 20);
+
+    // 3. Number of faces
+    plt::hist(faceVals, 20);
+
+    plt::show();
 
     csvFile.close();
+}
+
+void ResamplingOutliers(const std::string& databasePath, const std::string& outputPath) 
+{
+    int thresholdMin = 100;
+	int thresholdMax = 10000;
+
+
+
+
 }

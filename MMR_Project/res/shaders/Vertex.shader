@@ -51,7 +51,7 @@ void main()
     vec3 diffuse = diff * lightColor;
 
     // Final vertex color (ambient + diffuse)
-	if(position == barycenter)
+	//if(position == barycenter)
     vertexColor = clamp((ambient + diffuse) * objectColor, 0.0, 1.0);
 
 

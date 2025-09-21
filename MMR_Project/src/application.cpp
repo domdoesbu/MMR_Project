@@ -9,7 +9,6 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "Preprocessing.h"
-
 #include <iostream>
 #include <direct.h>
 #include <fstream>
@@ -21,6 +20,8 @@ struct ShaderProgramSource
 	std::string VertexSource;
 	std::string FragmentSource;
 };
+
+
 
 bool drawWireframe = false;
 bool togglePan = false;
@@ -38,6 +39,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
             drawWireframe = !drawWireframe;
             break;
         }
+        
     }
 }
 
@@ -235,14 +237,16 @@ int main(void)
 
 
 	Preprocessing prep;
-	std::string databsePath = "./test_objs/";
+	std::string databsePath = "./ShapeDatabase_INFOMR-master/";
+	//prep.AnalyzeShapes(databsePath);
 	//prep.AnalyzeShapes(databsePath);
 	prep.DatabaseStatistics("./shape_analysis.csv");
+
     // Request object to user
     std::cout << "Specify path for the desired object:" << std::endl;
     std::string userInput;
     std::cin >> userInput;
-    std::string inputFile = "./test_objs/" + userInput;
+    std::string inputFile = "./ShapeDatabase_INFOMR-master/" + userInput;
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
