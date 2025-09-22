@@ -1,3 +1,18 @@
+#include <vcg/complex/complex.h>
+#include <vcg/complex/algorithms/clean.h>
+#include <vcg/complex/algorithms/local_optimization/tri_edge_collapse_quadric.h>
+#include <vcg/complex/used_types.h>
+#include <vcg/simplex/vertex/base.h>
+#include <vcg/simplex/edge/base.h>
+#include <vcg/complex/algorithms/edge_collapse.h>
+#include <vcg/simplex/face/base.h>
+#include <vcg/complex/base.h>
+// io
+#include <wrap/io_trimesh/import.h>
+#include <wrap/io_trimesh/export_ply.h>
+// local optimization
+#include <vcg/complex/algorithms/local_optimization.h>
+#include <vcg/math/quadric.h>
 #include "Preprocessing.h"
 #include <iostream>
 #include <filesystem>
@@ -12,6 +27,65 @@
 
 namespace fs = std::filesystem;
 namespace plt = matplotlibcpp;
+
+
+using namespace vcg;
+using namespace tri;
+
+/**********************************************************
+Mesh Classes for Quadric Edge collapse based simplification
+
+For edge collpases we need verteses with:
+- V->F adjacency
+- per vertex incremental mark
+- per vertex Normal
+
+
+Moreover for using a quadric based collapse the vertex class
+must have also a Quadric member Q();
+Otherwise the user have to provide an helper function object
+to recover the quadric.
+
+******************************************************/
+// The class prototypes.
+class MyVertex;
+class MyEdge;
+class MyFace;
+
+struct MyUsedTypes : public UsedTypes<Use<MyVertex>::AsVertexType, Use<MyEdge>::AsEdgeType, Use<MyFace>::AsFaceType> {};
+
+class MyVertex : public Vertex< MyUsedTypes,
+    vertex::VFAdj,
+    vertex::Coord3f,
+    vertex::Mark,
+    vertex::Qualityf,
+    vertex::BitFlags  > {
+public:
+    vcg::math::Quadric<double>& Qd() { return q; }
+private:
+    math::Quadric<double> q;
+};
+
+class MyEdge : public Edge< MyUsedTypes> {};
+
+typedef BasicVertexPair<MyVertex> VertexPair;
+
+class MyFace : public Face< MyUsedTypes,
+    face::VFAdj,
+    face::VertexRef,
+    face::BitFlags > {
+};
+
+// the main mesh class
+class MyMesh : public vcg::tri::TriMesh<std::vector<MyVertex>, std::vector<MyFace> > {};
+
+
+class MyTriEdgeCollapse : public vcg::tri::TriEdgeCollapseQuadric< MyMesh, VertexPair, MyTriEdgeCollapse, QInfoStandard<MyVertex>  > {
+public:
+    typedef  vcg::tri::TriEdgeCollapseQuadric< MyMesh, VertexPair, MyTriEdgeCollapse, QInfoStandard<MyVertex>  > TECQ;
+    typedef  MyMesh::EdgeType EdgeType;
+    inline MyTriEdgeCollapse(const VertexPair& p, int i, BaseParameterClass* pp) { TECQ(p, i, pp); }
+};
 
 void Preprocessing::AnalyzeShapes(const std::string& databasePath)
 {
@@ -350,8 +424,6 @@ void ResamplingOutliers(const std::string& databasePath, const std::string& outp
 {
     int thresholdMin = 100;
 	int thresholdMax = 10000;
-
-
 
 
 }
