@@ -18,21 +18,6 @@ out vec3 Normal;
 
 void main()
 {
-	// FragPos = vec3(model * vec4(position, 1.0));
-	// gl_Position = projection * view * model * vec4(position, 1.0);
-
-	// To get Gouraud shading lighting calculations are done per vertex
-	// float ambientStrength = 0.5;
-	// vec3 ambient = ambientStrength * lightColor;
-	
-	// vec3 norm = normalize(normal);
-	// vec3 lightDir = normalize(lightPos - FragPos);
-	
-	// float diff = max(dot(norm, lightDir), 0.0);
-	// vec3 diffuse = diff * lightColor;
-	// vertexColor = clamp((ambient + diffuse) * objectColor, 0.0, 1.0);
-
-	// Normal = normal;
 
 	// Transform vertex position to world space
     vec3 FragPos = vec3(model * vec4(position, 1.0));
@@ -51,8 +36,7 @@ void main()
     vec3 diffuse = diff * lightColor;
 
     // Final vertex color (ambient + diffuse)
-	//if(position == barycenter)
-    vertexColor = clamp((ambient + diffuse) * objectColor, 0.0, 1.0);
 
+    vertexColor = clamp((ambient + diffuse) * objectColor, 0.0, 1.0);
 
 };

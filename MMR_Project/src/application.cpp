@@ -22,10 +22,9 @@ struct ShaderProgramSource
 };
 
 
-
 bool drawWireframe = false;
 bool togglePan = false;
- 
+bool simplifyMesh = false;
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS)
@@ -38,7 +37,11 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         case GLFW_KEY_P:
             drawWireframe = !drawWireframe;
             break;
+        case GLFW_KEY_M:
+			simplifyMesh = !simplifyMesh;
+            break;
         }
+        
         
     }
 }
@@ -240,7 +243,7 @@ int main(void)
 	std::string databsePath = "./ShapeDatabase_INFOMR-master/";
 	//prep.AnalyzeShapes(databsePath);
 	//prep.AnalyzeShapes(databsePath);
-	prep.DatabaseStatistics("./shape_analysis.csv");
+	//prep.DatabaseStatistics("./shape_analysis.csv");
 
     // Request object to user
     std::cout << "Specify path for the desired object:" << std::endl;
@@ -280,7 +283,6 @@ int main(void)
 	}
 
     std::vector<float> outBarycenter;
-    findBarycenter(positions, indices, outBarycenter);
 
     unsigned int vao;
     glGenVertexArrays(1, &vao);
@@ -361,7 +363,26 @@ int main(void)
         glBindVertexArray(vao);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
-    
+        
+        if (simplifyMesh) {
+			// Call the simplification function here
+            MeshData simplified = prep.ResamplingOutliers(positions, indices);
+
+			std::cout << "Simplified positions " << simplified.positions.size() << std::endl;
+			std::cout << "Simplified indices " << simplified.indices.size() << std::endl;
+
+			positions = simplified.positions;
+			indices = simplified.indices;
+			simplifyMesh = false; // Reset the flag to avoid continuous simplification
+            glBindBuffer(GL_ARRAY_BUFFER, buffer);
+            glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+			std::cout << "Mesh simplified. New vertex count: " << positions.size() / 6 << ", New index count: " << indices.size() << std::endl;
+        }
+        
+
         if (drawWireframe) {
 			glEnable(GL_POLYGON_OFFSET_LINE);
 			glPolygonOffset(-1.0f, -1.0f);

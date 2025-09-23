@@ -2,7 +2,12 @@
 #include <iostream>
 #include <filesystem>
 #include <string>
+#include <vector>
 
+struct MeshData {
+	std::vector<float> positions;
+	std::vector<unsigned int> indices;
+};
 
 class Preprocessing
 {
@@ -41,7 +46,8 @@ public:
 		3. Maybe save the new shapes?
 	*/
 	
-	void ResamplingOutliers(const std::string& databasePath, const std::string& outputPath);
+	
+	MeshData ResamplingOutliers(std::vector<float>& positions, std::vector<unsigned int>& indices);
 
 	/*
 	2.4. Checkiung the resampling

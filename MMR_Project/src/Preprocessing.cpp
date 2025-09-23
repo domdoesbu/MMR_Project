@@ -54,28 +54,35 @@ class MyFace;
 
 struct MyUsedTypes : public UsedTypes<Use<MyVertex>::AsVertexType, Use<MyEdge>::AsEdgeType, Use<MyFace>::AsFaceType> {};
 
-class MyVertex : public Vertex< MyUsedTypes,
-    vertex::VFAdj,
-    vertex::Coord3f,
-    vertex::Mark,
-    vertex::Qualityf,
-    vertex::BitFlags  > {
+class MyVertex : public vcg::Vertex<
+    MyUsedTypes,
+    vcg::vertex::Coord3f,    // 3D position
+    vcg::vertex::Normal3f,   // per-vertex normal (REQUIRED)
+    vcg::vertex::Qualityf,   // used for quality-weighted decimation
+    vcg::vertex::Mark,       // marking utility
+    vcg::vertex::BitFlags,   // deleted/selected flags
+    vcg::vertex::VFAdj       // vertex->face adjacency (REQUIRED)
+>
+{
 public:
-    vcg::math::Quadric<double>& Qd() { return q; }
+    vcg::math::Quadric<double>& Qd() { return q; }  // Quadric storage
 private:
-    math::Quadric<double> q;
+    vcg::math::Quadric<double> q;
 };
 
 class MyEdge : public Edge< MyUsedTypes> {};
 
 typedef BasicVertexPair<MyVertex> VertexPair;
 
-class MyFace : public Face< MyUsedTypes,
-    face::VFAdj,
-    face::VertexRef,
-    face::BitFlags > {
+class MyFace : public vcg::Face<
+    MyUsedTypes,
+    vcg::face::VertexRef,    // references to vertices
+    vcg::face::FFAdj,
+    vcg::face::Normal3f,     // per-face normal (REQUIRED)
+    vcg::face::VFAdj,        // face->vertex adjacency (REQUIRED)
+    vcg::face::BitFlags      // deleted/selected flags
+> {
 };
-
 // the main mesh class
 class MyMesh : public vcg::tri::TriMesh<std::vector<MyVertex>, std::vector<MyFace> > {};
 
@@ -84,7 +91,9 @@ class MyTriEdgeCollapse : public vcg::tri::TriEdgeCollapseQuadric< MyMesh, Verte
 public:
     typedef  vcg::tri::TriEdgeCollapseQuadric< MyMesh, VertexPair, MyTriEdgeCollapse, QInfoStandard<MyVertex>  > TECQ;
     typedef  MyMesh::EdgeType EdgeType;
-    inline MyTriEdgeCollapse(const VertexPair& p, int i, BaseParameterClass* pp) { TECQ(p, i, pp); }
+    inline MyTriEdgeCollapse(const VertexPair& p, int i, BaseParameterClass* pp)
+        : TECQ(p, i, pp) {
+    }
 };
 
 void Preprocessing::AnalyzeShapes(const std::string& databasePath)
@@ -379,7 +388,7 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     //counts
     // 1. Shape classes
 
-   /* std::vector<std::string> labels;
+    std::vector<std::string> labels;
     std::vector<int> values;
     for (auto& p : classNames) {
         labels.push_back(p.first);
@@ -407,12 +416,15 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     plt::xlabel("Classes");
     plt::ylabel("Count");
     plt::title("Class Histogram");
-    plt::show();*/
+    plt::show();
 
 	// 2. Number of vertices
 	//plt::hist(vertexVals, 20);
-
+    
     // 3. Number of faces
+     plt::xlabel("Faces");
+    plt::ylabel("Count");
+    plt::title("Face Histogram");
     plt::hist(faceVals, 20);
 
     plt::show();
@@ -420,10 +432,255 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     csvFile.close();
 }
 
-void ResamplingOutliers(const std::string& databasePath, const std::string& outputPath) 
+MeshData Preprocessing::ResamplingOutliers(std::vector<float>& positions, std::vector<unsigned int>& indices)
 {
-    int thresholdMin = 100;
-	int thresholdMax = 10000;
+    MeshData results;
 
+    std::cout << "positions.size() = " << positions.size() << " indices.size() = " << indices.size() << std::endl;
+    float targetRatio = 0.5f; // Reduce to 50% of original faces by default
 
+    try {
+        if (positions.empty() || indices.empty()) {
+            std::cerr << "[ResamplingOutliers] Empty input, nothing to do.\n";
+            return results;
+        }
+        if (positions.size() % 6 != 0) {
+            throw std::runtime_error("positions vector length must be multiple of 6 (pos + normal per vertex)");
+        }
+        if (indices.size() % 3 != 0) {
+            throw std::runtime_error("indices vector length must be multiple of 3 (triangles)");
+        }
+
+        const size_t vertCount = positions.size() / 6;
+        const size_t faceCount = indices.size() / 3;
+        if (vertCount == 0 || faceCount == 0) {
+            std::cerr << "[ResamplingOutliers] No vertices/faces found.\n";
+            return results;
+        }
+
+        std::cout << "vertCount = " << vertCount << ", faceCount = " << faceCount << std::endl;
+
+        // validate indices
+        for (size_t i = 0; i < indices.size(); ++i) {
+            if (indices[i] >= vertCount) {
+                std::cerr << "Error: index " << indices[i] << " out of range (vertCount=" << vertCount << ")" << std::endl;
+                // continue checking but don't crash here (caller should fix input)
+            }
+        }
+
+        // --- Build mesh ---
+        MyMesh mesh;
+        mesh.vert.resize(vertCount);
+        mesh.face.resize(faceCount);
+
+        // Fill vertices (position + normal)
+        for (size_t i = 0; i < vertCount; ++i) {
+            MyVertex& v = mesh.vert[i];
+            v.P() = vcg::Point3f(
+                positions[i * 6 + 0],
+                positions[i * 6 + 1],
+                positions[i * 6 + 2]
+            );
+            v.N() = vcg::Point3f(
+                positions[i * 6 + 3],
+                positions[i * 6 + 4],
+                positions[i * 6 + 5]
+            );
+            v.ClearD(); // ensure not marked deleted initially
+        }
+
+        // Fill faces
+        for (size_t f = 0; f < faceCount; ++f) {
+            unsigned int i0 = indices[f * 3 + 0];
+            unsigned int i1 = indices[f * 3 + 1];
+            unsigned int i2 = indices[f * 3 + 2];
+
+            mesh.face[f].ClearD();
+
+            if (i0 >= vertCount || i1 >= vertCount || i2 >= vertCount) {
+                // invalid face -> mark as deleted explicitly
+                mesh.face[f].SetD(); // mark deleted
+                continue;
+            }
+            mesh.face[f].V(0) = &mesh.vert[i0];
+            mesh.face[f].V(1) = &mesh.vert[i1];
+            mesh.face[f].V(2) = &mesh.vert[i2];
+
+        }
+
+        std::cout << "Before cleaning: vertCount=" << mesh.vert.size() << " faceCount=" << mesh.face.size() << std::endl;
+
+        // Build vertex->face adjacency BEFORE cleaning (important for RemoveUnreferencedVertex)
+        vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
+
+        // Debug: count deleted faces before cleaning
+        {
+            int deletedFaces = 0;
+            for (auto& f : mesh.face) if (f.IsD()) ++deletedFaces;
+            std::cout << "Deleted faces before cleaning: " << deletedFaces << std::endl;
+        }
+
+        // --- Clean: remove degenerate faces, duplicate vertices, unreferenced vertices
+        tri::Clean<MyMesh>::RemoveDegenerateFace(mesh);       // remove degenerate triangles
+        tri::Clean<MyMesh>::RemoveDuplicateVertex(mesh);      // remove duplicate vertices
+        tri::Clean<MyMesh>::RemoveUnreferencedVertex(mesh);   // remove vertices not referenced by any face
+
+        // Debug: count deleted faces after cleaning (logical deletes)
+        {
+            int deletedFaces = 0;
+            for (auto& f : mesh.face) if (f.IsD()) ++deletedFaces;
+            int deletedVerts = 0;
+            for (auto& v : mesh.vert) if (v.IsD()) ++deletedVerts;
+            std::cout << "After cleaning: deletedFaces=" << deletedFaces
+                << " deletedVerts=" << deletedVerts << std::endl;
+        }
+
+        mesh.vn = 0;
+        for (auto& v : mesh.vert) if (!v.IsD()) ++mesh.vn;
+
+        mesh.fn = 0;
+        for (auto& f : mesh.face) if (!f.IsD()) ++mesh.fn;
+
+        std::cout << "Before compaction: mesh.vn=" << mesh.vn << " mesh.fn=" << mesh.fn << std::endl;
+
+        // Compact internal vectors to remove deleted elements and keep contiguous storage
+        vcg::tri::Allocator<MyMesh>::CompactEveryVector(mesh);
+
+        // After compaction, rebuild adjacency (both VertexFace and FaceFace) on the cleaned mesh
+        vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
+        // FaceFace requires FFAdj component in MyFace; ensure your MyFace includes vcg::face::FFAdj.
+        vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
+
+        // Recompute counts of non-deleted elements
+       
+
+        std::cout << mesh.fn << " faces before decimation.\n";
+
+        // Safeguard: if no faces remain, return original (avoid returning empty mesh)
+        if (mesh.fn == 0) {
+            std::cerr << "[ResamplingOutliers] No valid faces after cleaning. Returning original mesh unchanged.\n";
+            // Copy original input into results (so caller keeps the original mesh)
+            results.positions = positions;
+            results.indices = indices;
+            return results;
+        }
+
+        // Update bounding box and normals
+        vcg::tri::UpdateBounding<MyMesh>::Box(mesh);
+        vcg::tri::UpdateNormal<MyMesh>::PerFaceNormalized(mesh);
+        vcg::tri::UpdateNormal<MyMesh>::PerVertexNormalized(mesh);
+
+        // --- Setup decimation
+        TriEdgeCollapseQuadricParameter qparams;
+        qparams.PreserveTopology = false;
+        qparams.PreserveBoundary = true;
+        qparams.QualityCheck = false;
+        qparams.NormalCheck = false;
+        qparams.OptimalPlacement = true;
+        qparams.QualityThr = 0.0f;
+
+        vcg::LocalOptimization<MyMesh> deciSession(mesh, &qparams);
+        deciSession.Init<MyTriEdgeCollapse>();
+
+        std::cout << mesh.fn << " faces before decimation.\n";
+
+        if (targetRatio <= 0.0f || targetRatio >= 1.0f) targetRatio = 0.5f;
+        const int minTargetFaces = 100;
+        const int targetFaces = std::max(minTargetFaces, (int)std::floor(mesh.fn * targetRatio));
+        deciSession.SetTargetSimplices(targetFaces);
+        deciSession.SetTimeBudget(0.5f);
+        deciSession.SetTargetOperations(100000);
+
+        std::cout << "[ResamplingOutliers] Target faces: " << targetFaces << std::endl;
+
+        // --- Run optimization loop
+        int lastFn = mesh.fn;
+        int iter = 0;
+        while (deciSession.DoOptimization() && mesh.fn > targetFaces) {
+            if (++iter % 20 == 0) {
+                std::cout << "[ResamplingOutliers] progress: faces=" << mesh.fn
+                    << " heap=" << deciSession.h.size()
+                    << " err=" << deciSession.currMetric << std::endl;
+            }
+            if (mesh.fn == lastFn) {
+                std::cout << "[ResamplingOutliers] decimation stalled (no face reduction this loop). Breaking.\n";
+                break;
+            }
+            lastFn = mesh.fn;
+        }
+
+        std::cout << "[ResamplingOutliers] #verts after: " << mesh.vn
+            << " #faces after: " << mesh.fn
+            << " final err: " << deciSession.currMetric << std::endl;
+
+        // --- Build compact arrays back to positions/indices -------------
+        std::unordered_map<MyVertex*, unsigned int> vmap;
+        vmap.reserve(mesh.vert.size());
+
+        unsigned int newIdx = 0;
+        for (size_t i = 0; i < mesh.vert.size(); ++i) {
+            MyVertex& v = mesh.vert[i];
+            if (!v.IsD()) {
+                vmap[&v] = newIdx++;
+            }
+        }
+
+        // Reserve and fill results
+        results.positions.reserve(newIdx * 6);
+        // Fill vertex array in deterministic order (iterate mesh.vert)
+        for (size_t i = 0; i < mesh.vert.size(); ++i) {
+            MyVertex& v = mesh.vert[i];
+            if (!v.IsD()) {
+                results.positions.push_back(v.P()[0]);
+                results.positions.push_back(v.P()[1]);
+                results.positions.push_back(v.P()[2]);
+                // vertex normal (updated previously)
+                results.positions.push_back(v.N()[0]);
+                results.positions.push_back(v.N()[1]);
+                results.positions.push_back(v.N()[2]);
+            }
+        }
+
+        // Faces -> indices
+        for (size_t fi = 0; fi < mesh.face.size(); ++fi) {
+            MyFace& f = mesh.face[fi];
+            if (f.IsD()) continue;
+            MyVertex* v0 = f.V(0);
+            MyVertex* v1 = f.V(1);
+            MyVertex* v2 = f.V(2);
+            if (!v0 || !v1 || !v2) continue;
+            auto it0 = vmap.find(v0);
+            auto it1 = vmap.find(v1);
+            auto it2 = vmap.find(v2);
+            if (it0 == vmap.end() || it1 == vmap.end() || it2 == vmap.end()) continue;
+            results.indices.push_back(it0->second);
+            results.indices.push_back(it1->second);
+            results.indices.push_back(it2->second);
+        }
+
+        std::cout << "Output positions: " << results.positions.size()
+            << " indices: " << results.indices.size() << std::endl;
+
+        std::cout << "[ResamplingOutliers] finished: positions=" << positions.size()
+            << " indices=" << indices.size() << std::endl;
+
+        return results;
+    }
+    catch (const std::length_error& le) {
+        std::cerr << "[ResamplingOutliers] std::length_error: " << le.what() << std::endl;
+        throw;
+    }
+    catch (const std::exception& ex) {
+        std::cerr << "[ResamplingOutliers] exception: " << ex.what() << std::endl;
+        throw;
+    }
+    catch (...) {
+        std::cerr << "[ResamplingOutliers] unknown exception" << std::endl;
+        throw;
+    }
 }
+
+
+
+
+
