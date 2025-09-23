@@ -47,7 +47,9 @@ public:
 	*/
 	
 	
-	MeshData ResamplingOutliers(std::vector<float>& positions, std::vector<unsigned int>& indices);
+	MeshData Simplify(std::vector<float>& positions, std::vector<unsigned int>& indices);
+
+	MeshData Refine(std::vector<float>& positions, std::vector<unsigned int>& indices, int refineSteps);
 
 	/*
 	2.4. Checkiung the resampling
