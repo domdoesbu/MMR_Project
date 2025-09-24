@@ -14,6 +14,8 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <filesystem>
+#include <wrap/io_trimesh/export_ply.h>
 
 struct ShaderProgramSource
 {
@@ -229,6 +231,97 @@ static bool LoadObj(const char* inputFile, std::vector<float>&outVertices, std::
     return true;
 }
 
+void WriteNewObj(std::string destinationFilename, MeshData results) {
+
+    std::ofstream out(destinationFilename);
+    if (!out) {
+        std::cerr << "Error: Could not open file for writing: " << destinationFilename << std::endl;
+    }
+    else {
+        // Write vertices
+        for (size_t i = 0; i < results.positions.size(); i += 6) {
+            float x = results.positions[i + 0];
+            float y = results.positions[i + 1];
+            float z = results.positions[i + 2];
+            out << "v " << x << " " << y << " " << z << "\n";
+        }
+
+        // Optionally write normals (OBJ allows this)
+        for (size_t i = 0; i < results.positions.size(); i += 6) {
+            float nx = results.positions[i + 3];
+            float ny = results.positions[i + 4];
+            float nz = results.positions[i + 5];
+            out << "vn " << nx << " " << ny << " " << nz << "\n";
+        }
+
+        // Write faces (OBJ uses 1-based indices)
+        for (size_t i = 0; i < results.indices.size(); i += 3) {
+            unsigned int i0 = results.indices[i + 0] + 1;
+            unsigned int i1 = results.indices[i + 1] + 1;
+            unsigned int i2 = results.indices[i + 2] + 1;
+            // If you want normals: use format "f v1//n1 v2//n2 v3//n3"
+            out << "f " << i0 << "//" << i0 << " "
+                << i1 << "//" << i1 << " "
+                << i2 << "//" << i2 << "\n";
+        }
+
+        out.close();
+        std::cout << "[ResamplingOutliers] Wrote OBJ: " << destinationFilename << std::endl;
+    }
+}
+
+namespace fs = std::filesystem;
+int Resampling()
+{
+    Preprocessing prep;
+    std::vector<float> positions;
+    std::vector<unsigned int> indices;
+	fs::path sourcePath = "./test_objs/";
+    fs::path targetParent = "./ResampledDatabase/";
+	std::string databasePath = "./test_objs/";
+    for (const auto& classDir : fs::directory_iterator(databasePath)) {
+        if (!fs::is_directory(classDir)) continue;
+        std::string className = classDir.path().filename().string();
+        fs::path fullTargetPath = targetParent.string() + className + "/";
+        fs::create_directories(fullTargetPath);
+        // For each obj in the folder, get the information about it
+
+        for (const auto& file : fs::directory_iterator(classDir)) {
+
+            positions.clear();
+			indices.clear();
+            std::string currentFile = file.path().filename().string();
+			std::string fullFilePath = classDir.path().string() + "/" + currentFile;
+            if (!LoadObj(fullFilePath.c_str(), positions, indices))
+            {
+                std::cerr << "Failed to load obj" << std::endl;
+                return -1;
+            }
+
+            if (positions.size() / 6 < 5000) { // Refinement
+				
+                MeshData data = prep.Refine(positions, indices, 5000, className, currentFile);
+				std::string path = fullTargetPath.string() + file.path().filename().string();
+                std::cout << path << std::endl;
+                WriteNewObj(path, data);
+				
+            }
+            else if (positions.size() / 6 > 10000) { //Simplification
+                MeshData data = prep.Simplify(positions, indices, 10000, className, currentFile);
+                std::string path = fullTargetPath.string() + file.path().filename().string();
+				std::cout << path << std::endl;
+                WriteNewObj(path, data);
+                
+            }
+            else {
+                
+                fs::copy(fullFilePath, fullTargetPath, fs::copy_options::overwrite_existing);
+            }
+        }
+    }
+}
+
+
 
 // fragment shader is the pixel shader. ran once for each pixel: colour of specific pixel
 // vertex shader is ran once for each vertex, so with a triangle, its ran 3 times
@@ -244,16 +337,14 @@ int main(void)
 
 
 	Preprocessing prep;
-	std::string databsePath = "./ShapeDatabase_INFOMR-master/";
-	//prep.AnalyzeShapes(databsePath);
-	//prep.AnalyzeShapes(databsePath);
-	//prep.DatabaseStatistics("./shape_analysis.csv");
+	//std::string databsePath = "./ShapeDatabase_INFOMR-master/";
+	//std::string databsePath = "./test_objs/";
+    std::string databsePath = "./ResampledDatabase/";
+    prep.AnalyzeShapes(databsePath);
+	prep.DatabaseStatistics("./shape_analysis.csv");
 
     // Request object to user
-    std::cout << "Specify path for the desired object:" << std::endl;
-    std::string userInput;
-    std::cin >> userInput;
-    std::string inputFile = "./ShapeDatabase_INFOMR-master/" + userInput;
+    
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -277,14 +368,21 @@ int main(void)
 		std::cout << "Error!" << std::endl;
 	}
     // Load Obj
- 	std::vector<float> positions = std::vector<float> ();
-	std::vector<unsigned int> indices;
+    std::vector<float> positions = std::vector<float>();
+    std::vector<unsigned int> indices;
 
+	//Resampling();
+    std::cout << "Specify path for the desired object:" << std::endl;
+    std::string userInput;
+    std::cin >> userInput;
+    std::string inputFile = "./ResampledDatabase/" + userInput;
 	if (!LoadObj(inputFile.c_str(), positions, indices))
 	{
 		std::cerr << "Failed to load obj" << std::endl;
 		return -1;
 	}
+
+
 
     std::vector<float> outBarycenter;
 
@@ -368,46 +466,29 @@ int main(void)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
         
-   //     if (simplifyMesh) {
-			//// Call the simplification function here
-   //         MeshData simplified = prep.ResamplingOutliers(positions, indices);
+        //if (simplifyMesh) {
+        //    MeshData newMesh = prep.Simplify(positions, indices);
+        //    positions = newMesh.positions;
+        //    indices = newMesh.indices;
+        //    simplifyMesh = false;
+        //    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        //    glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
 
-			//std::cout << "Simplified positions " << simplified.positions.size() << std::endl;
-			//std::cout << "Simplified indices " << simplified.indices.size() << std::endl;
+        //    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        //    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+        //}
 
-			//positions = simplified.positions;
-			//indices = simplified.indices;
-			//simplifyMesh = false; // Reset the flag to avoid continuous simplification
-   //         glBindBuffer(GL_ARRAY_BUFFER, buffer);
-   //         glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
+        //if (refineMesh) {
+        //    MeshData newMesh = prep.Refine(positions, indices, 1); // try 2 for more subdivision
+        //    positions = newMesh.positions;
+        //    indices = newMesh.indices;
+        //    refineMesh = false;
+        //    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        //    glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
 
-   //         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-   //         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-			//std::cout << "Mesh simplified. New vertex count: " << positions.size() / 6 << ", New index count: " << indices.size() << std::endl;
-   //     }
-        if (simplifyMesh) {
-            MeshData newMesh = prep.Simplify(positions, indices);
-            positions = newMesh.positions;
-            indices = newMesh.indices;
-            simplifyMesh = false;
-            glBindBuffer(GL_ARRAY_BUFFER, buffer);
-            glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-        }
-
-        if (refineMesh) {
-            MeshData newMesh = prep.Refine(positions, indices, 1); // try 2 for more subdivision
-            positions = newMesh.positions;
-            indices = newMesh.indices;
-            refineMesh = false;
-            glBindBuffer(GL_ARRAY_BUFFER, buffer);
-            glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
-
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-        }
+        //    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        //    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+        //}
 
         if (drawWireframe) {
 			glEnable(GL_POLYGON_OFFSET_LINE);

@@ -47,9 +47,10 @@ public:
 	*/
 	
 	
-	MeshData Simplify(std::vector<float>& positions, std::vector<unsigned int>& indices);
+	
+	MeshData Simplify(std::vector<float>& positions, std::vector<unsigned int>& indices, float targetRatio, std::string className, std::string filename);
 
-	MeshData Refine(std::vector<float>& positions, std::vector<unsigned int>& indices, int refineSteps);
+	MeshData Refine(std::vector<float>& positions, std::vector<unsigned int>& indices, float targetRatio, std::string className, std::string filename);
 
 	/*
 	2.4. Checkiung the resampling
