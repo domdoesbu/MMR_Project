@@ -1,5 +1,5 @@
 #include <vcg/complex/complex.h>
-#include <vcg/complex/algorithms/clean.h>
+
 #include <vcg/complex/algorithms/local_optimization/tri_edge_collapse_quadric.h>
 #include <vcg/complex/used_types.h>
 #include <vcg/simplex/vertex/base.h>
@@ -9,6 +9,7 @@
 #include <vcg/complex/base.h>
 #include <vcg/complex/algorithms/update/topology.h>
 #include <vcg/complex/algorithms/update/normal.h>
+
 // io
 #include <wrap/io_trimesh/import.h>
 #include <wrap/io_trimesh/export_ply.h>
@@ -22,6 +23,7 @@
 // local optimization
 #include <vcg/complex/algorithms/local_optimization.h>
 #include <vcg/math/quadric.h>
+#include <vcg/complex/algorithms/clean.h>
 #include "Preprocessing.h"
 #include <iostream>
 #include <filesystem>
@@ -79,7 +81,8 @@ class MyFace : public vcg::Face<
     vcg::face::FFAdj,
     vcg::face::Normal3f,     // per-face normal (REQUIRED)
     vcg::face::VFAdj,        // face->vertex adjacency (REQUIRED)
-    vcg::face::BitFlags      // deleted/selected flags
+    vcg::face::BitFlags,      // deleted/selected flags
+    vcg::face::WedgeTexCoord2f
 > {
 };
 // the main mesh class
@@ -95,6 +98,59 @@ public:
     }
 };
 
+//void PrepareMeshForRefinement(MyMesh& mesh)
+//{
+//    // --- Step 1: Clean obvious problems ---
+//    // Remove degenerate faces (zero area)
+//    int removedDegenerate = vcg::tri::Clean<MyMesh>::RemoveDegenerateFace(mesh);
+//    if (removedDegenerate > 0)
+//        std::cerr << "[Repair] Removed " << removedDegenerate << " degenerate faces.\n";
+//
+//    // Remove duplicated vertices
+//    int removedDuplicates = vcg::tri::Clean<MyMesh>::RemoveDuplicateVertex(mesh);
+//    if (removedDuplicates > 0)
+//        std::cerr << "[Repair] Removed " << removedDuplicates << " duplicate vertices.\n";
+//
+//    // Remove unreferenced vertices (important after face deletions)
+//    int removedUnref = vcg::tri::Clean<MyMesh>::RemoveUnreferencedVertex(mesh);
+//    if (removedUnref > 0)
+//        std::cerr << "[Repair] Removed " << removedUnref << " unreferenced vertices.\n";
+//
+//    vcg::tri::Allocator<MyMesh>::CompactEveryVector(mesh);
+//
+//    // --- Step 2: Build adjacency ---
+//    vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
+//    vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
+//
+//    // --- Step 3: Fix non-manifold vertices ---
+//    int splitVerts = vcg::tri::Clean<MyMesh>::SplitNonManifoldVertex(mesh, 0.0f);
+//    if (splitVerts > 0)
+//        std::cerr << "[Repair] Split " << splitVerts << " non-manifold vertices.\n";
+//
+//    vcg::tri::Allocator<MyMesh>::CompactEveryVector(mesh);
+//    vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
+//    vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
+//
+//    // --- Step 4: Split non-manifold edges (into separate components) ---
+//    int compCount = vcg::tri::Clean<MyMesh>::SplitManifoldComponents(mesh);
+//    if (compCount > 1)
+//        std::cerr << "[Repair] Mesh split into " << compCount << " manifold components.\n";
+//
+//    vcg::tri::Allocator<MyMesh>::CompactEveryVector(mesh);
+//    vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
+//    vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
+//
+//    // --- Step 5: Optional cleaning of small components ---
+//    // Remove tiny connected components (optional, depends on your pipeline)
+//    // int removedSmall = vcg::tri::Clean<MyMesh>::RemoveSmallConnectedComponentsDiameter(mesh, minComponentDiameter);
+//    // if (removedSmall > 0)
+//    //     std::cerr << "[Repair] Removed " << removedSmall << " tiny connected components.\n";
+//
+//    // --- Step 6: Update normals and bounding box ---
+//    vcg::tri::UpdateBounding<MyMesh>::Box(mesh);
+//    vcg::tri::UpdateNormal<MyMesh>::PerFaceNormalized(mesh);
+//    vcg::tri::UpdateNormal<MyMesh>::PerVertexNormalized(mesh);
+//}
 
 bool CheckMeshManifoldAndValidity(MyMesh& mesh) {
     // quick face/vertex null checks
@@ -485,23 +541,23 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
         sorted_labels.push_back(labels[i]);
     }
 
-    plt::bar(x, y);
-	plt::xticks(x, sorted_labels, { {"rotation", "vertical"} });
-    plt::xlabel("Classes");
-    plt::ylabel("Count");
-    plt::title("Class Histogram");
-    plt::show();
+ //   plt::bar(x, y);
+	//plt::xticks(x, sorted_labels, { {"rotation", "vertical"} });
+ //   plt::xlabel("Classes");
+ //   plt::ylabel("Count");
+ //   plt::title("Class Histogram");
+ //   plt::show();
 
-	// 2. Number of vertices
-	//plt::hist(vertexVals, 20);
-    
-    // 3. Number of faces
-     plt::xlabel("Faces");
-    plt::ylabel("Count");
-    plt::title("Face Histogram");
-    plt::hist(faceVals, 20);
+	//// 2. Number of vertices
+	////plt::hist(vertexVals, 20);
+ //   
+ //   // 3. Number of faces
+ //    plt::xlabel("Faces");
+ //   plt::ylabel("Count");
+ //   plt::title("Face Histogram");
+ //   plt::hist(faceVals, 20);
 
-    plt::show();
+ //   plt::show();
 
     csvFile.close();
 }
@@ -509,35 +565,35 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
 MeshData Preprocessing::Simplify(std::vector<float>& positions, std::vector<unsigned int>& indices, float targetVertices, std::string className, std::string filename)
 {
     MeshData results;
-
-    std::cout << "positions.size() = " << positions.size() << " indices.size() = " << indices.size() << std::endl;
+    std::cout << "----------------------------------------------\n" << std::endl;
+    std::cout << "[Simplification] "<< filename << "positions.size() = " << positions.size() << " indices.size() = " << indices.size() << std::endl;
    
 
     try {
         if (positions.empty() || indices.empty()) {
-            std::cerr << "[ResamplingOutliers] Empty input, nothing to do.\n";
+            std::cerr << "[Simplification] Empty input, nothing to do.\n";
             return results;
         }
         if (positions.size() % 6 != 0) {
-            throw std::runtime_error("positions vector length must be multiple of 6 (pos + normal per vertex)");
+            throw std::runtime_error("[Simplification] positions vector length must be multiple of 6 (pos + normal per vertex)");
         }
         if (indices.size() % 3 != 0) {
-            throw std::runtime_error("indices vector length must be multiple of 3 (triangles)");
+            throw std::runtime_error("[Simplification] indices vector length must be multiple of 3 (triangles)");
         }
 
         const size_t vertCount = positions.size() / 6;
         const size_t faceCount = indices.size() / 3;
         if (vertCount == 0 || faceCount == 0) {
-            std::cerr << "[ResamplingOutliers] No vertices/faces found.\n";
+            std::cerr << "[Simplification] No vertices/faces found.\n";
             return results;
         }
 
-        std::cout << "vertCount = " << vertCount << ", faceCount = " << faceCount << std::endl;
+        std::cout << "[Simplification] vertCount = " << vertCount << ", faceCount = " << faceCount << std::endl;
 
         // validate indices
         for (size_t i = 0; i < indices.size(); ++i) {
             if (indices[i] >= vertCount) {
-                std::cerr << "Error: index " << indices[i] << " out of range (vertCount=" << vertCount << ")" << std::endl;
+                std::cerr << "[Simplification] Error: index " << indices[i] << " out of range (vertCount=" << vertCount << ")" << std::endl;
                 // continue checking but don't crash here (caller should fix input)
             }
         }
@@ -582,7 +638,7 @@ MeshData Preprocessing::Simplify(std::vector<float>& positions, std::vector<unsi
 
         }
 
-        std::cout << "Before cleaning: vertCount=" << mesh.vert.size() << " faceCount=" << mesh.face.size() << std::endl;
+        std::cout << "[Simplification] Before cleaning: vertCount=" << mesh.vert.size() << " faceCount=" << mesh.face.size() << std::endl;
 
         // Build vertex->face adjacency BEFORE cleaning (important for RemoveUnreferencedVertex)
         vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
@@ -605,8 +661,7 @@ MeshData Preprocessing::Simplify(std::vector<float>& positions, std::vector<unsi
             for (auto& f : mesh.face) if (f.IsD()) ++deletedFaces;
             int deletedVerts = 0;
             for (auto& v : mesh.vert) if (v.IsD()) ++deletedVerts;
-            std::cout << "After cleaning: deletedFaces=" << deletedFaces
-                << " deletedVerts=" << deletedVerts << std::endl;
+            std::cout << "[Simplification] After cleaning: deletedFaces=" << deletedFaces << " deletedVerts=" << deletedVerts << std::endl;
         }
 
         mesh.vn = 0;
@@ -615,7 +670,7 @@ MeshData Preprocessing::Simplify(std::vector<float>& positions, std::vector<unsi
         mesh.fn = 0;
         for (auto& f : mesh.face) if (!f.IsD()) ++mesh.fn;
 
-        std::cout << "Before compaction: mesh.vn=" << mesh.vn << " mesh.fn=" << mesh.fn << std::endl;
+        std::cout << "[Simplification] Before compaction: mesh.vn=" << mesh.vn << " mesh.fn=" << mesh.fn << std::endl;
 
         // Compact internal vectors to remove deleted elements and keep contiguous storage
         vcg::tri::Allocator<MyMesh>::CompactEveryVector(mesh);
@@ -628,11 +683,11 @@ MeshData Preprocessing::Simplify(std::vector<float>& positions, std::vector<unsi
         // Recompute counts of non-deleted elements
        
 
-        std::cout << mesh.fn << " faces before decimation.\n";
+        std::cout << "[Simplification] " << mesh.fn << " faces before decimation.\n";
 
         // Safeguard: if no faces remain, return original (avoid returning empty mesh)
         if (mesh.fn == 0) {
-            std::cerr << "[ResamplingOutliers] No valid faces after cleaning. Returning original mesh unchanged.\n";
+            std::cerr << "[Simplification] No valid faces after cleaning. Returning original mesh unchanged.\n";
             // Copy original input into results (so caller keeps the original mesh)
             results.positions = positions;
             results.indices = indices;
@@ -655,9 +710,6 @@ MeshData Preprocessing::Simplify(std::vector<float>& positions, std::vector<unsi
 
         vcg::LocalOptimization<MyMesh> deciSession(mesh, &qparams);
         deciSession.Init<MyTriEdgeCollapse>();
-
-        std::cout << mesh.fn << " faces before decimation.\n";
-
         
         const int minTargetFaces = 100;
         const int targetFaces = std::max(minTargetFaces, (int)std::floor(mesh.fn * 0.5));
@@ -665,19 +717,17 @@ MeshData Preprocessing::Simplify(std::vector<float>& positions, std::vector<unsi
         deciSession.SetTimeBudget(0.5f);
         deciSession.SetTargetOperations(100000);
 
-        std::cout << "[ResamplingOutliers] Target faces: " << targetFaces << std::endl;
+        std::cout << "[Simplification] Target faces: " << targetFaces << std::endl;
 
         // --- Run optimization loop
         int lastFn = mesh.fn;
         int iter = 0;
         while (deciSession.DoOptimization() && mesh.vn > targetVertices) {
             if (++iter % 20 == 0) {
-                std::cout << "[ResamplingOutliers] progress: faces=" << mesh.fn
-                    << " heap=" << deciSession.h.size()
-                    << " err=" << deciSession.currMetric << std::endl;
+                std::cout << "[Simplification] progress: faces=" << mesh.fn << " heap=" << deciSession.h.size() << " err=" << deciSession.currMetric << std::endl;
             }
             if (mesh.fn == lastFn) {
-                std::cout << "[ResamplingOutliers] decimation stalled (no face reduction this loop). Breaking.\n";
+                std::cout << "[Simplification] decimation stalled (no face reduction this loop). Breaking.\n";
                 break;
             }
             lastFn = mesh.fn;
@@ -686,9 +736,7 @@ MeshData Preprocessing::Simplify(std::vector<float>& positions, std::vector<unsi
         std::string destinationFilename = "./ResampledDatabase/" + className + filename;
         //vcg::tri::io::ExporterOBJ<MyMesh>::Save(mesh, destinationFilename.c_str());
 
-        std::cout << "[ResamplingOutliers] #verts after: " << mesh.vn
-            << " #faces after: " << mesh.fn
-            << " final err: " << deciSession.currMetric << std::endl;
+        std::cout << "[Simplification] #verts after: " << mesh.vn << " #faces after: " << mesh.fn << " final err: " << deciSession.currMetric << std::endl;
 
         // --- Build compact arrays back to positions/indices -------------
         std::unordered_map<MyVertex*, unsigned int> vmap;
@@ -735,12 +783,10 @@ MeshData Preprocessing::Simplify(std::vector<float>& positions, std::vector<unsi
             results.indices.push_back(it2->second);
         }
 
-        std::cout << "Output positions: " << results.positions.size()
-            << " indices: " << results.indices.size() << std::endl;
+        std::cout << "[Simplification] Output positions: " << results.positions.size() << " indices: " << results.indices.size() << std::endl;
 
-        std::cout << "[ResamplingOutliers] finished: positions=" << positions.size()
-            << " indices=" << indices.size() << std::endl;
-
+        std::cout << "[Simplification] finished: positions=" << positions.size() << " indices=" << indices.size() << std::endl;
+        std::cout << "----------------------------------------------\n" << std::endl;
         return results;
     }
     catch (const std::length_error& le) {
@@ -760,36 +806,36 @@ MeshData Preprocessing::Simplify(std::vector<float>& positions, std::vector<unsi
 MeshData Preprocessing::Refine(std::vector<float>& positions, std::vector<unsigned int>& indices, float targetVertices, std::string className, std::string filename) {
     MeshData results;
 
-	std::cout << results.positions.size() << " " << results.indices.size() << std::endl;
-
-    std::cout << "positions.size() = " << positions.size() << " indices.size() = " << indices.size() << std::endl;
+	
+    std::cout << "----------------------------------------------\n" << std::endl;
+    std::cout << "[Refinement] "<< filename << "positions.size() "<<  positions.size() << " indices.size() = " << indices.size() << std::endl;
     
 
     try {
         if (positions.empty() || indices.empty()) {
-            std::cerr << "[ResamplingOutliers] Empty input, nothing to do.\n";
+            std::cerr << "[Refinement]  Empty input, nothing to do.\n";
             return results;
         }
         if (positions.size() % 6 != 0) {
-            throw std::runtime_error("positions vector length must be multiple of 6 (pos + normal per vertex)");
+            throw std::runtime_error("[Refinement] positions vector length must be multiple of 6 (pos + normal per vertex)");
         }
         if (indices.size() % 3 != 0) {
-            throw std::runtime_error("indices vector length must be multiple of 3 (triangles)");
+            throw std::runtime_error("[Refinement] indices vector length must be multiple of 3 (triangles)");
         }
 
         const size_t vertCount = positions.size() / 6;
         const size_t faceCount = indices.size() / 3;
         if (vertCount == 0 || faceCount == 0) {
-            std::cerr << "[ResamplingOutliers] No vertices/faces found.\n";
+            std::cerr << "[Refinement] No vertices/faces found.\n";
             return results;
         }
 
-        std::cout << "vertCount = " << vertCount << ", faceCount = " << faceCount << std::endl;
+        std::cout << "[Refinement] vertCount = " << vertCount << ", faceCount = " << faceCount << std::endl;
 
         // validate indices
         for (size_t i = 0; i < indices.size(); ++i) {
             if (indices[i] >= vertCount) {
-                std::cerr << "Error: index " << indices[i] << " out of range (vertCount=" << vertCount << ")" << std::endl;
+                std::cerr << "[Refinement] Error: index " << indices[i] << " out of range (vertCount=" << vertCount << ")" << std::endl;
                 // continue checking but don't crash here (caller should fix input)
             }
         }
@@ -837,7 +883,7 @@ MeshData Preprocessing::Refine(std::vector<float>& positions, std::vector<unsign
 
         }
 
-        std::cout << "Before cleaning: vertCount=" << mesh.vert.size() << " faceCount=" << mesh.face.size() << std::endl;
+        std::cout << "[Refinement] Before cleaning: vertCount=" << mesh.vert.size() << " faceCount=" << mesh.face.size() << std::endl;
 
         // Build vertex->face adjacency BEFORE cleaning (important for RemoveUnreferencedVertex)
         vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
@@ -846,7 +892,7 @@ MeshData Preprocessing::Refine(std::vector<float>& positions, std::vector<unsign
         {
             int deletedFaces = 0;
             for (auto& f : mesh.face) if (f.IsD()) ++deletedFaces;
-            std::cout << "Deleted faces before cleaning: " << deletedFaces << std::endl;
+            std::cout << "[Refinement] Deleted faces before cleaning: " << deletedFaces << std::endl;
         }
 
         // --- Clean: remove degenerate faces, duplicate vertices, unreferenced vertices
@@ -860,8 +906,7 @@ MeshData Preprocessing::Refine(std::vector<float>& positions, std::vector<unsign
             for (auto& f : mesh.face) if (f.IsD()) ++deletedFaces;
             int deletedVerts = 0;
             for (auto& v : mesh.vert) if (v.IsD()) ++deletedVerts;
-            std::cout << "After cleaning: deletedFaces=" << deletedFaces
-                << " deletedVerts=" << deletedVerts << std::endl;
+            std::cout << "[Refinement] After cleaning: deletedFaces=" << deletedFaces << " deletedVerts=" << deletedVerts << std::endl;
         }
 
         mesh.vn = 0;
@@ -869,8 +914,6 @@ MeshData Preprocessing::Refine(std::vector<float>& positions, std::vector<unsign
 
         mesh.fn = 0;
         for (auto& f : mesh.face) if (!f.IsD()) ++mesh.fn;
-
-        std::cout << "Before compaction: mesh.vn=" << mesh.vn << " mesh.fn=" << mesh.fn << std::endl;
 
         // Validate faces after initial construction
         for (size_t fi = 0; fi < mesh.face.size(); ++fi) {
@@ -885,7 +928,7 @@ MeshData Preprocessing::Refine(std::vector<float>& positions, std::vector<unsign
                 // (this is approximate; pointer comparisons with vector data are fragile but can help in debug)
             }
             if (bad) {
-                std::cerr << "Marking face " << fi << " deleted due to null vertex pointer\n";
+                std::cerr << "[Refinement] Marking face " << fi << " deleted due to null vertex pointer\n";
                 f.SetD();
                 f.V(0) = f.V(1) = f.V(2) = nullptr;
             }
@@ -901,45 +944,48 @@ MeshData Preprocessing::Refine(std::vector<float>& positions, std::vector<unsign
 
         // Safeguard: if no faces remain, return original (avoid returning empty mesh)
         if (mesh.fn == 0) {
-            std::cerr << "[ResamplingOutliers] No valid faces after cleaning. Returning original mesh unchanged.\n";
+            std::cerr << "[Refinement] No valid faces after cleaning. Returning original mesh unchanged.\n";
             // Copy original input into results (so caller keeps the original mesh)
             results.positions = positions;
             results.indices = indices;
             return results;
         }
-
+        
         // Update bounding box and normals
         vcg::tri::UpdateBounding<MyMesh>::Box(mesh);
         vcg::tri::UpdateNormal<MyMesh>::PerFaceNormalized(mesh);
         vcg::tri::UpdateNormal<MyMesh>::PerVertexNormalized(mesh);
-        std::cout << mesh.fn << " faces before decimation.\n";
-
-        //const int minTargetFaces = 100;
-        //const int targetFaces = std::max(minTargetFaces, (int)std::floor(mesh.fn * targetRatio));
+        vcg::tri::Allocator<MyMesh>::CompactEveryVector(mesh);
         vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
         vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
 
-        if (!CheckMeshManifoldAndValidity(mesh)) {
-            std::cerr << "[ResamplingOutliers] Mesh not manifold/valid — skipping refinement.\n";
-            // either return original or proceed without refining
-        }
-        else {
+
+        //REFINEMENT
+
+        //PrepareMeshForRefinement(mesh);
+
+        if (CheckMeshManifoldAndValidity(mesh)) {
             while (mesh.vn < targetVertices) {
                 vcg::tri::Refine<MyMesh, vcg::tri::MidPoint<MyMesh>>(
                     mesh,
                     vcg::tri::MidPoint<MyMesh>(&mesh),
-                    0.0f // no minimum edge length
+                    0.01f // no minimum edge length
                 );
+
                 vcg::tri::Allocator<MyMesh>::CompactEveryVector(mesh);
                 vcg::tri::UpdateTopology<MyMesh>::VertexFace(mesh);
                 vcg::tri::UpdateTopology<MyMesh>::FaceFace(mesh);
-                std::cout << "[ResamplingOutliers] Refining: new vertex count = " << mesh.vn << std::endl;
+
+                std::cout << "[Refinement] Vertex count: " << mesh.vn << std::endl;
             }
+        }
+        else {
+            std::cerr << "[Refinement] Mesh still non-manifold/invalid — skipping refinement.\n";
         }
 
         int deletedFaces = 0;
         for (auto& f : mesh.face) if (f.IsD()) ++deletedFaces;
-        std::cout << "After refinement: deletedFaces=" << deletedFaces << std::endl;
+        std::cout << "[Refinement] After refinement: deletedFaces=" << deletedFaces << std::endl;
         //  compact & validate mesh before rebuilding adjacency
         vcg::tri::Allocator<MyMesh>::CompactEveryVector(mesh);
 
@@ -963,9 +1009,8 @@ MeshData Preprocessing::Refine(std::vector<float>& positions, std::vector<unsign
         vcg::tri::UpdateNormal<MyMesh>::PerFaceNormalized(mesh);
         vcg::tri::UpdateNormal<MyMesh>::PerVertexNormalized(mesh);
 
-        std::cout << "[ResamplingOutliers] Refinement done. New face count: "
-            << mesh.fn << std::endl;
-
+        std::cout << "[Refinement] REFINEMENT done. New face count: " << mesh.fn << std::endl;
+        
         // --- Build compact arrays back to positions/indices -------------
         std::unordered_map<MyVertex*, unsigned int> vmap;
         vmap.reserve(mesh.vert.size());
@@ -1011,24 +1056,22 @@ MeshData Preprocessing::Refine(std::vector<float>& positions, std::vector<unsign
             results.indices.push_back(it2->second);
         }
 
-        std::cout << "Output positions: " << results.positions.size()
-            << " indices: " << results.indices.size() << std::endl;
-
-        std::cout << "[ResamplingOutliers] finished: positions=" << positions.size()
-            << " indices=" << indices.size() << std::endl;
+        std::cout << "[Refinement] Output positions: " << results.positions.size() << " indices: " << results.indices.size() << std::endl;
+        std::cout << "----------------------------------------------\n" << std::endl;
+        
 
         return results;
     }
     catch (const std::length_error& le) {
-        std::cerr << "[ResamplingOutliers] std::length_error: " << le.what() << std::endl;
+        std::cerr << "[Refinement] std::length_error: " << le.what() << std::endl;
         throw;
     }
     catch (const std::exception& ex) {
-        std::cerr << "[ResamplingOutliers] exception: " << ex.what() << std::endl;
+        std::cerr << "[Refinement] exception: " << ex.what() << std::endl;
         throw;
     }
     catch (...) {
-        std::cerr << "[ResamplingOutliers] unknown exception" << std::endl;
+        std::cerr << "[Refinement] unknown exception" << std::endl;
         throw;
     }
 }

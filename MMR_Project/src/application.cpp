@@ -322,6 +322,76 @@ int Resampling()
 }
 
 
+glm::vec3 ComputeBarycenter(std::vector<float> positions)
+{
+    //	glm::vec3 barycenter(0.0f);
+    //	float sumOfAreas = 0.0f;
+    //	float localArea = 1.0f; // Placeholder for area calculation
+    //	int vertexCount = positions.size() / 6; // Assuming each vertex has 6 floats (position + normal)
+    //	for (int i = 0; i < positions.size(); i += 18) {
+    //        glm::vec3 localBarycenter(0.0f);
+    //
+    //        // one triangle
+    //		localBarycenter.x = (positions[i + 0] + positions[i + 6 + 0] + positions[i + 6*2 + 0]) / 3.0f; // barX = (x1 + x2 + x3) / 3
+    //		localBarycenter.y = (positions[i + 1] + positions[i + 6 + 1] + positions[i + 6*2 + 1]) / 3.0f; // barY = (y1 + y2 + y3) / 3
+    //		localBarycenter.z = (positions[i + 2] + positions[i + 6 + 2] + positions[i + 6*2 + 2]) / 3.0f; // barZ = (z1 + z2 + z3) / 3
+    //
+    //        //Area of this triangle
+    //        glm::vec3 e1;
+    //        glm::vec3 e2;
+    //        glm::vec3 e3;
+    //
+    //        e1.x = positions[i + 6 + 0] - positions[i + 0];
+    //		e1.y = positions[i + 6 + 1] - positions[i + 1];
+    //		e1.z = positions[i + 6 + 2] - positions[i + 2];
+    //
+    //		e2.x = positions[i + 6*2 + 0] - positions[i + 6 + 0];
+    //		e2.y = positions[i + 6*2 + 1] - positions[i + 6 + 1];
+    //		e2.z = positions[i + 6*2 + 2] - positions[i + 6 + 2];
+    //
+    //		e3.x = e1.y * e2.z - e1.z * e2.y;
+    //		e3.y = e1.z * e2.x - e1.x * e2.z;
+    //		e3.z = e1.x * e2.y - e1.y * e2.x;
+    //
+    //        float localArea = sqrt(e3.x * e3.x + e3.y * e3.y + e3.z * e3.z);
+    //        
+    //		sumOfAreas += localArea;
+    //	
+    //        //multiply center of this triangle * area
+    //        localBarycenter = localBarycenter * localArea;
+    //
+    //        barycenter += localBarycenter; //?
+    //	}
+    //	if (vertexCount > 0) {
+    //		barycenter /= sumOfAreas;
+    //	}
+    //	return barycenter;
+    //}
+    glm::vec3 barycenter(0.0f);
+    float sumOfAreas = 0.0f;
+
+    for (int i = 0; i < positions.size(); i += 18) {
+        glm::vec3 v1(positions[i + 0], positions[i + 1], positions[i + 2]);
+        glm::vec3 v2(positions[i + 6], positions[i + 7], positions[i + 8]);
+        glm::vec3 v3(positions[i + 12], positions[i + 13], positions[i + 14]);
+
+        glm::vec3 localBarycenter = (v1 + v2 + v3) / 3.0f;
+
+        glm::vec3 e1 = v2 - v1;
+        glm::vec3 e2 = v3 - v1;
+        glm::vec3 cross = glm::cross(e1, e2);
+
+        float localArea = glm::length(cross) * 0.5f; // triangle area
+
+        sumOfAreas += localArea;
+        barycenter += localBarycenter * localArea;
+    }
+
+    if (sumOfAreas > 0.0f) {
+        barycenter /= sumOfAreas;
+    }
+    return barycenter;
+}
 
 // fragment shader is the pixel shader. ran once for each pixel: colour of specific pixel
 // vertex shader is ran once for each vertex, so with a triangle, its ran 3 times
@@ -334,17 +404,6 @@ int main(void)
     /* Initialize the library */
     if (!glfwInit())
         return -1;
-
-
-	Preprocessing prep;
-	//std::string databsePath = "./ShapeDatabase_INFOMR-master/";
-	//std::string databsePath = "./test_objs/";
-    std::string databsePath = "./ResampledDatabase/";
-    prep.AnalyzeShapes(databsePath);
-	prep.DatabaseStatistics("./shape_analysis.csv");
-
-    // Request object to user
-    
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -371,18 +430,23 @@ int main(void)
     std::vector<float> positions = std::vector<float>();
     std::vector<unsigned int> indices;
 
-	//Resampling();
+	Resampling();
+    Preprocessing prep;
+	//std::string databsePath = "./ShapeDatabase_INFOMR-master/";
+	//std::string databsePath = "./test_objs/";
+    std::string databsePath = "./ResampledDatabase/";
+    prep.AnalyzeShapes(databsePath);
+    prep.DatabaseStatistics("./shape_analysis.csv");
+
     std::cout << "Specify path for the desired object:" << std::endl;
     std::string userInput;
     std::cin >> userInput;
-    std::string inputFile = "./ResampledDatabase/" + userInput;
+    std::string inputFile = userInput;
 	if (!LoadObj(inputFile.c_str(), positions, indices))
 	{
 		std::cerr << "Failed to load obj" << std::endl;
 		return -1;
 	}
-
-
 
     std::vector<float> outBarycenter;
 
@@ -430,6 +494,13 @@ int main(void)
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+    glm::vec3 barycenter = ComputeBarycenter(positions);
+    for (int i = 0; i < positions.size(); i += 6) {
+        positions[i + 0] -= barycenter.x;
+        positions[i + 1] -= barycenter.y;
+        positions[i + 2] -= barycenter.z;
+    }
+	std::cout << "Barycenter: " << glm::to_string(barycenter) << std::endl;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -440,11 +511,15 @@ int main(void)
 		// Calculate camera angle
 		glm::mat4 viewMatrix = camera.GetViewMatrix();
 		glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
+
+		
 		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, barycenter);
+		//model = glm::translate(barycenter, glm::vec3(0.0,0.0,0.0));
 		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1, 0, 0));
 
         solidShader.use();
-
+        glUniform3f(glGetUniformLocation(solidShader.ID, "barycenter"), barycenter.x, barycenter.y, barycenter.z);
 		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
