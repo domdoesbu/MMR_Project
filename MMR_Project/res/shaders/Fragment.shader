@@ -6,12 +6,13 @@ uniform vec3 barycenter;
 uniform int toggleWireframe;
 
 in vec3 FragPos;
+
 in vec3 vertexColor;
 in vec3 Normal;
 
 void main()
 {
-	
-		FragColor = vec4(vertexColor, 1.0);
+
+	FragColor = vec4(vertexColor, 1.0);
 	
 };

@@ -11,16 +11,19 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+
 out vec3 FragPos;
 out vec3 vertexColor; 
 out vec3 Normal;
 
 void main()
 {
-
 	// Transform vertex position to world space
     vec3 FragPos = vec3(model * vec4(position, 1.0));
     gl_Position = projection * view * model * vec4(position, 1.0);
+
+	
+
 
     // Transform normal to world space (important if model is scaled/rotated)
     mat3 normalMatrix = transpose(inverse(mat3(model)));
