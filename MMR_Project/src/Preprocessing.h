@@ -1,12 +1,31 @@
 #pragma once
+#define GLM_ENABLE_EXPERIMENTAL
 #include <iostream>
 #include <filesystem>
 #include <string>
 #include <vector>
 
-struct MeshData {
-	std::vector<float> positions;
-	std::vector<unsigned int> indices;
+#include "glm/gtc/type_ptr.hpp"
+#include <glm/gtx/string_cast.hpp>
+#include "glm/glm.hpp"
+#include "FileOrganizer.h"
+
+struct shapeInfo
+{
+	std::string className;
+	std::string fileName;
+
+	int vertexNum;
+	int faceNum;
+	std::string faceType;
+
+	float minX;
+	float minY;
+	float minZ;
+
+	float maxX;
+	float maxY;
+	float maxZ;
 };
 
 class Preprocessing
@@ -21,6 +40,9 @@ public:
 		3. Type of faces
 		4. The axis aligned 3D bounding box of the shape
 	*/ 
+
+	void AnalyzeShape(std::filesystem::path filename, shapeInfo& outInfo);
+
 	void AnalyzeShapes(const std::string& databasePath);
 
 	/*
@@ -52,6 +74,8 @@ public:
 
 	MeshData Refine(std::vector<float>& positions, std::vector<unsigned int>& indices, float targetRatio, std::string className, std::string filename);
 
+	int Resampling();
+
 	/*
 	2.4. Checkiung the resampling
 		1. Visualize the results of the previous steps
@@ -69,6 +93,10 @@ public:
 		
 	
 	*/
+
+	glm::vec3 ComputeBarycenter(std::vector<float> positions);
+
+	std::vector<float> NormalizeScale(std::vector<float> positions, std::filesystem::path filename);
 
 
 };

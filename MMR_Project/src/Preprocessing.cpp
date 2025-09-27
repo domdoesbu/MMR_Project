@@ -1,3 +1,4 @@
+#define GLM_ENABLE_EXPERIMENTAL
 #include <vcg/complex/complex.h>
 
 #include <vcg/complex/algorithms/local_optimization/tri_edge_collapse_quadric.h>
@@ -210,7 +211,7 @@ bool CheckMeshManifoldAndValidity(MyMesh& mesh) {
             edgeCount[k]++;
             if (edgeCount[k] > 2) {
                 std::cerr << "Non-manifold edge detected between verts " << k.a << " and " << k.b
-                    << " (shared by >2 faces). Aborting refine.\n";
+                    << " (shared by >2 faces)." << edgeCount[k] << " Aborting refine.\n";
                 return false;
             }
         }
@@ -226,11 +227,91 @@ bool CheckMeshManifoldAndValidity(MyMesh& mesh) {
     return true;
 }
 
+void Preprocessing::AnalyzeShape(std::filesystem::path filename, shapeInfo & outInfo)
+{
+    if (filename.extension() != ".obj") return;
+    outInfo.fileName = filename.string();
+    std::ifstream objFile(filename);
+
+    size_t vertexCount = 0, faceCount = 0;
+    bool headerVertexFound = false, headerFaceFound = false;
+
+    // This is for the bounding boxes
+    outInfo.minX = std::numeric_limits<float>::max();
+    outInfo.minY = std::numeric_limits<float>::max();
+    outInfo.minZ = std::numeric_limits<float>::max();
+    outInfo.maxX = std::numeric_limits<float>::lowest();
+    outInfo.maxY = std::numeric_limits<float>::lowest();
+    outInfo.maxZ = std::numeric_limits<float>::lowest();
+
+    // Tells us what kind of faces we actually have
+    bool hasTriangle = false, hasQuad = false, hasOther = false;
+
+    std::string line;
+    while (std::getline(objFile, line)) {
+        if (line.empty()) continue;
+
+        // Some obj files have the info in the header, so find those first
+        if (line.rfind("# Vertices:", 0) == 0) {
+            vertexCount = std::stoul(line.substr(11));
+            headerVertexFound = true;
+            continue;
+        }
+        if (line.rfind("# Faces:", 0) == 0) {
+            faceCount = std::stoul(line.substr(8));
+            headerFaceFound = true;
+            continue;
+        }
+
+        // If it doesn't have information int he header, look over everything
+        std::istringstream iss(line);
+        std::string type;
+        iss >> type;
+
+        if (type == "v") { // Always process vertices for bounding box, even if we have header information
+            float x, y, z;
+            iss >> x >> y >> z;
+            if (!headerVertexFound) vertexCount++; // Only count manually if no header info
+            outInfo.minX = std::min(outInfo.minX, x);
+            outInfo.minY = std::min(outInfo.minY, y);
+            outInfo.minZ = std::min(outInfo.minZ, z);
+            outInfo.maxX = std::max(outInfo.maxX, x);
+            outInfo.maxY = std::max(outInfo.maxY, y);
+            outInfo.maxZ = std::max(outInfo.maxZ, z);
+        }
+        else if (type == "f") {
+            if (!headerFaceFound) faceCount++; // Only count manually if no header info
+
+            std::vector<std::string> vertices;
+            std::string token;
+            while (iss >> token) vertices.push_back(token);
+
+            if (vertices.size() == 3)
+                hasTriangle = true;
+            else if (vertices.size() == 4)
+                hasQuad = true;
+            else
+                hasOther = true;
+        }
+    }
+    objFile.close();
+
+    outInfo.vertexNum = vertexCount;
+    outInfo.faceNum = faceCount;
+
+    // Get the info on which kind of faces it has
+    if (hasOther) outInfo.faceType = "Mixed (N-gons)";
+    else if (hasTriangle && hasQuad) outInfo.faceType = "Mixed (Triangles+Quads)";
+    else if (hasTriangle) outInfo.faceType = "Triangles";
+    else if (hasQuad) outInfo.faceType = "Quads";
+    else outInfo.faceType = "Unknown";
+}
+
 void Preprocessing::AnalyzeShapes(const std::string& databasePath)
 {
 	std::cout << "Analyzing shapes in database: " << databasePath << std::endl;
     // Excel file for all the data
-    std::string outputCsv = "shape_analysis2.csv";
+    std::string outputCsv = "shape_analysistmp.csv";
 
     // Check if database actually exists
     if (!fs::exists(databasePath) || !fs::is_directory(databasePath)) {
@@ -246,100 +327,26 @@ void Preprocessing::AnalyzeShapes(const std::string& databasePath)
 
     csvFile << "Class,File,Vertices,Faces,FaceType,Minx,Miny,Minz,Maxx,Maxy,Maxz\n";
 
+    shapeInfo currentShapeInfo;
+
     // loop over every sub folder, aka the class itself
     for (const auto& classDir : fs::directory_iterator(databasePath)) {
         if (!fs::is_directory(classDir)) continue;
 
         // Get the class
-        std::string className = classDir.path().filename().string();
+        currentShapeInfo.className = classDir.path().filename().string();
 
         // For each obj in the folder, get the information about it
         for (const auto& file : fs::directory_iterator(classDir)) {
-            if (file.path().extension() != ".obj") continue;
+            Preprocessing::AnalyzeShape(file.path(), currentShapeInfo);
 
-            std::ifstream objFile(file.path());
-            if (!objFile.is_open()) {
-                std::cerr << "Failed to open file: " << file.path() << std::endl;
-                continue;
-            }
-
-            size_t vertexCount = 0, faceCount = 0;
-            bool headerVertexFound = false, headerFaceFound = false;
-
-            // This is for the bounding boxes
-            float minX = std::numeric_limits<float>::max();
-            float minY = std::numeric_limits<float>::max();
-            float minZ = std::numeric_limits<float>::max();
-            float maxX = std::numeric_limits<float>::lowest();
-            float maxY = std::numeric_limits<float>::lowest();
-            float maxZ = std::numeric_limits<float>::lowest();
-
-            // Tells us what kind of faces we actually have
-            bool hasTriangle = false, hasQuad = false, hasOther = false;
-
-            std::string line;
-            while (std::getline(objFile, line)) {
-                if (line.empty()) continue;
-
-                // Some obj files have the info in the header, so find those first
-                if (line.rfind("# Vertices:", 0) == 0) {
-                    vertexCount = std::stoul(line.substr(11));
-                    headerVertexFound = true;
-                    continue;
-                }
-                if (line.rfind("# Faces:", 0) == 0) {
-                    faceCount = std::stoul(line.substr(8));
-                    headerFaceFound = true;
-                    continue;
-                }
-
-                // If it doesn't have information int he header, look over everything
-                std::istringstream iss(line);
-                std::string type;
-                iss >> type;
-
-                if (type == "v") { // Always process vertices for bounding box, even if we have header information
-                    float x, y, z;
-                    iss >> x >> y >> z;
-                    if (!headerVertexFound) vertexCount++; // Only count manually if no header info
-                    minX = std::min(minX, x);
-                    minY = std::min(minY, y);
-                    minZ = std::min(minZ, z);
-                    maxX = std::max(maxX, x);
-                    maxY = std::max(maxY, y);
-                    maxZ = std::max(maxZ, z);
-                }
-                else if (type == "f") {
-                    if (!headerFaceFound) faceCount++; // Only count manually if no header info
-
-                    std::vector<std::string> vertices;
-                    std::string token;
-                    while (iss >> token) vertices.push_back(token);
-
-                    if (vertices.size() == 3)
-                        hasTriangle = true;
-                    else if (vertices.size() == 4)
-                        hasQuad = true;
-                    else
-                        hasOther = true;
-                }
-            }
-
-            // Get the info on which kind of faces it has
-            std::string faceType;
-            if (hasOther) faceType = "Mixed (N-gons)";
-            else if (hasTriangle && hasQuad) faceType = "Mixed (Triangles+Quads)";
-            else if (hasTriangle) faceType = "Triangles";
-            else if (hasQuad) faceType = "Quads";
-            else faceType = "Unknown";
-
-            csvFile << className << ","
+            csvFile << currentShapeInfo.className << ","
                 << file.path().filename().string() << ","
-                << vertexCount << ","
-                << faceCount << ","
-                << "\"" << faceType << "\"" << ","
-                << minX << "," << minY << "," << minZ << ","
-                << maxX << "," << maxY << "," << maxZ
+                << currentShapeInfo.vertexNum<< ","
+                << currentShapeInfo.faceNum << ","
+                << "\"" << currentShapeInfo.faceType << "\"" << ","
+                << currentShapeInfo.minX << "," << currentShapeInfo.minY << "," << currentShapeInfo.minZ << ","
+                << currentShapeInfo.maxX << "," << currentShapeInfo.maxY << "," << currentShapeInfo.maxZ
                 << "\n";
         }
     }
@@ -1076,7 +1083,121 @@ MeshData Preprocessing::Refine(std::vector<float>& positions, std::vector<unsign
     }
 }
 
+namespace fs = std::filesystem;
+int Preprocessing::Resampling()
+{
+    FileOrganizer fo;
+    std::vector<float> positions;
+    std::vector<unsigned int> indices;
+    fs::path sourcePath = "./test_objs/";
+    fs::path targetParent = "./ResampledDatabase/";
+    std::string databasePath = "./test_objs/";
+    for (const auto& classDir : fs::directory_iterator(databasePath)) {
+        if (!fs::is_directory(classDir)) continue;
+        std::string className = classDir.path().filename().string();
+        fs::path fullTargetPath = targetParent.string() + className + "/";
+        fs::create_directories(fullTargetPath);
+        // For each obj in the folder, get the information about it
+
+        for (const auto& file : fs::directory_iterator(classDir)) {
+
+            positions.clear();
+            indices.clear();
+            std::string currentFile = file.path().filename().string();
+            std::string fullFilePath = classDir.path().string() + "/" + currentFile;
+            if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
+            {
+                std::cerr << "Failed to load obj" << std::endl;
+                return -1;
+            }
+
+            if (positions.size() / 6 < 5000) { // Refinement
+
+                MeshData data = Refine(positions, indices, 5000, className, currentFile);
+                std::string path = fullTargetPath.string() + file.path().filename().string();
+                std::cout << path << std::endl;
+                fo.WriteNewObj(path, data);
+
+            }
+            else if (positions.size() / 6 > 10000) { //Simplification
+                MeshData data = Simplify(positions, indices, 10000, className, currentFile);
+                std::string path = fullTargetPath.string() + file.path().filename().string();
+                std::cout << path << std::endl;
+                fo.WriteNewObj(path, data);
+
+            }
+            else {
+
+                fs::copy(fullFilePath, fullTargetPath, fs::copy_options::overwrite_existing);
+            }
+        }
+    }
+}
 
 
+
+glm::vec3 Preprocessing::ComputeBarycenter(std::vector<float> positions)
+{
+    glm::vec3 barycenter(0.0f);
+    float sumOfAreas = 0.0f;
+
+    for (int i = 0; i < positions.size(); i += 18) {
+        glm::vec3 v1(positions[i + 0], positions[i + 1], positions[i + 2]);
+        glm::vec3 v2(positions[i + 6], positions[i + 7], positions[i + 8]);
+        glm::vec3 v3(positions[i + 12], positions[i + 13], positions[i + 14]);
+        glm::vec3 localBarycenter(0.0f);
+        //glm::vec3 localBarycenter = (v1 + v2 + v3) / 3.0f;
+        localBarycenter.x = (positions[i + 0] + positions[i + 6 + 0] + positions[i + 12 + 0]) / 3.0f;
+        localBarycenter.y = (positions[i + 1] + positions[i + 6 + 1] + positions[i + 12 + 1]) / 3.0f;
+        localBarycenter.z = (positions[i + 2] + positions[i + 6 + 2] + positions[i + 12 + 2]) / 3.0f;
+
+
+        glm::vec3 e1 = v2 - v1;
+        glm::vec3 e2 = v3 - v1;
+        glm::vec3 cross = glm::cross(e1, e2);
+
+        float localArea = glm::length(cross) * 0.5f; // triangle area
+
+        // sum (x * area)
+        // / sum area
+
+        sumOfAreas += localArea;
+        barycenter += localBarycenter * localArea;
+    }
+
+    if (sumOfAreas > 0.0f) {
+        barycenter /= sumOfAreas;
+    }
+    return barycenter;
+}
+
+std::vector<float> Preprocessing::NormalizeScale(std::vector<float> positions, std::filesystem::path filename)
+{
+    // we need to scale the positions to fit into a 1:1 unit cube
+    // use formula y = x / maxcoord where x is the vertex position, to get new vertex position y. i.e. newMaxcoord = maxcoord / maxcoord = 1
+    // MaxCoord needs to be the highest among the maxCoord numbers for every axis so that the object will fit into a 1:1 unit cube 
+    // without stretching and changing proportions
+
+    shapeInfo sInfo;
+    AnalyzeShape(filename, sInfo);
+
+    float shapeMaxCoords[6] = { std::abs(sInfo.maxX), std::abs(sInfo.maxY), std::abs(sInfo.maxZ), std::abs(sInfo.minX), std::abs(sInfo.minY), std::abs(sInfo.minZ)};
+    float maxCoord = shapeMaxCoords[0];
+    for (int i = 1; i < sizeof(shapeMaxCoords); ++i)
+    {
+        if (shapeMaxCoords[i] > maxCoord)
+            maxCoord = shapeMaxCoords[i];
+    }
+
+    std::vector<float> scaledPositions = positions;
+    for (int i = 0; i < positions.size(); i += 3)
+    {
+        scaledPositions[i] = positions[i] / maxCoord;
+        scaledPositions[i + 1] = positions[i + 1] / maxCoord;
+        scaledPositions[i + 2] = positions[i + 2] / maxCoord;
+    }
+
+    return scaledPositions;
+}
 
 
