@@ -1,0 +1,173 @@
+// (C) 2024, AMV Consulting
+#pragma once
+
+#include <MRCMisc/common.h>
+#include <MRCMisc/exports.h>
+
+#include <stddef.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct MR_Polynomial_double_0 MR_Polynomial_double_0; // Defined in `#include <MRCMesh/MRBestFitPolynomial.h>`.
+typedef struct MR_Polynomial_double_1 MR_Polynomial_double_1; // Defined in `#include <MRCMesh/MRBestFitPolynomial.h>`.
+typedef struct MR_Polynomial_double_2 MR_Polynomial_double_2; // Defined in `#include <MRCMesh/MRBestFitPolynomial.h>`.
+typedef struct MR_Polynomial_double_3 MR_Polynomial_double_3; // Defined in `#include <MRCMesh/MRBestFitPolynomial.h>`.
+typedef struct MR_Polynomial_double_4 MR_Polynomial_double_4; // Defined in `#include <MRCMesh/MRBestFitPolynomial.h>`.
+typedef struct MR_Polynomial_double_5 MR_Polynomial_double_5; // Defined in `#include <MRCMesh/MRBestFitPolynomial.h>`.
+typedef struct MR_Polynomial_double_6 MR_Polynomial_double_6; // Defined in `#include <MRCMesh/MRBestFitPolynomial.h>`.
+
+
+/// Stores one of 7 objects: `MR::Polynomial<double, 0>`, `MR::Polynomial<double, 1>`, `MR::Polynomial<double, 2>`, `MR::Polynomial<double, 3>`, `MR::Polynomial<double, 4>`, `MR::Polynomial<double, 5>`, `MR::Polynomial<double, 6>`.
+/// Supported `MR_PassBy` modes: `MR_PassBy_DefaultConstruct`, `MR_PassBy_Copy`, `MR_PassBy_Move`, (and `MR_PassBy_DefaultArgument` and `MR_PassBy_NoObject` if supported by the callee).
+typedef struct MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6;
+
+/// Constructs an empty (default-constructed) instance.
+/// Never returns null. Returns an instance allocated on the heap! Must call `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Destroy()` to free it when you're done using it.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_DefaultConstruct(void);
+
+/// Constructs an array of empty (default-constructed) instances, of the specified size. Will never return null.
+/// The array must be destroyed using `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_DestroyArray()`.
+/// Use `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_OffsetMutablePtr()` and `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_OffsetPtr()` to access the array elements.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_DefaultConstructArray(size_t num_elems);
+
+/// Constructs a copy of another instance. The source remains alive.
+/// Never returns null. Returns an instance allocated on the heap! Must call `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Destroy()` to free it when you're done using it.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_ConstructFromAnother(MR_PassBy other_pass_by, MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *other);
+
+/// Assigns the contents from another instance. Both objects remain alive after the call.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API void MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_AssignFromAnother(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this, MR_PassBy other_pass_by, MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *other);
+
+/// Destroys a heap-allocated instance of `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6`. Does nothing if the pointer is null.
+MRC_API void MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Destroy(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Destroys a heap-allocated array of `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6`. Does nothing if the pointer is null.
+MRC_API void MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_DestroyArray(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Offsets a pointer to an array element by `i` positions (not bytes). Use only if you're certain that the pointer points to an array element.
+MRC_API const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_OffsetPtr(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *ptr, ptrdiff_t i);
+
+/// Offsets a pointer to an array element by `i` positions (not bytes). Use only if you're certain that the pointer points to an array element.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_OffsetMutablePtr(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *ptr, ptrdiff_t i);
+
+/// Returns the index of the stored element type. In rare cases may return -1 if this variant is "valueless by exception".
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API size_t MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Index(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Constructs the variant storing the element 0, of type `MR::Polynomial<double, 0>`.
+/// Never returns null. Returns an instance allocated on the heap! Must call `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Destroy()` to free it when you're done using it.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_ConstructAs_MR_Polynomial_double_0(MR_PassBy value_pass_by, MR_Polynomial_double_0 *value);
+
+/// Constructs the variant storing the element 1, of type `MR::Polynomial<double, 1>`.
+/// Never returns null. Returns an instance allocated on the heap! Must call `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Destroy()` to free it when you're done using it.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_ConstructAs_MR_Polynomial_double_1(MR_PassBy value_pass_by, MR_Polynomial_double_1 *value);
+
+/// Constructs the variant storing the element 2, of type `MR::Polynomial<double, 2>`.
+/// Never returns null. Returns an instance allocated on the heap! Must call `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Destroy()` to free it when you're done using it.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_ConstructAs_MR_Polynomial_double_2(MR_PassBy value_pass_by, MR_Polynomial_double_2 *value);
+
+/// Constructs the variant storing the element 3, of type `MR::Polynomial<double, 3>`.
+/// Never returns null. Returns an instance allocated on the heap! Must call `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Destroy()` to free it when you're done using it.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_ConstructAs_MR_Polynomial_double_3(MR_PassBy value_pass_by, MR_Polynomial_double_3 *value);
+
+/// Constructs the variant storing the element 4, of type `MR::Polynomial<double, 4>`.
+/// Never returns null. Returns an instance allocated on the heap! Must call `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Destroy()` to free it when you're done using it.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_ConstructAs_MR_Polynomial_double_4(MR_PassBy value_pass_by, MR_Polynomial_double_4 *value);
+
+/// Constructs the variant storing the element 5, of type `MR::Polynomial<double, 5>`.
+/// Never returns null. Returns an instance allocated on the heap! Must call `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Destroy()` to free it when you're done using it.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_ConstructAs_MR_Polynomial_double_5(MR_PassBy value_pass_by, MR_Polynomial_double_5 *value);
+
+/// Constructs the variant storing the element 6, of type `MR::Polynomial<double, 6>`.
+/// Never returns null. Returns an instance allocated on the heap! Must call `MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Destroy()` to free it when you're done using it.
+MRC_API MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_ConstructAs_MR_Polynomial_double_6(MR_PassBy value_pass_by, MR_Polynomial_double_6 *value);
+
+/// Assigns to the variant, making it store the element 0, of type `MR::Polynomial<double, 0>`.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API void MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_AssignAs_MR_Polynomial_double_0(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this, MR_PassBy value_pass_by, MR_Polynomial_double_0 *value);
+
+/// Assigns to the variant, making it store the element 1, of type `MR::Polynomial<double, 1>`.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API void MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_AssignAs_MR_Polynomial_double_1(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this, MR_PassBy value_pass_by, MR_Polynomial_double_1 *value);
+
+/// Assigns to the variant, making it store the element 2, of type `MR::Polynomial<double, 2>`.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API void MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_AssignAs_MR_Polynomial_double_2(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this, MR_PassBy value_pass_by, MR_Polynomial_double_2 *value);
+
+/// Assigns to the variant, making it store the element 3, of type `MR::Polynomial<double, 3>`.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API void MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_AssignAs_MR_Polynomial_double_3(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this, MR_PassBy value_pass_by, MR_Polynomial_double_3 *value);
+
+/// Assigns to the variant, making it store the element 4, of type `MR::Polynomial<double, 4>`.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API void MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_AssignAs_MR_Polynomial_double_4(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this, MR_PassBy value_pass_by, MR_Polynomial_double_4 *value);
+
+/// Assigns to the variant, making it store the element 5, of type `MR::Polynomial<double, 5>`.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API void MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_AssignAs_MR_Polynomial_double_5(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this, MR_PassBy value_pass_by, MR_Polynomial_double_5 *value);
+
+/// Assigns to the variant, making it store the element 6, of type `MR::Polynomial<double, 6>`.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API void MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_AssignAs_MR_Polynomial_double_6(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this, MR_PassBy value_pass_by, MR_Polynomial_double_6 *value);
+
+/// Returns the element 0, of type `MR::Polynomial<double, 0>`, read-only. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API const MR_Polynomial_double_0 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Get_MR_Polynomial_double_0(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 0, of type `MR::Polynomial<double, 0>`, mutable. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API MR_Polynomial_double_0 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_GetMutable_MR_Polynomial_double_0(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 1, of type `MR::Polynomial<double, 1>`, read-only. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API const MR_Polynomial_double_1 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Get_MR_Polynomial_double_1(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 1, of type `MR::Polynomial<double, 1>`, mutable. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API MR_Polynomial_double_1 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_GetMutable_MR_Polynomial_double_1(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 2, of type `MR::Polynomial<double, 2>`, read-only. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API const MR_Polynomial_double_2 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Get_MR_Polynomial_double_2(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 2, of type `MR::Polynomial<double, 2>`, mutable. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API MR_Polynomial_double_2 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_GetMutable_MR_Polynomial_double_2(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 3, of type `MR::Polynomial<double, 3>`, read-only. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API const MR_Polynomial_double_3 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Get_MR_Polynomial_double_3(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 3, of type `MR::Polynomial<double, 3>`, mutable. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API MR_Polynomial_double_3 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_GetMutable_MR_Polynomial_double_3(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 4, of type `MR::Polynomial<double, 4>`, read-only. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API const MR_Polynomial_double_4 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Get_MR_Polynomial_double_4(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 4, of type `MR::Polynomial<double, 4>`, mutable. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API MR_Polynomial_double_4 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_GetMutable_MR_Polynomial_double_4(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 5, of type `MR::Polynomial<double, 5>`, read-only. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API const MR_Polynomial_double_5 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Get_MR_Polynomial_double_5(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 5, of type `MR::Polynomial<double, 5>`, mutable. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API MR_Polynomial_double_5 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_GetMutable_MR_Polynomial_double_5(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 6, of type `MR::Polynomial<double, 6>`, read-only. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API const MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_Get_MR_Polynomial_double_6(const MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+/// Returns the element 6, of type `MR::Polynomial<double, 6>`, mutable. If it's not the active element, returns null.
+/// Parameter `_this` can not be null. It is a single object.
+MRC_API MR_Polynomial_double_6 *MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6_GetMutable_MR_Polynomial_double_6(MR_std_variant_MR_Polynomial_double_0_MR_Polynomial_double_1_MR_Polynomial_double_2_MR_Polynomial_double_3_MR_Polynomial_double_4_MR_Polynomial_double_5_MR_Polynomial_double_6 *_this);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif

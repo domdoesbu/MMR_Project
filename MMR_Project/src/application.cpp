@@ -9,8 +9,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-
-
+#include "Simplification.h"
 struct ShaderProgramSource
 {
 	std::string VertexSource;
@@ -77,7 +76,7 @@ void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
 
 }
 
-Camera camera(glm::vec3(0,0,-4), glm::vec3(0), 60.0f, 16/9);
+Camera camera(glm::vec3(0,0,-2), glm::vec3(0), 60.0f, 16/9);
 
 struct Vertex {
 	float position[3];
@@ -158,17 +157,20 @@ int main(void)
     FileOrganizer fo;
 
     Preprocessing prep;
-	prep.Resampling();
+	
 	//std::string databsePath = "./ShapeDatabase_INFOMR-master/";
 	std::string databsePath = "./test_objs/";
-    //std::string databsePath = "./ResampledDatabase/";
-    //prep.AnalyzeShapes(databsePath);
-    //prep.DatabaseStatistics("./shape_analysis.csv");
-
+    std::string databsePathResampled = "./ResampledDatabase/";
+    prep.AnalyzeShapes(databsePath, "./shape_analysis.csv");
+    prep.DatabaseStatistics("./shape_analysis.csv");
+    prep.Resampling(databsePath, databsePathResampled);
+    prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp.csv");
+    prep.DatabaseStatistics("./shape_analysis_resamp.csv");
     std::cout << "Specify path for the desired object:" << std::endl;
     std::string userInput;
     std::cin >> userInput;
     std::string inputFile = userInput;
+
 	if (!fo.LoadObj(inputFile.c_str(), positions, indices))
 	{
 		std::cerr << "Failed to load obj" << std::endl;
@@ -178,20 +180,30 @@ int main(void)
     std::vector<float> outBarycenter;
 
     glm::vec3 barycenter = prep.ComputeBarycenter(positions);
+	std::cout <<" before bary" << positions[0] << std::endl;
     for (int i = 0; i < positions.size(); i += 6) {
         positions[i + 0] -= barycenter.x;
         positions[i + 1] -= barycenter.y;
         positions[i + 2] -= barycenter.z;
     }
+    std::cout << " before bary" << positions[0] << std::endl;
+    
+    MeshData data;
+	data.positions = positions;
+	data.indices = indices;
+	fo.WriteNewObj(inputFile, data);
+    prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp.csv");
+    prep.DatabaseStatistics("./shape_analysis_resamp.csv");
 
     fs::path sourcePath = inputFile;
-    //positions = prep.NormalizeScale(positions, sourcePath);
-
-    prep.AnalyzeShapes(databsePath);
-    prep.DatabaseStatistics("./shape_analysis.csv");
-   
-    glm::vec3 barycenterAgain = prep.ComputeBarycenter(positions);
-    std::cout << "Barycenter: " << glm::to_string(barycenterAgain) << std::endl;
+    positions = prep.NormalizeScale(positions, sourcePath);
+    std::cout << "after normal" << positions[0] << std::endl;
+    MeshData normalizedData;
+    normalizedData.positions = positions;
+    normalizedData.indices = indices;
+    fo.WriteNewObj(inputFile, normalizedData);
+    prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp_norm.csv");
+    prep.DatabaseStatistics("./shape_analysis_resamp_norm.csv");
 
     unsigned int vao;
     glGenVertexArrays(1, &vao);

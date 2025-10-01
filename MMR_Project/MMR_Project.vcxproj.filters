@@ -27,13 +27,21 @@
     <ClCompile Include="src\Preprocessing.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\FileOrganizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Simplification.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Refinement.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\Fragment.shader" />
     <None Include="res\shaders\Vertex.shader" />
     <None Include="res\shaders\wireframeFragment.shader" />
-    <None Include="shape_analysis.csv" />
     <None Include="src\MMRLibrary\include\UnstructuredGrid.h~" />
     <None Include="src\MMRLibrary\include\UnstructuredGrid3D.h~" />
     <None Include="src\MMRLibrary\Makefile" />
@@ -95,6 +103,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\MMRLibrary\include\zpr.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FileOrganizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Simplification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Refinement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

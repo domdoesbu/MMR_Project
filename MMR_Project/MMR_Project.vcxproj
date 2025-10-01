@@ -104,14 +104,15 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;VCG_USEPLY;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\tiny_obj_loader;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\Python\include;$(SolutionDir)Dependencies\numpy;$(SolutionDir)Dependencies\GLUT\include\GL;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\vcg\wrap;$(SolutionDir)Dependencies\vcg\eigenlib</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\tiny_obj_loader;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\Python\include;$(SolutionDir)Dependencies\numpy;$(SolutionDir)Dependencies\GLUT\include\GL;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\vcg\wrap;$(SolutionDir)Dependencies\vcg\eigenlib;$(SolutionDir)Dependencies\MeshLib\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/bigobj /utf8</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022;$(SolutionDir)Dependencies\GLEW\lib\Release\x64;$(SolutionDir)Dependencies\Python\lib;$(SolutionDir)Dependencies\vcg</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib;opengl32.lib;glew32s.lib;python313.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022;$(SolutionDir)Dependencies\GLEW\lib\Release\x64;$(SolutionDir)Dependencies\Python\lib;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\MeshLib\lib\Release;$(SolutionDir)Dependencies\MeshLib\app\Release;$(SolutionDir)Dependencies\MeshLib\app\Debug;$(SolutionDir)Dependencies\MeshLib\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib;opengl32.lib;glew32s.lib;python313.lib;$(SolutionDir)Dependencies\MeshLib\lib\Debug\*.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -122,19 +123,23 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;VCG_USEPLY;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\tiny_obj_loader;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\Python\include;$(SolutionDir)Dependencies\numpy;$(SolutionDir)Dependencies\GLUT\include\GL;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\vcg\wrap;$(SolutionDir)Dependencies\vcg\eigenlib</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\tiny_obj_loader;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\Python\include;$(SolutionDir)Dependencies\numpy;$(SolutionDir)Dependencies\GLUT\include\GL;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\vcg\wrap;$(SolutionDir)Dependencies\vcg\eigenlib;$(SolutionDir)Dependencies\MeshLib\include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalOptions>/bigobj /utf8</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022;$(SolutionDir)Dependencies\GLEW\lib\Release\x64;$(SolutionDir)Dependencies\Python\lib;$(SolutionDir)Dependencies\vcg</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib;opengl32.lib;glew32s.lib;python313.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependencies\GLFW\lib-vc2022;$(SolutionDir)Dependencies\GLEW\lib\Release\x64;$(SolutionDir)Dependencies\Python\lib;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\MeshLib\lib\Release;$(SolutionDir)Dependencies\MeshLib\app\Release;$(SolutionDir)Dependencies\MeshLib\app\Debug;$(SolutionDir)Dependencies\MeshLib\lib\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(CoreLibraryDependencies);%(AdditionalDependencies);glfw3.lib;opengl32.lib;glew32s.lib;python313.lib;$(SolutionDir)Dependencies\MeshLib\lib\Debug\*.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Refinement.cpp" />
+    <ClCompile Include="src\Simplification.cpp" />
+    <ClCompile Include="src\FileOrganizer.cpp" />
     <ClCompile Include="src\Preprocessing.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\Camera.cpp" />
@@ -145,13 +150,15 @@
     <None Include="res\shaders\Fragment.shader" />
     <None Include="res\shaders\Vertex.shader" />
     <None Include="res\shaders\wireframeFragment.shader" />
-    <None Include="shape_analysis.csv" />
     <None Include="src\MMRLibrary\include\UnstructuredGrid.h~" />
     <None Include="src\MMRLibrary\include\UnstructuredGrid3D.h~" />
     <None Include="src\MMRLibrary\Makefile" />
     <None Include="src\MMRLibrary\refined.ply" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Refinement.h" />
+    <ClInclude Include="src\Simplification.h" />
+    <ClInclude Include="src\FileOrganizer.h" />
     <ClInclude Include="src\matplotlibcpp.h" />
     <ClInclude Include="src\MMRLibrary\include\Grid.h" />
     <ClInclude Include="src\MMRLibrary\include\MeshRenderer.h" />

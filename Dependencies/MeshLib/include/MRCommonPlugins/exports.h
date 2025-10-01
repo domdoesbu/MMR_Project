@@ -1,0 +1,14 @@
+// (C) 2024, AMV Consulting
+#pragma once
+#ifdef _WIN32
+#   ifdef MRCommonPlugins_EXPORTS
+#       define MRCOMMONPLUGINS_API __declspec(dllexport)
+#   else
+#       define MRCOMMONPLUGINS_API __declspec(dllimport)
+#   endif
+#   define MRCOMMONPLUGINS_CLASS
+#else
+#   define MRCOMMONPLUGINS_API __attribute__((visibility("default")))
+// to fix undefined reference to `typeinfo/vtable
+#   define MRCOMMONPLUGINS_CLASS __attribute__((visibility("default")))
+#endif

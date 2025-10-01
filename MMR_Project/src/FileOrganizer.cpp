@@ -123,6 +123,7 @@ void FileOrganizer::WriteNewObj(std::string destinationFilename, MeshData result
         std::cerr << "Error: Could not open file for writing: " << destinationFilename << std::endl;
     }
     else {
+        std::cout << results.positions[0] << std::endl;
         // Write vertices
         for (size_t i = 0; i < results.positions.size(); i += 6) {
             float x = results.positions[i + 0];

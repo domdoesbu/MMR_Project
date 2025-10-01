@@ -43,7 +43,7 @@ public:
 
 	void AnalyzeShape(std::filesystem::path filename, shapeInfo& outInfo);
 
-	void AnalyzeShapes(const std::string& databasePath);
+	void AnalyzeShapes(const std::string& databasePath, const std::string& outputCsv);
 
 	/*
 	2.2: Statisitcs
@@ -74,7 +74,7 @@ public:
 
 	MeshData Refine(std::vector<float>& positions, std::vector<unsigned int>& indices, float targetRatio, std::string className, std::string filename);
 
-	int Resampling();
+	int Resampling(const std::string& source, const std::string& target);
 
 	/*
 	2.4. Checkiung the resampling
