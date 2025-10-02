@@ -6,8 +6,9 @@ void Refinement::Refine(std::filesystem::path file, std::string& outputDir, int 
 	mesh.packOptimally();
 
 	MR::SubdivideSettings settings;
+	settings.smoothMode = true;
 
-	settings.maxEdgeSplits = maxEdgeSplits;
+	settings.maxEdgeSplits = 50;
 	MR::subdivideMesh(mesh, settings);
 	MR::MeshSave::toAnySupportedFormat(mesh, outputDir);
 }

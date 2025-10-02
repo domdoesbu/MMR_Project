@@ -9,6 +9,7 @@ void Simplification::Simplify(std::filesystem::path file, std::string& outputDir
 
     //// Setup decimate parameters
     MR::DecimateSettings settings;
+    //settings.strategy = MR::DecimateStrategy::ShortestEdgeFirst;
 
     //// Decimation stop thresholds, you may specify one or both
     //// settings.maxDeletedFaces = 1000; // Number of faces to be deleted
@@ -16,7 +17,7 @@ void Simplification::Simplify(std::filesystem::path file, std::string& outputDir
 	settings.maxDeletedVertices = maxDeletedVerts; // Number of vertices to be deleted
     //// Number of parts to simultaneous processing, greatly improves performance by cost of minor quality loss.
     //// Recommended to set to the number of available CPU cores or more for the best performance
-    settings.subdivideParts = 64;
+    settings.subdivideParts = 1;
 
     //// Simplify mesh
     MR::decimateMesh(mesh, settings);

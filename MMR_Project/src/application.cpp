@@ -10,6 +10,8 @@
 #include <string>
 #include <sstream>
 #include "Simplification.h"
+#include "Refinement.h"
+
 struct ShaderProgramSource
 {
 	std::string VertexSource;
@@ -245,6 +247,7 @@ int main(void)
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
+    Refinement ref;
 
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -290,17 +293,17 @@ int main(void)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
         
-        //if (simplifyMesh) {
-        //    MeshData newMesh = prep.Simplify(positions, indices);
-        //    positions = newMesh.positions;
-        //    indices = newMesh.indices;
-        //    simplifyMesh = false;
-        //    glBindBuffer(GL_ARRAY_BUFFER, buffer);
-        //    glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
+        if (simplifyMesh) {
+            ref.Refine(inputFile, inputFile, 0);
+            fo.LoadObj(inputFile.c_str(), positions, indices);
+            simplifyMesh = false;
+            glBindBuffer(GL_ARRAY_BUFFER, buffer);
+            glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
 
-        //    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        //    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
-        //}
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+        }
 
         //if (refineMesh) {
         //    MeshData newMesh = prep.Refine(positions, indices, 1); // try 2 for more subdivision
