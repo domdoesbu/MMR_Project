@@ -1,5 +1,5 @@
 Class,File,Vertices,Faces,FaceType,Minx,Miny,Minz,Maxx,Maxy,Maxz
-AircraftBuoyant,m1337.obj,59,94,"Triangles",0.0152932,0.0247779,0.0330329,0.899186,0.974366,0.882301
+AircraftBuoyant,m1337.obj,201,340,"Triangles",0.025,0.025,0.025,0.889234,0.975,0.889234
 AircraftBuoyant,m1338.obj,8761,16960,"Triangles",0.025,0.025,0.025,0.933058,0.975,0.937901
 AircraftBuoyant,m1339.obj,1878,6173,"Triangles",0.025,0.025,0.025,0.607072,0.975,0.626812
 AircraftBuoyant,m1340.obj,778,1457,"Triangles",0.025,0.025,0.025,0.367686,0.975,0.367689
