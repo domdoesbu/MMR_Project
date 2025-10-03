@@ -368,6 +368,7 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
     fs::path sourcePath = source;
     fs::path targetParent = target;
     std::string databasePath = sourcePath.string();
+    int resmapledCount = 0;
     for (const auto& classDir : fs::directory_iterator(databasePath)) {
         if (!fs::is_directory(classDir)) continue;
         std::string className = classDir.path().filename().string();
@@ -394,6 +395,7 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
                 std::cout << path << std::endl;
                 int maxEdgeSplits = 5000 - (positions.size()/6);
 				ref.Refine(file.path(), path, maxEdgeSplits);
+				resmapledCount++;
             }
             else if (positions.size() / 6 > 10000) { //Simplification
 
@@ -402,6 +404,7 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
 
                 int maxDeletedVerts = (positions.size() / 6) - 9000;
                 simp.Simplify(file.path(), path, maxDeletedVerts);
+				resmapledCount++;
             }
             else {
 
@@ -416,7 +419,7 @@ glm::vec3 Preprocessing::ComputeBarycenter(std::vector<float> positions)
     glm::vec3 barycenter(0.0f);
     float sumOfAreas = 0.0f;
 
-    for (int i = 0; i < positions.size(); i += 18) {
+    for (int i = 0; i + 14 < positions.size(); i += 18) {
         glm::vec3 v1(positions[i + 0], positions[i + 1], positions[i + 2]);
         glm::vec3 v2(positions[i + 6], positions[i + 7], positions[i + 8]);
         glm::vec3 v3(positions[i + 12], positions[i + 13], positions[i + 14]);
@@ -443,6 +446,8 @@ glm::vec3 Preprocessing::ComputeBarycenter(std::vector<float> positions)
     if (sumOfAreas > 0.0f) {
         barycenter /= sumOfAreas;
     }
+    else
+        barycenter = glm::vec3(0.0f);
     return barycenter;
 }
 

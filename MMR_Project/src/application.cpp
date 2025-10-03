@@ -163,10 +163,12 @@ int main(void)
 	//std::string databsePath = "./ShapeDatabase_INFOMR-master/";
 	std::string databsePath = "./test_objs/";
     std::string databsePathResampled = "./ResampledDatabase/";
+    std::string databsePathResampled2 = "./ResampledDatabase2/";
     prep.AnalyzeShapes(databsePath, "./shape_analysis.csv");
     prep.DatabaseStatistics("./shape_analysis.csv");
     prep.Resampling(databsePath, databsePathResampled);
-    prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp.csv");
+    /*prep.Resampling(databsePathResampled, databsePathResampled2);*/
+    prep.AnalyzeShapes(databsePathResampled2, "./shape_analysis_resamp.csv");
     prep.DatabaseStatistics("./shape_analysis_resamp.csv");
     std::cout << "Specify path for the desired object:" << std::endl;
     std::string userInput;
@@ -293,7 +295,7 @@ int main(void)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
         
-        if (simplifyMesh) {
+        /*if (simplifyMesh) {
             ref.Refine(inputFile, inputFile, 0);
             fo.LoadObj(inputFile.c_str(), positions, indices);
             simplifyMesh = false;
@@ -303,7 +305,7 @@ int main(void)
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
             glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
 
-        }
+        }*/
 
         //if (refineMesh) {
         //    MeshData newMesh = prep.Refine(positions, indices, 1); // try 2 for more subdivision
