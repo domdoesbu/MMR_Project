@@ -11,7 +11,8 @@
 #include <regex>
 #include <unordered_map>
 #include <tuple>
-
+#include <glm/glm.hpp>
+#include <Eigen/Dense>
 // MeshLibs
 #include "Simplification.h"
 #include "Refinement.h"
@@ -481,6 +482,68 @@ std::vector<float> Preprocessing::NormalizeScale(std::vector<float> positions, s
     }
 
     return scaledPositions;
+}
+
+void Preprocessing::NormalizeAlign(std::vector<float> &positions, int stride = 6, int posOffset = 0) {
+    
+    int vertexCount = positions.size() / stride;
+    // 1. Calculate the covariance matrix
+	Eigen::Matrix3f covariance = Eigen::Matrix3f::Zero();
+	size_t idx = posOffset;
+
+	for (size_t v = 0; v < vertexCount; ++v) {
+        float x = positions[idx + 0];
+        float y = positions[idx + 1];
+		float z = positions[idx + 2];
+        Eigen::Vector3f p(x, y, z);
+		covariance += p * p.transpose();
+	}
+	covariance /= static_cast<float>(vertexCount);
+
+    // 2. Calculate the covariance eigen valuyes and eigen vectors
+	Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> solver(covariance);
+	if (solver.info() != Eigen::Success) {
+		std::cerr << "Eigen decomposition failed!" << std::endl;
+		return;
+	}
+
+	Eigen::Vector3f eigVals = solver.eigenvalues();
+    Eigen::Matrix3f eigVecs = solver.eigenvectors();
+
+    int idxOrder[3] = { 0,1,2 };
+    for (int i = 0; i < 3; ++i) {
+        int best = i;
+        for (int j = i + 1; j < 3; j++) {
+            if (eigVals(idxOrder[j]) > eigVals(idxOrder[best])) {
+				best = j;
+            }
+        }
+		std::swap(idxOrder[i], idxOrder[best]);
+    }
+    
+	Eigen::Matrix3f rotation;
+	rotation.col(0) = eigVecs.col(idxOrder[0]);
+	rotation.col(1) = eigVecs.col(idxOrder[1]);
+	rotation.col(2) = eigVecs.col(idxOrder[2]);
+
+	float det = rotation.determinant();
+    if (det < 0) {
+		rotation.col(2) = -rotation.col(2);
+		det = rotation.determinant();
+    }
+
+	Eigen::Matrix3f invRotation = rotation.transpose();
+
+	// 3. Rotate all vertices
+	idx = posOffset;
+    for (size_t v = 0; v < vertexCount; ++v, idx += stride) {
+		Eigen::Vector3f p(positions[idx + 0], positions[idx + 1], positions[idx + 2]);
+		Eigen::Vector3f pRotated = invRotation * p;
+		positions[idx + 0] = pRotated.x();
+        positions[idx + 1] = pRotated.y();
+		positions[idx + 2] = pRotated.z();
+    }
+
 }
 
 

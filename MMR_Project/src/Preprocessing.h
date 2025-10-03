@@ -67,12 +67,6 @@ public:
 			b. or by adding vertices/facesa.
 		3. Maybe save the new shapes?
 	*/
-	
-	
-	
-	MeshData Simplify(std::vector<float>& positions, std::vector<unsigned int>& indices, float targetRatio, std::string className, std::string filename);
-
-	MeshData Refine(std::vector<float>& positions, std::vector<unsigned int>& indices, float targetRatio, std::string className, std::string filename);
 
 	int Resampling(const std::string& source, const std::string& target);
 
@@ -97,6 +91,8 @@ public:
 	glm::vec3 ComputeBarycenter(std::vector<float> positions);
 
 	std::vector<float> NormalizeScale(std::vector<float> positions, std::filesystem::path filename);
+
+	void NormalizeAlign(std::vector<float> &positions, int stride, int posOffset);
 
 
 };

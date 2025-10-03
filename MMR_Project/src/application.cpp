@@ -12,6 +12,7 @@
 #include "Simplification.h"
 #include "Refinement.h"
 
+
 struct ShaderProgramSource
 {
 	std::string VertexSource;
@@ -184,14 +185,14 @@ int main(void)
     std::vector<float> outBarycenter;
 
     glm::vec3 barycenter = prep.ComputeBarycenter(positions);
-	std::cout <<" before bary" << positions[0] << std::endl;
     for (int i = 0; i < positions.size(); i += 6) {
         positions[i + 0] -= barycenter.x;
         positions[i + 1] -= barycenter.y;
         positions[i + 2] -= barycenter.z;
     }
-    std::cout << " before bary" << positions[0] << std::endl;
     
+	prep.NormalizeAlign(positions, 6, 0);
+
     MeshData data;
 	data.positions = positions;
 	data.indices = indices;
