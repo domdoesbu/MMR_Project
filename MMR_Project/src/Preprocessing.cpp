@@ -13,6 +13,7 @@
 #include <tuple>
 #include <glm/glm.hpp>
 #include <Eigen/Dense>
+#include <cmath>
 // MeshLibs
 #include "Simplification.h"
 #include "Refinement.h"
@@ -546,4 +547,45 @@ void Preprocessing::NormalizeAlign(std::vector<float> &positions, int stride = 6
 
 }
 
+void Preprocessing::NormalizeFlipping(std::vector<float>& positions, std::vector<unsigned int>& indices, int stride, int posOffset) 
+{
+    // fi = sum sign(Ct,i)(Ct,i)^2
+    // Ct, i = coordinate of the center of traingfle t
 
+    // Update formula
+    // xi = xi sign(f0)
+	// yi = yi sign(f1)
+	// zi = zi sign(f2)
+
+    for (int axis = 0; axis < 3; ++axis) {
+        float positiveMass = 0.0f;
+		float negativeMass = 0.0f;
+
+        for (size_t i = 0; i < indices.size(); i += 3) {
+            unsigned int i0 = indices[i + 0] * stride + posOffset;
+            unsigned int i1 = indices[i + 1] * stride + posOffset;
+			unsigned int i2 = indices[i + 2] * stride + posOffset;
+			glm::fvec3 v0(positions[i0 + 0], positions[i0 + 1], positions[i0 + 2]);
+			glm::fvec3 v1(positions[i1 + 0], positions[i1 + 1], positions[i1 + 2]);
+			glm::fvec3 v2(positions[i2 + 0], positions[i2 + 1], positions[i2 + 2]);
+			
+            // area
+			float area = 0.5f * glm::length(glm::cross(v1 - v0, v2 - v0));
+			glm::fvec3 center = (v0 + v1 + v2) / 3.0f;
+
+            if (center[axis] >= 0) {
+                positiveMass += area;
+            }
+            else
+            {
+                negativeMass += area;
+            }
+        }
+
+        if (negativeMass > positiveMass) {
+            for (size_t i = posOffset; i < positions.size(); i += stride) {
+                positions[i + axis] = -positions[i + axis];
+            }
+        }
+    }
+}

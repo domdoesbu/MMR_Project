@@ -94,6 +94,7 @@ public:
 
 	void NormalizeAlign(std::vector<float> &positions, int stride, int posOffset);
 
+	void NormalizeFlipping(std::vector<float>& positions, std::vector<unsigned int>& indices, int stride, int posOffset);
 
 };
 

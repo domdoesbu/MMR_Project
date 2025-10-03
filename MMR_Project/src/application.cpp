@@ -192,6 +192,7 @@ int main(void)
     }
     
 	prep.NormalizeAlign(positions, 6, 0);
+	prep.NormalizeFlipping(positions, indices, 6, 0);
 
     MeshData data;
 	data.positions = positions;
