@@ -66,4 +66,5 @@ AquaticAnimal,m77.obj,11578,23022,"Triangles",0.025,0.025,0.025,0.975,0.407994,0
 AquaticAnimal,m78.obj,468,734,"Triangles",0.025,0.025,0.025,0.975,0.51665,0.428181
 AquaticAnimal,m79.obj,166,226,"Triangles",0.025,0.025,0.025,0.975,0.256171,0.300958
 AquaticAnimal,m80.obj,1104,2104,"Triangles",0.025,0.025,0.025,0.975,0.308883,0.416001
-AquaticAnimal,m81.obj,857,1673,"Triangles",0.025,0.025,0.025,0.4145,0.291,0.975
+AquaticAnimal,m81.obj,857,1673,"Triangles",-0.5,-0.146164,-0.104727,0.346253,0.177172,0.160758
+AquaticAnimal,sphere.obj,482,960,"Triangles",-0.420879,-0.335492,-0.417745,0.418636,0.5,0.417746

@@ -1,16 +1,18 @@
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
-#include "FileOrganizer.h"
-#include "Camera.h"
-#include "Shader.h"
-#include "Preprocessing.h"
-#include <iostream>
 #include <direct.h>
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <iostream>
+
+#include "FileOrganizer.h"
+#include "Camera.h"
+#include "Shader.h"
+#include "Preprocessing.h"
 #include "Simplification.h"
 #include "Refinement.h"
+#include "FeatureExtraction.h"
 
 
 struct ShaderProgramSource
@@ -167,8 +169,10 @@ int main(void)
     std::string databsePathResampled2 = "./ResampledDatabase2/";
     prep.AnalyzeShapes(databsePath, "./shape_analysis.csv");
     prep.DatabaseStatistics("./shape_analysis.csv");
+
+    // Remeshing
     prep.Resampling(databsePath, databsePathResampled);
-    /*prep.Resampling(databsePathResampled, databsePathResampled2);*/
+
     prep.AnalyzeShapes(databsePathResampled2, "./shape_analysis_resamp.csv");
     prep.DatabaseStatistics("./shape_analysis_resamp.csv");
     std::cout << "Specify path for the desired object:" << std::endl;
@@ -182,7 +186,7 @@ int main(void)
 		return -1;
 	}
 
-    std::vector<float> outBarycenter;
+    // Translation
 
     glm::vec3 barycenter = prep.ComputeBarycenter(positions);
     for (int i = 0; i < positions.size(); i += 6) {
@@ -191,8 +195,14 @@ int main(void)
         positions[i + 2] -= barycenter.z;
     }
     
-	prep.NormalizeAlign(positions, 6, 0);
-	prep.NormalizeFlipping(positions, indices, 6, 0);
+    // Pose
+	Eigen::Vector3f eigVals = prep.NormalizeAlign(positions, 6, 0);
+	
+	float largeEig = eigVals(2);
+	float smallEig = eigVals(0);
+
+    // Flipping
+    prep.NormalizeFlipping(positions, indices, 6, 0);
 
     MeshData data;
 	data.positions = positions;
@@ -202,8 +212,17 @@ int main(void)
     prep.DatabaseStatistics("./shape_analysis_resamp.csv");
 
     fs::path sourcePath = inputFile;
+
+    // Size
     positions = prep.NormalizeScale(positions, sourcePath);
-    std::cout << "after normal" << positions[0] << std::endl;
+
+	FeatureExtraction fe;
+
+	float diameter = fe.Diameter(positions);
+	std::cout << "Diameter: " << diameter << std::endl;
+	float eccentricity = fe.Eccentricity(largeEig, smallEig);
+	std::cout << "Eccentricity: " << eccentricity << std::endl;
+
     MeshData normalizedData;
     normalizedData.positions = positions;
     normalizedData.indices = indices;

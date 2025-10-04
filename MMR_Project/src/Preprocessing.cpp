@@ -485,27 +485,37 @@ std::vector<float> Preprocessing::NormalizeScale(std::vector<float> positions, s
     return scaledPositions;
 }
 
-void Preprocessing::NormalizeAlign(std::vector<float> &positions, int stride = 6, int posOffset = 0) {
+Eigen::Vector3f Preprocessing::NormalizeAlign(std::vector<float> &positions, int stride = 6, int posOffset = 0) {
     
     int vertexCount = positions.size() / stride;
     // 1. Calculate the covariance matrix
-	Eigen::Matrix3f covariance = Eigen::Matrix3f::Zero();
+
 	size_t idx = posOffset;
 
-	for (size_t v = 0; v < vertexCount; ++v) {
-        float x = positions[idx + 0];
-        float y = positions[idx + 1];
-		float z = positions[idx + 2];
-        Eigen::Vector3f p(x, y, z);
-		covariance += p * p.transpose();
-	}
-	covariance /= static_cast<float>(vertexCount);
+    Eigen::Vector3f mean(0, 0, 0);
+    idx = posOffset;
+    for (size_t v = 0; v < vertexCount; ++v, idx += stride) {
+        mean.x() += positions[idx + 0];
+        mean.y() += positions[idx + 1];
+        mean.z() += positions[idx + 2];
+    }
+    mean /= static_cast<float>(vertexCount);
+
+    // 1. Compute covariance
+    Eigen::Matrix3f covariance = Eigen::Matrix3f::Zero();
+    idx = posOffset;
+    for (size_t v = 0; v < vertexCount; ++v, idx += stride) {
+        Eigen::Vector3f p(positions[idx + 0], positions[idx + 1], positions[idx + 2]);
+        Eigen::Vector3f d = p - mean;
+        covariance += d * d.transpose();
+    }
+    covariance /= static_cast<float>(vertexCount);
 
     // 2. Calculate the covariance eigen valuyes and eigen vectors
 	Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> solver(covariance);
 	if (solver.info() != Eigen::Success) {
 		std::cerr << "Eigen decomposition failed!" << std::endl;
-		return;
+		return Eigen::Vector3f::Zero();
 	}
 
 	Eigen::Vector3f eigVals = solver.eigenvalues();
@@ -544,7 +554,8 @@ void Preprocessing::NormalizeAlign(std::vector<float> &positions, int stride = 6
         positions[idx + 1] = pRotated.y();
 		positions[idx + 2] = pRotated.z();
     }
-
+	
+    return eigVals;
 }
 
 void Preprocessing::NormalizeFlipping(std::vector<float>& positions, std::vector<unsigned int>& indices, int stride, int posOffset) 
