@@ -1,0 +1,6 @@
+// (C) 2024, AMV Consulting
+#pragma once
+
+#if defined( MR_USE_CMAKE_CONFIGURE_FILE ) && __has_include( "config_cmake.h" )
+#include "config_cmake.h"
+#endif

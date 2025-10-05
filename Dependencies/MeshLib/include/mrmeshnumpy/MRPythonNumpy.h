@@ -1,0 +1,6 @@
+// (C) 2024, AMV Consulting
+#pragma once
+
+#ifndef MRMESHNUMPY_PARENT_MODULE_NAME
+#define MRMESHNUMPY_PARENT_MODULE_NAME meshlib
+#endif

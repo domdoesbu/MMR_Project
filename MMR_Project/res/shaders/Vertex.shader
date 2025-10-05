@@ -11,31 +11,19 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
+
 out vec3 FragPos;
 out vec3 vertexColor; 
 out vec3 Normal;
 
 void main()
 {
-	// FragPos = vec3(model * vec4(position, 1.0));
-	// gl_Position = projection * view * model * vec4(position, 1.0);
-
-	// To get Gouraud shading lighting calculations are done per vertex
-	// float ambientStrength = 0.5;
-	// vec3 ambient = ambientStrength * lightColor;
-	
-	// vec3 norm = normalize(normal);
-	// vec3 lightDir = normalize(lightPos - FragPos);
-	
-	// float diff = max(dot(norm, lightDir), 0.0);
-	// vec3 diffuse = diff * lightColor;
-	// vertexColor = clamp((ambient + diffuse) * objectColor, 0.0, 1.0);
-
-	// Normal = normal;
-
 	// Transform vertex position to world space
     vec3 FragPos = vec3(model * vec4(position, 1.0));
     gl_Position = projection * view * model * vec4(position, 1.0);
+
+	
+
 
     // Transform normal to world space (important if model is scaled/rotated)
     mat3 normalMatrix = transpose(inverse(mat3(model)));
@@ -51,6 +39,4 @@ void main()
 
     // Final vertex color (ambient + diffuse)
     vertexColor = clamp((ambient + diffuse) * objectColor, 0.0, 1.0);
-
-
 };

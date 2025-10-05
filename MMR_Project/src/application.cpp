@@ -1,19 +1,19 @@
-#define GLM_ENABLE_EXPERIMENTAL
-#define TINYOBJLOADER_IMPLEMENTATION
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
-#include "glm/glm.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include <glm/gtx/string_cast.hpp>
-#include "./include/tiny_obj_loader.h"
-#include "Camera.h"
-#include "Shader.h"
-
-#include <iostream>
 #include <direct.h>
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <iostream>
+
+#include "FileOrganizer.h"
+#include "Camera.h"
+#include "Shader.h"
+#include "Preprocessing.h"
+#include "Simplification.h"
+#include "Refinement.h"
+#include "FeatureExtraction.h"
+
 
 struct ShaderProgramSource
 {
@@ -21,9 +21,11 @@ struct ShaderProgramSource
 	std::string FragmentSource;
 };
 
+
 bool drawWireframe = false;
 bool togglePan = false;
- 
+bool simplifyMesh = false;
+bool refineMesh = false;
 void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (action == GLFW_PRESS)
@@ -36,7 +38,13 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods
         case GLFW_KEY_P:
             drawWireframe = !drawWireframe;
             break;
-        }
+        case GLFW_KEY_M:
+			simplifyMesh = !simplifyMesh;
+            break;
+        case GLFW_KEY_N:
+            refineMesh = !refineMesh;
+            break;
+        }        
     }
 }
 
@@ -73,7 +81,7 @@ void HandleInput(GLFWwindow* window, Camera& camera, float deltaTime)
 
 }
 
-Camera camera(glm::vec3(0,0,-4), glm::vec3(0), 60.0f, 16/9);
+Camera camera(glm::vec3(0,0,-2), glm::vec3(0), 60.0f, 16/9);
 
 struct Vertex {
 	float position[3];
@@ -81,117 +89,42 @@ struct Vertex {
 	float texcoord[2];
 };
 
-
-static bool LoadObj(const char* inputFile, std::vector<float>&outVertices, std::vector<unsigned int>&outIndices)
+static void findBarycenter(std::vector<float> positions, std::vector<unsigned int> indices, std::vector<float>&outBarycenter)
 {
-    tinyobj::ObjReaderConfig readerConfig;
-    readerConfig.mtl_search_path = "./test_objs/";
-    tinyobj::ObjReader reader;
+    float sumX = 0.0, sumY = 0.0, sumZ = 0.0;
+    for (int i = 0; i < positions.size() - 3; ++i) 
+    {
+        sumX += positions[i + 0];
+        sumY += positions[i + 1];
+        sumZ += positions[i + 2];
+    }
+    unsigned int size = positions.size()/3;
 
-    if (!reader.ParseFromFile(inputFile, readerConfig)) {
-        if (!reader.Error().empty()) {
-            std::cerr << "TinyObjReader: " << reader.Error() << std::endl;
-        }
-        return false;
+    float avgX = sumX / size;
+    float avgY = sumY / size;
+    float avgZ = sumZ / size;
+
+    std::vector<float> distX, distY, distZ;
+    for (int i = 0; i < positions.size() - 3; ++i)
+    {
+        distX.push_back(abs(avgX - positions[i + 0]));
+        distY.push_back(abs(avgY - positions[i + 1]));
+        distZ.push_back(abs(avgZ - positions[i + 2]));
     }
 
-    if (!reader.Warning().empty()) {
-        std::cout << "TinyObjReader: " << reader.Warning() << std::endl;
-    }
+    float avgPosX = *std::min_element(distX.begin(), distX.end());
+    float avgPosY= *std::min_element(distY.begin(), distY.end());
+    float avgPosZ = *std::min_element(distZ.begin(), distZ.end());
 
-    const tinyobj::attrib_t& attrib = reader.GetAttrib();
-    const std::vector<tinyobj::shape_t>& shapes = reader.GetShapes();
+    std::cout << avgPosX << std::endl;
 
-    outVertices.clear();
-    outIndices.clear();
-
-    // Temporary arrays
-    std::vector<glm::vec3> positions(attrib.vertices.size() / 3);
-    for (size_t i = 0; i < positions.size(); i++) {
-        positions[i] = glm::vec3(
-            attrib.vertices[3 * i + 0],
-            attrib.vertices[3 * i + 1],
-            attrib.vertices[3 * i + 2]
-        );
-    }
-
-    std::vector<glm::vec3> normals;
-    bool hasNormals = !attrib.normals.empty();
-    if (hasNormals) {
-        normals.resize(attrib.normals.size() / 3);
-        for (size_t i = 0; i < normals.size(); i++) {
-            normals[i] = glm::vec3(
-                attrib.normals[3 * i + 0],
-                attrib.normals[3 * i + 1],
-                attrib.normals[3 * i + 2]
-            );
-        }
-    }
-    else {
-        normals.resize(positions.size(), glm::vec3(0.0f));
-    }
-
-    for (const auto& shape : shapes) {
-        size_t index_offset = 0;
-        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) {
-            int fv = shape.mesh.num_face_vertices[f];
-            if (fv != 3) {
-                std::cerr << "Warning: non-triangle face detected. Skipping.\n";
-                index_offset += fv;
-                continue;
-            }
-
-            glm::vec3 faceNormal(0.0f);
-
-            for (int v = 0; v < fv; v++) {
-                tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
-                outIndices.push_back(idx.vertex_index);
-
-                // If normals are missing, compute face normal
-                if (!hasNormals) {
-                    glm::vec3 v0 = positions[shape.mesh.indices[index_offset + 0].vertex_index];
-                    glm::vec3 v1 = positions[shape.mesh.indices[index_offset + 1].vertex_index];
-                    glm::vec3 v2 = positions[shape.mesh.indices[index_offset + 2].vertex_index];
-                    faceNormal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
-                }
-            }
-
-            if (!hasNormals) {
-                // Accumulate face normal into vertex normals
-                for (int v = 0; v < fv; v++) {
-                    tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
-                    normals[idx.vertex_index] += faceNormal;
-                }
-            }
-
-            index_offset += fv;
-        }
-    }
-
-    if (!hasNormals) {
-        for (auto& n : normals) {
-            n = glm::normalize(n);
-        }
-    }
-
-    // Interleave position + normal
-    outVertices.reserve(positions.size() * 6);
-    for (size_t i = 0; i < positions.size(); i++) {
-        outVertices.push_back(positions[i].x);
-        outVertices.push_back(positions[i].y);
-        outVertices.push_back(positions[i].z);
-        outVertices.push_back(normals[i].x);
-        outVertices.push_back(normals[i].y);
-        outVertices.push_back(normals[i].z);
-    }
-
-    return true;
+    outBarycenter = { avgPosX, avgPosY, avgPosZ };
 }
-
 
 // fragment shader is the pixel shader. ran once for each pixel: colour of specific pixel
 // vertex shader is ran once for each vertex, so with a triangle, its ran 3 times
 
+namespace fs = std::filesystem;
 
 int main(void)
 {
@@ -200,12 +133,6 @@ int main(void)
     /* Initialize the library */
     if (!glfwInit())
         return -1;
-
-    // Request object to user
-    std::cout << "Specify path for the desired object:" << std::endl;
-    std::string userInput;
-    std::cin >> userInput;
-    std::string inputFile = "./test_objs/" + userInput;
 
     /* Create a windowed mode window and its OpenGL context */
     window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
@@ -229,14 +156,79 @@ int main(void)
 		std::cout << "Error!" << std::endl;
 	}
     // Load Obj
- 	std::vector<float> positions = std::vector<float> ();
-	std::vector<unsigned int> indices;
+    std::vector<float> positions = std::vector<float>();
+    std::vector<unsigned int> indices;
 
-	if (!LoadObj(inputFile.c_str(), positions, indices))
+    FileOrganizer fo;
+
+    Preprocessing prep;
+	
+	//std::string databsePath = "./ShapeDatabase_INFOMR-master/";
+	std::string databsePath = "./test_objs/";
+    std::string databsePathResampled = "./ResampledDatabase/";
+    std::string databsePathResampled2 = "./ResampledDatabase2/";
+    prep.AnalyzeShapes(databsePath, "./shape_analysis.csv");
+    prep.DatabaseStatistics("./shape_analysis.csv");
+
+    // Remeshing
+    prep.Resampling(databsePath, databsePathResampled);
+
+    prep.AnalyzeShapes(databsePathResampled2, "./shape_analysis_resamp.csv");
+    prep.DatabaseStatistics("./shape_analysis_resamp.csv");
+    std::cout << "Specify path for the desired object:" << std::endl;
+    std::string userInput;
+    std::cin >> userInput;
+    std::string inputFile = userInput;
+
+	if (!fo.LoadObj(inputFile.c_str(), positions, indices))
 	{
 		std::cerr << "Failed to load obj" << std::endl;
 		return -1;
 	}
+
+    // Translation
+
+    glm::vec3 barycenter = prep.ComputeBarycenter(positions);
+    for (int i = 0; i < positions.size(); i += 6) {
+        positions[i + 0] -= barycenter.x;
+        positions[i + 1] -= barycenter.y;
+        positions[i + 2] -= barycenter.z;
+    }
+    
+    // Pose
+	Eigen::Vector3f eigVals = prep.NormalizeAlign(positions, 6, 0);
+	
+	float largeEig = eigVals(2);
+	float smallEig = eigVals(0);
+
+    // Flipping
+    prep.NormalizeFlipping(positions, indices, 6, 0);
+
+    MeshData data;
+	data.positions = positions;
+	data.indices = indices;
+	fo.WriteNewObj(inputFile, data);
+    prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp.csv");
+    prep.DatabaseStatistics("./shape_analysis_resamp.csv");
+
+    fs::path sourcePath = inputFile;
+
+    // Size
+    positions = prep.NormalizeScale(positions, sourcePath);
+
+	FeatureExtraction fe;
+
+	float diameter = fe.Diameter(positions);
+	std::cout << "Diameter: " << diameter << std::endl;
+	float eccentricity = fe.Eccentricity(largeEig, smallEig);
+	std::cout << "Eccentricity: " << eccentricity << std::endl;
+
+    MeshData normalizedData;
+    normalizedData.positions = positions;
+    normalizedData.indices = indices;
+    fo.WriteNewObj(inputFile, normalizedData);
+    prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp_norm.csv");
+    prep.DatabaseStatistics("./shape_analysis_resamp_norm.csv");
 
     unsigned int vao;
     glGenVertexArrays(1, &vao);
@@ -278,10 +270,12 @@ int main(void)
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffer);
 
+    Refinement ref;
 
 	//glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+   
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
@@ -292,11 +286,15 @@ int main(void)
 		// Calculate camera angle
 		glm::mat4 viewMatrix = camera.GetViewMatrix();
 		glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
+
+		
 		glm::mat4 model = glm::mat4(1.0f);
+		//model = glm::translate(model, barycenter);
+		//model = glm::translate(barycenter, glm::vec3(0.0,0.0,0.0));
 		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1, 0, 0));
 
         solidShader.use();
-
+        //glUniform3f(glGetUniformLocation(solidShader.ID, "barycenter"), barycenter.x, barycenter.y, barycenter.z);
 		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
 		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
 		glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -317,7 +315,31 @@ int main(void)
         glBindVertexArray(vao);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, nullptr);
-    
+        
+        /*if (simplifyMesh) {
+            ref.Refine(inputFile, inputFile, 0);
+            fo.LoadObj(inputFile.c_str(), positions, indices);
+            simplifyMesh = false;
+            glBindBuffer(GL_ARRAY_BUFFER, buffer);
+            glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+
+        }*/
+
+        //if (refineMesh) {
+        //    MeshData newMesh = prep.Refine(positions, indices, 1); // try 2 for more subdivision
+        //    positions = newMesh.positions;
+        //    indices = newMesh.indices;
+        //    refineMesh = false;
+        //    glBindBuffer(GL_ARRAY_BUFFER, buffer);
+        //    glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);
+
+        //    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        //    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), indices.data(), GL_STATIC_DRAW);
+        //}
+
         if (drawWireframe) {
 			glEnable(GL_POLYGON_OFFSET_LINE);
 			glPolygonOffset(-1.0f, -1.0f);
@@ -334,6 +356,8 @@ int main(void)
         
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
+
+        
         
         /* Poll for and process events */
         glfwPollEvents();

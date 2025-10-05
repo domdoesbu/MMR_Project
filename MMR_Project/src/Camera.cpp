@@ -1,5 +1,5 @@
 #include "Camera.h"
-
+#include <iostream>
 glm::mat4 Camera::GetTransformMatrix()
 {
 	glm::mat4 translationMatrix = glm::translate(glm::mat4(1), position);
@@ -14,7 +14,8 @@ glm::mat4 Camera::GetViewMatrix()
 {
 	if (firstPerson)
 	{
-		forward = glm::vec3(glm::vec4(position + glm::vec3(0, 0, -1), 1.0f) * GetTransformMatrix());
+		forward = glm::vec3(glm::vec4(position + glm::vec3(0, 0, 1), 1.0f) * GetTransformMatrix());
+		
 	}
 	else
 	{

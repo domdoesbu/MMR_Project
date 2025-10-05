@@ -14,7 +14,6 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -24,13 +23,35 @@
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe
 *.out
 *.app
 
+*.csv
 .vs/
-./MMR_Project/x64
-x64/
+
+Dependencies/MeshLib/app/Debug/meshlib/mrmeshpy.pyd
+Dependencies/MeshLib/app/Debug/MeshLibC2.ilk
+Dependencies/MeshLib/app/Debug/MRMesh.ilk
+Dependencies/MeshLib/app/Debug/MRViewer.ilk
+Dependencies/MeshLib/app/Debug/MRVoxels.ilk
+Dependencies/MeshLib/app/Release/meshlib/mrmeshpy.pyd
+Dependencies/MeshLib/lib/Debug/MeshLibC2.pdb
+Dependencies/MeshLib/lib/Debug/MRMesh.pdb
+Dependencies/MeshLib/lib/Debug/MRViewer.pdb
+Dependencies/MeshLib/lib/Debug/MRVoxels.pdb
+MMR_Project/x64/Debug/meshlib/mrmeshpy.pyd
+MMR_Project/x64/Debug/MeshLibC2.ilk
+MMR_Project/x64/Debug/MeshViewer.ilk
+MMR_Project/x64/Debug/MRMesh.ilk
+MMR_Project/x64/Debug/MRViewer.ilk
+MMR_Project/x64/Debug/MRVoxels.ilk
+MMR_Project/x64/Release/meshlib/mrmeshpy.pyd
+x64/Debug/meshlib/mrmeshpy.pyd
+x64/Debug/MeshLibC2.ilk
+x64/Debug/MRMesh.ilk
+x64/Debug/MRViewer.ilk
+x64/Debug/MRVoxels.ilk
+x64/Release/meshlib/mrmeshpy.pyd
