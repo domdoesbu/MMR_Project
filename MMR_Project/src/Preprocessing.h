@@ -4,7 +4,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
-
+#include <Eigen/Dense>
 #include "glm/gtc/type_ptr.hpp"
 #include <glm/gtx/string_cast.hpp>
 #include "glm/glm.hpp"
@@ -92,7 +92,7 @@ public:
 
 	std::vector<float> NormalizeScale(std::vector<float> positions, std::filesystem::path filename);
 
-	void NormalizeAlign(std::vector<float> &positions, int stride, int posOffset);
+	Eigen::Vector3f NormalizeAlign(std::vector<float> &positions, int stride, int posOffset);
 
 	void NormalizeFlipping(std::vector<float>& positions, std::vector<unsigned int>& indices, int stride, int posOffset);
 

@@ -36,7 +36,7 @@
     <ClCompile Include="src\Refinement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FeatureExtraction.cpp">
+    <ClCompile Include="src\FeatureExtraction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -117,7 +117,7 @@
     <ClInclude Include="src\Refinement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FeatureExtraction.h">
+    <ClInclude Include="src\FeatureExtraction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
