@@ -1,56 +1,58 @@
 ﻿cl : command line  warning D9002: ignoring unknown option '/utf8'
+  ElementaryFeatures.cpp
+  FeatureExtraction.cpp
+  Refinement.cpp
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\ElementaryFeatures.h(15,1): error C2143: syntax error: missing ';' before '}'
+  (compiling source file 'src/ElementaryFeatures.cpp')
+  
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Refinement.cpp(15,16): warning C4834: discarding return value of function with [[nodiscard]] attribute
+  Simplification.cpp
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Simplification.cpp(26,19): warning C4834: discarding return value of function with [[nodiscard]] attribute
+  FileOrganizer.cpp
   Preprocessing.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(94,25): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(95,23): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(206,26): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(206,26): warning C4267:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(206,26): warning C4267:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(206,26): warning C4267:             _Ty=int
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(206,26): warning C4267:         ]
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(207,28): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(207,28): warning C4267:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(207,28): warning C4267:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(207,28): warning C4267:             _Ty=int
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(207,28): warning C4267:         ]
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(229,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(234,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(246,27): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(248,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(274,34): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(281,34): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(288,27): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(293,27): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(298,33): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(300,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(304,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(398,35): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(407,37): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(490,21): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(94,25): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(95,23): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(206,26): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(206,26): warning C4267:         with
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(206,26): warning C4267:         [
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(206,26): warning C4267:             _Ty=int
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(206,26): warning C4267:         ]
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(207,28): warning C4267: 'argument': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(207,28): warning C4267:         with
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(207,28): warning C4267:         [
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(207,28): warning C4267:             _Ty=int
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(207,28): warning C4267:         ]
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(229,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(234,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(246,27): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(248,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(274,34): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(281,34): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(288,27): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(293,27): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(298,33): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(300,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(304,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(398,35): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(407,37): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(490,21): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
   (compiling source file 'src/Preprocessing.cpp')
-      C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
+      C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
       the template instantiation context (the oldest one first) is
-          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
+          C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
           see reference to function template instantiation 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' being compiled
   
+  Shader.cpp
+  Camera.cpp
   application.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(99,23): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(243,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(244,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(264,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(298,44): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(335,54): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  Generating code
-  12 of 3985 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
-    2 functions were new in current compilation
-    73 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
-  MMR_Project.vcxproj -> C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\MMR_Project.exe
-  'pwsh.exe' is not recognized as an internal or external command,
-  operable program or batch file.
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\application.cpp(99,23): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\application.cpp(243,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\application.cpp(244,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\application.cpp(264,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\application.cpp(298,44): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\leonp\Uni\MMR\MMR_Project\MMR_Project\src\application.cpp(335,54): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
