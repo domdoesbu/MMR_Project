@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include <iostream>
+#include <glm/glm.hpp>
 
 class FeatureExtraction
 {
@@ -23,15 +25,15 @@ public:
 	// Eccentricity (ratio of largest to smallest eigenvalues of covariance matrix)
 	float Eccentricity(float largeEig, float smallEig);
 	// A3
-
+	float A3(std::vector<float>& positions);
 	// D1
-
+	float D1(std::vector<float>& positions, glm::vec3 barycenter);
 	// D2
-
+	float D2(std::vector<float>& positions);
 	// D3
-
+	float D3(std::vector<float>& positions);
 	// D4
-
+	float D4(std::vector<float>& positions);
 
 };
 
