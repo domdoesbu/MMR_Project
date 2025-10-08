@@ -137,7 +137,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\ElementaryFeatures.cpp" />
     <ClCompile Include="src\FeatureExtraction.cpp" />
     <ClCompile Include="src\Refinement.cpp" />
     <ClCompile Include="src\Simplification.cpp" />
@@ -158,7 +157,6 @@
     <None Include="src\MMRLibrary\refined.ply" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ElementaryFeatures.h" />
     <ClInclude Include="src\FeatureExtraction.h" />
     <ClInclude Include="src\Refinement.h" />
     <ClInclude Include="src\Simplification.h" />
