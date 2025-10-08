@@ -10,24 +10,6 @@
 #include "glm/glm.hpp"
 #include "FileOrganizer.h"
 
-struct shapeInfo
-{
-	std::string className;
-	std::string fileName;
-
-	int vertexNum;
-	int faceNum;
-	std::string faceType;
-
-	float minX;
-	float minY;
-	float minZ;
-
-	float maxX;
-	float maxY;
-	float maxZ;
-};
-
 class Preprocessing
 {
 public:
