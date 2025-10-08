@@ -76,15 +76,15 @@ float FeatureExtraction::Rectangularity(std::vector<float> positions, float bary
 float FeatureExtraction::Convexity(std::vector<float> positions, float barycenter[3])
 {
     // Generate the convex hull mesh using MeshLib
-    MR::Mesh mesh;
-    MR::makeConvexHull(mesh);
+    //MR::Mesh mesh;
+    //MR::makeConvexHull(mesh);
 
-    // compute the volume of the convex hull
+    //// compute the volume of the convex hull
 
-    // compute the volume of the shape
-    float shapeVolume = ComputeVolume(positions, "triangles", barycenter);
+    //// compute the volume of the shape
+    //float shapeVolume = ComputeVolume(positions, "triangles", barycenter);
 
-    // return the ratio
+    //// return the ratio
 }
 
 // TODO: untested
