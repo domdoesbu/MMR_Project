@@ -1,12 +1,25 @@
 #pragma once
 #include <vector>
 #include <iostream>
-#include <glm/glm.hpp>
+#include<glm/glm.hpp>
+#include"FileOrganizer.h"
+#include<MRMesh/MRConvexHull.h>
 
 class FeatureExtraction
 {
 public:
 	FeatureExtraction() {};
+
+
+
+	float SurfaceArea(std::vector<float> positions);
+
+	// shape volume divided by OBB volume
+	float Rectangularity(std::vector<float> positions, float barycenter[3], std::string shapeFilename, std::string csvFilename);
+
+	// shape volume divided by convex hull volume, should return a histogram?
+	float Convexity(std::vector<float> positions, float barycenter[3]);
+
 
 	// Volume V
 
@@ -35,5 +48,11 @@ public:
 	// D4
 	float D4(std::vector<float>& positions);
 
+private:
+	float ComputeVolume(std::vector<float> positions, std::string faceType, float barycenter[3]);
+
+	float ComputeLocalArea(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3);
+
+	float Distance(glm::vec3 v1, glm::vec3 v2);
 };
 

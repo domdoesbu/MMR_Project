@@ -155,3 +155,38 @@ void FileOrganizer::WriteNewObj(std::string destinationFilename, MeshData result
         std::cout << "[ResamplingOutliers] Wrote OBJ: " << destinationFilename << std::endl;
     }
 }
+
+shapeInfo FileOrganizer::getShapeFromDatabase(std::string csvFilename, std::string shapeFilename)
+{
+    std::ifstream csvFile(csvFilename);
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open input CSV file: " << csvFilename << std::endl;
+        return;
+    }
+    std::string line;
+
+    shapeInfo outInfo;
+
+    while (std::getline(csvFile, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        std::getline(iss, outInfo.className, ',');
+        std::getline(iss, outInfo.fileName, ',');
+        if (outInfo.fileName == shapeFilename)
+        {
+            std::getline(iss, token, ','); outInfo.vertexNum = std::stoul(token);
+            std::getline(iss, token, ','); outInfo.faceNum = std::stoul(token);
+            std::getline(iss, outInfo.faceType, ',');
+            std::getline(iss, token, ','); outInfo.minX = std::stof(token);
+            std::getline(iss, token, ','); outInfo.minY = std::stof(token);
+            std::getline(iss, token, ','); outInfo.minZ = std::stof(token);
+            std::getline(iss, token, ','); outInfo.maxX = std::stof(token);
+            std::getline(iss, token, ','); outInfo.maxY = std::stof(token);
+            std::getline(iss, token, ','); outInfo.maxZ = std::stof(token);
+            csvFile.close();
+            return outInfo;
+        }
+    }
+    csvFile.close();
+    return outInfo;
+}

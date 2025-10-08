@@ -4,8 +4,6 @@
 #include <iostream>
 #include <filesystem>
 #include <string>
-#include <fstream>
-#include <sstream>
 #include <limits>
 #include <vector>
 #include <regex>
@@ -166,16 +164,8 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
         std::cerr << "Failed to open input CSV file: " << shapeAnalysisFile << std::endl;
         return;
     }
-    struct ShapeInfo {
-        std::string className;
-        std::string fileName;
-        size_t vertices;
-        size_t faces;
-        std::string faceType;
-        float minX, minY, minZ;
-        float maxX, maxY, maxZ;
-    };
-    std::vector<ShapeInfo> shapes;
+
+    std::vector<shapeInfo> shapes;
     std::vector<int> vertexVals;
 	std::vector<int> faceVals;
 	std::unordered_map<std::string, int> classNames;
@@ -189,11 +179,11 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     while (std::getline(csvFile, line)) {
         std::istringstream iss(line);
         std::string token;
-        ShapeInfo info;
+        shapeInfo info;
         std::getline(iss, info.className, ',');
         std::getline(iss, info.fileName, ',');
-        std::getline(iss, token, ','); info.vertices = std::stoul(token);
-        std::getline(iss, token, ','); info.faces = std::stoul(token);
+        std::getline(iss, token, ','); info.vertexNum = std::stoul(token);
+        std::getline(iss, token, ','); info.faceNum= std::stoul(token);
         std::getline(iss, info.faceType, ',');
         std::getline(iss, token, ','); info.minX = std::stof(token);
         std::getline(iss, token, ','); info.minY = std::stof(token);
@@ -203,8 +193,8 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
         std::getline(iss, token, ','); info.maxZ = std::stof(token);
 
 		classNames[info.className]++;
-		faceVals.push_back(info.faces);
-		vertexVals.push_back(info.vertices);
+		faceVals.push_back(info.faceNum);
+		vertexVals.push_back(info.vertexNum);
         shapes.push_back(info);
     }
    
@@ -217,8 +207,8 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     double totalVertices = 0.0;
     double totalFaces = 0.0;
     for (const auto& shape : shapes) {
-        totalVertices += shape.vertices;
-        totalFaces += shape.faces;
+        totalVertices += shape.vertexNum;
+        totalFaces += shape.faceNum;
     }
     double avgVertices = totalVertices / shapes.size();
 	double avgFaces = totalFaces / shapes.size();
@@ -231,7 +221,7 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     // Average Shape
     for (const auto& shape : shapes) {
 
-		float currentDistance = sqrt(pow(avgVertices - shape.vertices, 2) + pow(avgFaces - shape.faces, 2));
+		float currentDistance = sqrt(pow(avgVertices - shape.vertexNum, 2) + pow(avgFaces - shape.faceNum, 2));
 		if (currentDistance < minDistanceAvg) {
 			minDistanceAvg = currentDistance;
 			averageShapeFile = shape.fileName;
@@ -269,33 +259,33 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
 	for (const auto& shape : shapes) {
 		
         // Highest Number of verts
-        if (shape.vertices > maxVertNumber)
+        if (shape.vertexNum > maxVertNumber)
         {
-            maxVertNumber = shape.vertices;
+            maxVertNumber = shape.vertexNum;
             highVertOutlier = shape.fileName;
         }
 
         // Min number of verts
-        if (shape.vertices < minVertNumber)
+        if (shape.vertexNum< minVertNumber)
         {
-            minVertNumber = shape.vertices;
+            minVertNumber = shape.vertexNum;
             lowVertOutlier = shape.fileName;
         }
 
         // Faces
-		if (shape.faces < minFaceDistance)
+		if (shape.faceNum< minFaceDistance)
 		{
-			minFaceDistance = shape.faces;
+			minFaceDistance = shape.faceNum;
 			lowFaceOutlier = shape.fileName;
 		}
-		if (shape.faces > maxFaceDistance)
+		if (shape.faceNum > maxFaceDistance)
 		{
-			maxFaceDistance = shape.faces;
+			maxFaceDistance = shape.faceNum;
 			highFaceOutlier = shape.fileName;
 		}
 
         // Euclidean Distance
-        float currentDistanceEU = sqrt(pow(avgVertices - shape.vertices, 2) + pow(avgFaces - shape.faces, 2));
+        float currentDistanceEU = sqrt(pow(avgVertices - shape.vertexNum, 2) + pow(avgFaces - shape.faceNum, 2));
         if (currentDistanceEU < minEUDistance) {
             minEUDistance = currentDistanceEU;
             lowEDOutlier = shape.fileName;
