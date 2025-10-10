@@ -198,7 +198,7 @@ float FeatureExtraction::SurfaceArea(std::vector<float> positions)
     return sumOfAreas;
 }
 
-float FeatureExtraction::Rectangularity(std::vector<float> positions, float barycenter[3], std::string shapeFilename, std::string csvFilename)
+float FeatureExtraction::Rectangularity(std::vector<float> positions, glm::vec3 barycenter, std::string shapeFilename, std::string csvFilename)
 {
     // 1. Get eigen vector aligned bounding volume (which after full normalization is just the axis aligned one) from the csv database
     shapeInfo info;
@@ -223,23 +223,45 @@ float FeatureExtraction::Rectangularity(std::vector<float> positions, float bary
     return shapeVolume / OBBvolume;
 }
 
+void FeatureExtraction::GenerateConvexHull(std::string filename, std::string outputDir)
+{
+	MR::Mesh mesh = *MR::MeshLoad::fromAnySupportedFormat(filename);
+
+	//// Repack mesh optimally.
+	//// It's not necessary but highly recommended to achieve the best performance in parallel processing
+	mesh.packOptimally();
+
+	MR::Mesh convexHull = MR::makeConvexHull(mesh);
+	//ask Dom how this works
+	MR::MeshSave::toAnySupportedFormat(mesh, outputDir);
+	return;
+}
+
 // Shape volume divided by convex hull volume
-float FeatureExtraction::Convexity(std::vector<float> positions, float barycenter[3])
+float FeatureExtraction::Convexity(std::vector<float> positions, glm::vec3 barycenter, std::string filename)
 {
     // Generate the convex hull mesh using MeshLib
-    //MR::Mesh mesh;
-    //MR::makeConvexHull(mesh);
+	std::string chPath = "./ConvexHulls/" + filename; // I dont like how Im saving these and loading them, feels like a waste of time
+	GenerateConvexHull(filename, "./ConvexHulls/" + filename);
+	FileOrganizer fo;
+	std::vector<float> chPositions;
+	std::vector<unsigned int> chIndices;
+	fo.LoadObj(chPath.c_str(), chPositions, chIndices);
+	
+    // compute the volume of the convex hull
+	Preprocessing prep;
+	glm::vec3 chBarycenter = prep.ComputeBarycenter(chPositions);
+	float chVolume = ComputeVolume(chPositions, "triangles", chBarycenter);
 
-    //// compute the volume of the convex hull
+    // compute the volume of the shape
+	float shapeVolume = ComputeVolume(chPositions, "triangles", chBarycenter);
 
-    //// compute the volume of the shape
-    //float shapeVolume = ComputeVolume(positions, "triangles", barycenter);
-
-    //// return the ratio
+    // return the ratio
+	return shapeVolume / chVolume;
 }
 
 // TODO: untested
-float FeatureExtraction::ComputeVolume(std::vector<float> positions, std::string faceType, float barycenter[3])
+float FeatureExtraction::ComputeVolume(std::vector<float> positions, std::string faceType, glm::vec3 barycenter)
 {
     float fullVolume = 0.0;
     // TODO: change computation based on facetype
@@ -263,7 +285,7 @@ float FeatureExtraction::ComputeVolume(std::vector<float> positions, std::string
         localBarycenter.z = localBarycenter.z / 3;
 
         // We need to find the distance from the face barycenter to the mesh barycenter (that's h)
-        float height = Distance(glm::vec3(barycenter[0],barycenter[1],barycenter[2]), localBarycenter);
+        float height = Distance(barycenter, localBarycenter);
         float localVolume = (1 / 3) * baseArea * height;
         fullVolume += localVolume;
     }

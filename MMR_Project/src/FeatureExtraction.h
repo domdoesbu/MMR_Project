@@ -3,8 +3,13 @@
 #include <iostream>
 #include<glm/glm.hpp>
 #include"FileOrganizer.h"
+#include"Preprocessing.h"
 #include "matplotlibcpp.h"
 #include<MRMesh/MRConvexHull.h>
+#include <MRMesh/MRMeshFwd.h>
+#include <MRMesh/MRMeshLoad.h>
+#include <MRMesh/MRMeshSave.h>
+#include <MRMesh/MRMesh.h>
 
 class FeatureExtraction
 {
@@ -15,12 +20,10 @@ public:
 	float SurfaceArea(std::vector<float> positions);
 
 	// shape volume divided by OBB volume
-	// // 3D rectangularity
-	float Rectangularity(std::vector<float> positions, float barycenter[3], std::string shapeFilename, std::string csvFilename);
-	
-	// Convexity (shape volume / convex hull volume)
+	float Rectangularity(std::vector<float> positions, glm::vec3 barycenter, std::string shapeFilename, std::string csvFilename);
+
 	// shape volume divided by convex hull volume, should return a histogram?
-	float Convexity(std::vector<float> positions, float barycenter[3]);
+	float Convexity(std::vector<float> positions, glm::vec3 barycenter, std::string filename);
 
 	// Compactness
 	// S^3/(36*Pi*V^2)
@@ -42,11 +45,12 @@ public:
 	void D4(std::vector<float>& positions, int samples, int bins);
 
 private:
-	// Volume V
-	float ComputeVolume(std::vector<float> positions, std::string faceType, float barycenter[3]);
+	float ComputeVolume(std::vector<float> positions, std::string faceType, glm::vec3 barycenter);
 
 	float ComputeLocalArea(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3);
 
 	float Distance(glm::vec3 v1, glm::vec3 v2);
+	
+	void GenerateConvexHull(std::string filename, std::string outputDir);
 };
 
