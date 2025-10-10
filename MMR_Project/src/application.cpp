@@ -216,7 +216,19 @@ int main(void)
     // Size
     positions = prep.NormalizeScale(positions, sourcePath);
 
-	FeatureExtraction fe;
+	FeatureExtraction fe; 
+
+    // If we do 10000, that means that some won't have every vertex accounted for and some will have double
+    // Not sure if we should make it dependent on number of vertices or have once total value
+    // In the end we need to normalize so I don't think we 100% need them to be exactly the same
+
+	fe.A3(positions, 10000, 20);
+	fe.D1(positions, barycenter, 10000, 20);
+	fe.D2(positions, 10000, 20);
+
+    
+	fe.D3(positions, 10000, 20);
+	fe.D4(positions, 10000, 20);
 
 	float diameter = fe.Diameter(positions);
 	std::cout << "Diameter: " << diameter << std::endl;
