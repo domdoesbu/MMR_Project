@@ -24,7 +24,7 @@ public:
 	FeatureExtraction() {};
 
 	// 1. Surface area S
-	float SurfaceArea(std::vector<float> positions);
+	float SurfaceArea(std::string& fileName);
 
 	// 2. Compactness
 	float Compactness(float surfaceArea, float volume);
@@ -42,21 +42,21 @@ public:
 
 	// 7. A3 -> D4
 	//// A3
-	void A3(std::vector<float>& positions, int samples, int bins);
+	void A3(std::vector<float>& positions, int samples, int bins, bool showGraph);
 	//// D1
-	void D1(std::vector<float>& positions, glm::vec3 barycenter, int samples, int bins);
+	void D1(std::vector<float>& positions, glm::vec3 barycenter, int samples, int bins, bool showGraph);
 	//// D2
-	void D2(std::vector<float>& positions, int samples, int bins);
+	void D2(std::vector<float>& positions, int samples, int bins, bool showGraph);
 	//// D3
-	void D3(std::vector<float>& positions, int samples, int bins);
+	void D3(std::vector<float>& positions, int samples, int bins, bool showGraph);
 	//// D4
-	void D4(std::vector<float>& positions, int samples, int bins);
+	void D4(std::vector<float>& positions, int samples, int bins, bool showGraph);
 
 	// Helper
 	float Volume(std::string& fileName);
 
 private:
-	float Volume(std::vector<float> positions, std::string faceType, glm::vec3 barycenter);
+	float Volume(std::vector<float> positions);
 
 	float ComputeLocalArea(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3);
 

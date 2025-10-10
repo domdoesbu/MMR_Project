@@ -21,7 +21,6 @@ struct ShaderProgramSource
 	std::string FragmentSource;
 };
 
-
 bool drawWireframe = false;
 bool togglePan = false;
 bool simplifyMesh = false;
@@ -174,7 +173,7 @@ int main(void)
 
     // Remeshing
 	std::cout << "--- REMESHING ---" << std::endl;
-    //prep.Resampling(databsePath, databsePathResampled);
+    prep.Resampling(databsePath, databsePathResampled);
     std::cout << "--- REMESHING END---" << std::endl;
 
     prep.AnalyzeShapes(databsePathResampled2, "./shape_analysis_resamp.csv");
@@ -189,6 +188,9 @@ int main(void)
 		std::cerr << "Failed to load obj" << std::endl;
 		return -1;
 	}
+
+    // -------------------------------------------------------------------------------
+	// PREPROCESSING
 
     // Translation
 
@@ -237,27 +239,34 @@ int main(void)
         return -1;
     }
     std::cout << "--- PREPROCESSING END ---" << std::endl;
+    // -------------------------------------------------------------------------------
+
+
     // ---------------------------------------------------------------------------------
     // FEATURE EXTRACTION
 	std::cout << "--- FEATURE EXTRACTION ---" << std::endl;
 	FeatureExtraction fe; 
+
     // 1. Surface area S
-	float surfaceArea = fe.SurfaceArea(positions);
+	float surfaceArea = fe.SurfaceArea(inputFile);
 	std::cout << "Surface Area: " << surfaceArea << std::endl;
+
     // 2. Compactness
 	float volume = fe.Volume(inputFile);
 	float compactness = fe.Compactness(surfaceArea, volume);
 	std::cout << "Volume : " << volume << "|| Compactness : " << compactness << std::endl;
-    // 3. Recantgularity
 
-	float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, fileName, "./shape_analysis_resamp_norm.csv");
+    // 3. Recantgularity
+	float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, fileName, "./shape_analysis_resamp.csv");
 	std::cout << "Rectangularity: " << rectangularity << std::endl;
+    
     // 4. Diameter
     float diameter = fe.Diameter(positions);
     std::cout << "Diameter: " << diameter << std::endl;
 
     // 5. Convexity
-
+	float convexity = fe.Convexity(positions, barycenter, fileName);
+	std::cout << "Convexity: " << convexity << std::endl;
 
     // 6. Eccentricity
     float eccentricity = fe.Eccentricity(largeEig, smallEig);
@@ -265,15 +274,15 @@ int main(void)
 
     // 7. A3 -> D4
     //// A3
-    fe.A3(positions, 10000, 20);
+    fe.A3(positions, 10000, 20, false);
     //// D1
-    fe.D1(positions, barycenter, 10000, 20);
+    fe.D1(positions, barycenter, 10000, 20, false);
     //// D2
-    fe.D2(positions, 10000, 20);
+    fe.D2(positions, 10000, 20, false);
     //// D3
-    fe.D3(positions, 10000, 20);
+    fe.D3(positions, 10000, 20, false);
     //// D4
-	fe.D4(positions, 10000, 20);
+	fe.D4(positions, 10000, 20, false);
 
 	std::cout << "--- END FEATURE EXTRACTION ---" << std::endl;
 	// --------------------------------------------------------------------------------- 

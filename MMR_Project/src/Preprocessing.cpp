@@ -88,7 +88,6 @@ void Preprocessing::AnalyzeShape(std::filesystem::path filename, shapeInfo & out
 
 void Preprocessing::AnalyzeShapes(const std::string& databasePath, const std::string& outputCsv)
 {
-	std::cout << "Analyzing shapes in database: " << databasePath << std::endl;
     // Excel file for all the data
     
 
@@ -129,7 +128,6 @@ void Preprocessing::AnalyzeShapes(const std::string& databasePath, const std::st
                 << "\n";
         }
     }
-    std::cout << "Finsihed Analyzing shapes in database: " << std::endl;
 	csvFile.close();
 }
 
@@ -143,7 +141,7 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
             b. Number of faces
             c. Shape class
     */
-
+    std::cout << "----- Database Statistics -----" << std::endl;
     std::cout << "Generating statistics from file: " << shapeAnalysisFile << std::endl;
     std::ifstream csvFile(shapeAnalysisFile);
     if (!csvFile.is_open()) {
@@ -281,14 +279,14 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
             highEDOutlier = shape.fileName;
         }
 	}
-
+    std::cout << "--- Outliers Statistics ---" << std::endl;
     std::cout << "Low outlier shape by vertices: " << lowVertOutlier << " with " << (minVertNumber) << " less vertices." << std::endl;
     std::cout << "High outlier shape by vertices: " << highVertOutlier << " with " << (maxVertNumber) << "more vertices." << std::endl;
     std::cout << "Low shape by faces: " << lowFaceOutlier << " with " << (minFaceDistance) << " less faces." << std::endl;
     std::cout << "High shape by faces: " << highFaceOutlier << " with " << (maxFaceDistance) << " more faces." << std::endl;
     std::cout << "Low shape by EU: " << lowEDOutlier << " with " << (minEUDistance) << " higher EU." << std::endl;
     std::cout << "High shape by EU: " << highEDOutlier << " with " << (maxEUDistance) << " lower EU." << std::endl;
-
+    std::cout << "--------------------------" << std::endl;
     //counts
     // 1. Shape classes
 
@@ -334,6 +332,7 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
  //   plt::show();
 
     csvFile.close();
+    std::cout << "----- Database Statistics End-----" << std::endl;
 }
 
 

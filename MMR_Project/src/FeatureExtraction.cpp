@@ -1,19 +1,32 @@
 #include "FeatureExtraction.h"
 
 // 1. Surface Area :: S
-float FeatureExtraction::SurfaceArea(std::vector<float> positions)
+//// Helper
+float FeatureExtraction::ComputeLocalArea(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3)
 {
-	float sumOfAreas = 0.0;
-	for (int i = 0; i + 14 < positions.size(); i += 18) {
-		glm::vec3 v1(positions[i + 0], positions[i + 1], positions[i + 2]);
-		glm::vec3 v2(positions[i + 6], positions[i + 7], positions[i + 8]);
-		glm::vec3 v3(positions[i + 12], positions[i + 13], positions[i + 14]);
+	glm::vec3 e1 = v2 - v1;
+	glm::vec3 e2 = v3 - v1;
+	glm::vec3 cross = glm::cross(e1, e2);
 
-		float localArea = ComputeLocalArea(v1, v2, v3); // triangle area
+	return glm::length(cross) * 0.5f; // triangle area
+}
 
-		sumOfAreas += localArea;
-	}
-	return sumOfAreas;
+float FeatureExtraction::SurfaceArea(std::string& fileName)
+{
+	//float sumOfAreas = 0.0;
+	//for (int i = 0; i + 14 < positions.size(); i += 18) {
+	//	glm::vec3 v1(positions[i + 0], positions[i + 1], positions[i + 2]);
+	//	glm::vec3 v2(positions[i + 6], positions[i + 7], positions[i + 8]);
+	//	glm::vec3 v3(positions[i + 12], positions[i + 13], positions[i + 14]);
+
+	//	float localArea = ComputeLocalArea(v1, v2, v3); // triangle area
+
+	//	sumOfAreas += localArea;
+	//}
+	//return sumOfAreas;
+	MR::Mesh mesh = *MR::MeshLoad::fromAnySupportedFormat(fileName);
+
+	return mesh.area();
 }
 
 // 2. Compactness
@@ -35,7 +48,6 @@ float FeatureExtraction::Rectangularity(std::vector<float> positions, glm::vec3 
 	glm::vec3 OBBp2(info.maxX, info.maxY, info.maxZ);
 	glm::vec3 OBBp3(info.maxX, info.minY, info.minZ);
 	glm::vec3 OBBp4(info.maxX, info.maxY, info.minZ);
-
 
 	float OBBbase = Distance(OBBp1, OBBp4);
 	float OBBheight = Distance(OBBp3, OBBp4);
@@ -103,10 +115,10 @@ float FeatureExtraction::Convexity(std::vector<float> positions, glm::vec3 baryc
 	// compute the volume of the convex hull
 	Preprocessing prep;
 	glm::vec3 chBarycenter = prep.ComputeBarycenter(chPositions);
-	float chVolume = Volume(chPositions, "triangles", chBarycenter);
+	float chVolume = Volume(chPositions);
 
 	// compute the volume of the shape
-	float shapeVolume = Volume(chPositions, "triangles", chBarycenter);
+	float shapeVolume = Volume(chPositions);
 
 	// return the ratio
 	return shapeVolume / chVolume;
@@ -121,7 +133,7 @@ float FeatureExtraction::Eccentricity(float largeEig, float smallEig)
 
 // 7. A3 -> D4
 namespace plt = matplotlibcpp;
-void FeatureExtraction::A3(std::vector<float>& positions, int samples, int bins)
+void FeatureExtraction::A3(std::vector<float>& positions, int samples, int bins, bool showGraph)
 {
 	// Pick 3 random points on the surface and find the angle between them
 	// Repeat this a large number of times and make a histogram of the angles
@@ -149,16 +161,16 @@ void FeatureExtraction::A3(std::vector<float>& positions, int samples, int bins)
 			}
 		}
 	}
-
-	plt::xlabel("Angle");
-	plt::ylabel("Count");
-    plt::title("A3 Histogram");
-	plt::hist(vertexVals, bins);
-	plt::show();
-
+	if (showGraph) {
+		plt::xlabel("Angle");
+		plt::ylabel("Count");
+		plt::title("A3 Histogram");
+		plt::hist(vertexVals, bins);
+		plt::show();
+	}
 }
 
-void FeatureExtraction::D1(std::vector<float>& positions, glm::vec3 barycenter, int samples, int bins)
+void FeatureExtraction::D1(std::vector<float>& positions, glm::vec3 barycenter, int samples, int bins, bool showGraph)
 {
 	// Pick a random point on the surface and find the distance to the barycenter
 	std::vector<float> vertexVals;
@@ -169,14 +181,18 @@ void FeatureExtraction::D1(std::vector<float>& positions, glm::vec3 barycenter, 
 		float distance = glm::distance(p, barycenter);
 		vertexVals.push_back(distance);
 	}
-	plt::xlabel("Distance to Barycenter");
-	plt::ylabel("Count");
-	plt::title("D1 Histogram");
-	plt::hist(vertexVals, bins);
-	plt::show();
+
+	if (showGraph) {
+		plt::xlabel("Distance to Barycenter");
+		plt::ylabel("Count");
+		plt::title("D1 Histogram");
+		plt::hist(vertexVals, bins);
+		plt::show();
+	}
+	
 }
 
-void FeatureExtraction::D2(std::vector<float>& positions, int samples, int bins)
+void FeatureExtraction::D2(std::vector<float>& positions, int samples, int bins, bool showGraph)
 {
 	// Pick 2 random points on the surface and find the distance between them
 	std::vector<float> vertexVals;
@@ -194,14 +210,17 @@ void FeatureExtraction::D2(std::vector<float>& positions, int samples, int bins)
 		}
 	}
 
-	plt::xlabel("Distance between 2 points");
-	plt::ylabel("Count");
-	plt::title("D2 Histogram");
-	plt::hist(vertexVals, 20);
-	plt::show();
+	if (showGraph) {
+		plt::xlabel("Distance between 2 points");
+		plt::ylabel("Count");
+		plt::title("D2 Histogram");
+		plt::hist(vertexVals, 20);
+		plt::show();
+	}
+	
 }
 
-void FeatureExtraction::D3(std::vector<float>& positions, int samples, int bins)
+void FeatureExtraction::D3(std::vector<float>& positions, int samples, int bins, bool showGraph)
 {
 	// Pick 3 random points on the surface and find the area of the triangle they form
 	std::vector<float> vertexVals;
@@ -226,15 +245,16 @@ void FeatureExtraction::D3(std::vector<float>& positions, int samples, int bins)
 			}
 		}
 	}
-	std::cout << vertexVals.size() << std::endl;
-	plt::xlabel("Area of Triangles");
-	plt::ylabel("Count");
-	plt::title("D3 Histogram");
-	plt::hist(vertexVals, 20);
-	plt::show();
+	if (showGraph) {
+		plt::xlabel("Area of Triangles");
+		plt::ylabel("Count");
+		plt::title("D3 Histogram");
+		plt::hist(vertexVals, 20);
+		plt::show();
+	}
 }
 
-void FeatureExtraction::D4(std::vector<float>& positions, int samples, int bins)
+void FeatureExtraction::D4(std::vector<float>& positions, int samples, int bins, bool showGraph)
 {
 	std::vector<float> vertexVals;
 	int numVertices = positions.size() / 6;
@@ -264,12 +284,13 @@ void FeatureExtraction::D4(std::vector<float>& positions, int samples, int bins)
 		}
 	}
 
-	// Pick 4 random points on the surface and find the volume of the tetrahedron they form
-	plt::xlabel("Volume of Tetrahedron");
-	plt::ylabel("Count");
-	plt::title("D4 Histogram");
-	plt::hist(vertexVals, 20);
-	plt::show();
+	if (showGraph) {
+		plt::xlabel("Volume of Tetrahedron");
+		plt::ylabel("Count");
+		plt::title("D4 Histogram");
+		plt::hist(vertexVals, 20);
+		plt::show();
+	}
 }
 
 // Helpers
@@ -278,11 +299,12 @@ void FeatureExtraction::D4(std::vector<float>& positions, int samples, int bins)
 float FeatureExtraction::Volume(std::string& fileName)
 {
 	MR::Mesh mesh = *MR::MeshLoad::fromAnySupportedFormat(fileName);
+	
 	return mesh.volume();
 }
 
 //// Volume of a shape given its vertices and face type
-float FeatureExtraction::Volume(std::vector<float> positions, std::string faceType, glm::vec3 barycenter)
+float FeatureExtraction::Volume(std::vector<float> positions)
 {
     float fullVolume = 0.0;
 
@@ -297,16 +319,6 @@ float FeatureExtraction::Volume(std::vector<float> positions, std::string faceTy
 		
     }
     return fabs(fullVolume);
-}
-
-// Local areas
-float FeatureExtraction::ComputeLocalArea(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3)
-{
-    glm::vec3 e1 = v2 - v1;
-    glm::vec3 e2 = v3 - v1;
-    glm::vec3 cross = glm::cross(e1, e2);
-
-    return glm::length(cross) * 0.5f; // triangle area
 }
 
 // Distance

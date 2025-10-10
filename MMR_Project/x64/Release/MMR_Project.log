@@ -1,11 +1,11 @@
 ﻿cl : command line  warning D9002: ignoring unknown option '/utf8'
   application.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(101,23): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(310,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(311,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(331,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(365,44): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(402,54): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(100,23): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(319,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(320,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(340,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(374,44): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(411,54): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
@@ -19,9 +19,9 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,4
   
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  1 of 4014 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+  6 of 4178 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    65 functions had inline decision re-evaluated but remain unchanged
+    76 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
   MMR_Project.vcxproj -> C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\MMR_Project.exe
