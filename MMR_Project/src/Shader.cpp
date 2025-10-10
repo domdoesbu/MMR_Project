@@ -1,7 +1,4 @@
 #include "Shader.h"
-#include <fstream>
-#include <sstream>
-#include <iostream>
 
 Shader::Shader(const char* vertexPath, const char* fragmentPath) {
     std::string vCode, fCode;

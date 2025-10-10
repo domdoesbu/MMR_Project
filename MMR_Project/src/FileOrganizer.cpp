@@ -1,15 +1,6 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #define GLM_ENABLE_EXPERIMENTAL
 #include "FileOrganizer.h"
-#include <iostream>
-#include <filesystem>
-#include <string>
-#include <fstream>
-
-#include <glm/gtx/string_cast.hpp>
-#include "glm/glm.hpp"
-#include <limits>
-#include <vector>
 
 bool FileOrganizer::LoadObj(const char* inputFile, std::vector<float>& outVertices, std::vector<unsigned int>& outIndices)
 {

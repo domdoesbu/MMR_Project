@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include <iostream>
+
 glm::mat4 Camera::GetTransformMatrix()
 {
 	glm::mat4 translationMatrix = glm::translate(glm::mat4(1), position);

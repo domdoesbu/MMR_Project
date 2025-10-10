@@ -1,21 +1,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Preprocessing.h"
-#include <iostream>
-#include <filesystem>
-#include <string>
-#include <limits>
-#include <vector>
-#include <regex>
-#include <unordered_map>
-#include <tuple>
-#include <glm/glm.hpp>
-#include <Eigen/Dense>
-#include <cmath>
-// MeshLibs
-#include "Simplification.h"
-#include "Refinement.h"
-#include "matplotlibcpp.h"
+
 
 namespace fs = std::filesystem;
 namespace plt = matplotlibcpp;
@@ -589,4 +575,51 @@ void Preprocessing::NormalizeFlipping(std::vector<float>& positions, std::vector
             }
         }
     }
+}
+void Preprocessing::CheckNormalOrientation(std::vector<float>& vertices, std::vector<unsigned int>& indices, glm::vec3& barycenter) {
+    const int floatsPerVertex = 6; // 3 position + 3 normal
+
+    // Compute barycenter once
+
+    // Flip faces if their normal points inward
+    for (size_t i = 0; i + 2 < indices.size(); i += 3) {
+        unsigned int i1 = indices[i];
+        unsigned int i2 = indices[i + 1];
+        unsigned int i3 = indices[i + 2];
+
+        glm::vec3 v1(vertices[i1 * floatsPerVertex + 0],
+            vertices[i1 * floatsPerVertex + 1],
+            vertices[i1 * floatsPerVertex + 2]);
+        glm::vec3 v2(vertices[i2 * floatsPerVertex + 0],
+            vertices[i2 * floatsPerVertex + 1],
+            vertices[i2 * floatsPerVertex + 2]);
+        glm::vec3 v3(vertices[i3 * floatsPerVertex + 0],
+            vertices[i3 * floatsPerVertex + 1],
+            vertices[i3 * floatsPerVertex + 2]);
+
+        glm::vec3 faceNormal = glm::cross(v2 - v1, v3 - v1);
+        glm::vec3 faceCenter = (v1 + v2 + v3) / 3.0f;
+
+        if (glm::dot(faceNormal, faceCenter - barycenter) < 0.0f) {
+            std::swap(indices[i + 1], indices[i + 2]);
+        }
+    }
+}
+
+void Preprocessing::CheckHoles(const std::string& filename) {  
+   MR::Mesh mesh = *MR::MeshLoad::fromAnySupportedFormat(filename);  
+
+   std::vector<MR::EdgeId> holeEdges = mesh.topology.findHoleRepresentiveEdges();  
+   for (MR::EdgeId e : holeEdges) {  
+       MR::FillHoleParams params;  
+       params.metric = MR::getUniversalMetric(mesh);  
+       MR::fillHole(mesh, e, params);  
+   }  
+
+   if (mesh.volume() < 0) {  
+       std::cout << "Flipping mesh orientation to ensure outward normals..." << std::endl;  
+       mesh.topology.flipOrientation();  
+   }  
+ 
+   MR::MeshSave::toAnySupportedFormat(mesh, filename);  
 }

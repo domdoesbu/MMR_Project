@@ -1,35 +1,11 @@
 ﻿cl : command line  warning D9002: ignoring unknown option '/utf8'
-  FeatureExtraction.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(40,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(41,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(76,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(94,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(95,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(119,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(120,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(151,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(152,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(285,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(286,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(287,14): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
-  (compiling source file 'src/FeatureExtraction.cpp')
-      C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
-      the template instantiation context (the oldest one first) is
-          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
-          see reference to function template instantiation 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' being compiled
-  
   application.cpp
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(101,23): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(269,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(270,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(290,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(324,44): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(361,54): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(310,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(311,20): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(331,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(365,44): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(402,54): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
@@ -43,9 +19,9 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,4
   
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  7 of 4120 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    79 functions had inline decision re-evaluated but remain unchanged
+  1 of 4014 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    65 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glew32s.lib(glew.obj) : warning LNK4099: PDB '' was not found with 'glew32s.lib(glew.obj)' or at ''; linking object as if no debug info
   MMR_Project.vcxproj -> C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\MMR_Project.exe

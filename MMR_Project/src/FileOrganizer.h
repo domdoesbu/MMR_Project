@@ -1,9 +1,14 @@
 #pragma once
+#define GLM_ENABLE_EXPERIMENTAL
 #include <filesystem>
-#include <wrap/io_trimesh/export_ply.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <string>
+#include <limits>
+#include <vector>
+#include "glm/gtx/string_cast.hpp"
+#include "glm/glm.hpp"
 #include "./include/tiny_obj_loader.h"
 
 struct MeshData {

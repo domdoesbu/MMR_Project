@@ -135,7 +135,7 @@ int main(void)
         return -1;
 
     /* Create a windowed mode window and its OpenGL context */
-    window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(640, 480, "MMR Project", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -164,14 +164,18 @@ int main(void)
     Preprocessing prep;
 	
 	//std::string databsePath = "./ShapeDatabase_INFOMR-master/";
-	std::string databsePath = "./test_objs/";
+	std::string databsePath = "./test2/";
     std::string databsePathResampled = "./ResampledDatabase/";
     std::string databsePathResampled2 = "./ResampledDatabase2/";
+	std::cout << "--- PREPROCESSING ---" << std::endl;
+
     prep.AnalyzeShapes(databsePath, "./shape_analysis.csv");
     prep.DatabaseStatistics("./shape_analysis.csv");
 
     // Remeshing
-    prep.Resampling(databsePath, databsePathResampled);
+	std::cout << "--- REMESHING ---" << std::endl;
+    //prep.Resampling(databsePath, databsePathResampled);
+    std::cout << "--- REMESHING END---" << std::endl;
 
     prep.AnalyzeShapes(databsePathResampled2, "./shape_analysis_resamp.csv");
     prep.DatabaseStatistics("./shape_analysis_resamp.csv");
@@ -179,7 +183,7 @@ int main(void)
     std::string userInput;
     std::cin >> userInput;
     std::string inputFile = userInput;
-
+	std::string fileName = fs::path(inputFile).filename().string();
 	if (!fo.LoadObj(inputFile.c_str(), positions, indices))
 	{
 		std::cerr << "Failed to load obj" << std::endl;
@@ -204,43 +208,75 @@ int main(void)
     // Flipping
     prep.NormalizeFlipping(positions, indices, 6, 0);
 
-    MeshData data;
-	data.positions = positions;
-	data.indices = indices;
-	fo.WriteNewObj(inputFile, data);
-    prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp.csv");
-    prep.DatabaseStatistics("./shape_analysis_resamp.csv");
-
+    float maxRadius = 0.0f;
+    for (int i = 0; i + 2 < positions.size(); i += 6) {
+        glm::vec3 v(positions[i], positions[i + 1], positions[i + 2]);
+        maxRadius = std::max(maxRadius, glm::length(v));
+    }
+    std::cout << "Mesh radius  " << maxRadius << std::endl;
     fs::path sourcePath = inputFile;
 
     // Size
     positions = prep.NormalizeScale(positions, sourcePath);
+    prep.CheckNormalOrientation(positions, indices, barycenter);
 
-	FeatureExtraction fe; 
-
-    // If we do 10000, that means that some won't have every vertex accounted for and some will have double
-    // Not sure if we should make it dependent on number of vertices or have once total value
-    // In the end we need to normalize so I don't think we 100% need them to be exactly the same
-
-	fe.A3(positions, 10000, 20);
-	fe.D1(positions, barycenter, 10000, 20);
-	fe.D2(positions, 10000, 20);
+    MeshData data;
+    data.positions = positions;
+    data.indices = indices;
+    fo.WriteNewObj(inputFile, data);
+    prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp.csv");
+    prep.DatabaseStatistics("./shape_analysis_resamp.csv");
 
     
-	fe.D3(positions, 10000, 20);
+    prep.CheckHoles(inputFile);
+    positions.clear();
+	indices.clear();
+    if (!fo.LoadObj(inputFile.c_str(), positions, indices))
+    {
+        std::cerr << "Failed to load obj" << std::endl;
+        return -1;
+    }
+    std::cout << "--- PREPROCESSING END ---" << std::endl;
+    // ---------------------------------------------------------------------------------
+    // FEATURE EXTRACTION
+	std::cout << "--- FEATURE EXTRACTION ---" << std::endl;
+	FeatureExtraction fe; 
+    // 1. Surface area S
+	float surfaceArea = fe.SurfaceArea(positions);
+	std::cout << "Surface Area: " << surfaceArea << std::endl;
+    // 2. Compactness
+	float volume = fe.Volume(inputFile);
+	float compactness = fe.Compactness(surfaceArea, volume);
+	std::cout << "Volume : " << volume << "|| Compactness : " << compactness << std::endl;
+    // 3. Recantgularity
+
+	float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, fileName, "./shape_analysis_resamp_norm.csv");
+	std::cout << "Rectangularity: " << rectangularity << std::endl;
+    // 4. Diameter
+    float diameter = fe.Diameter(positions);
+    std::cout << "Diameter: " << diameter << std::endl;
+
+    // 5. Convexity
+
+
+    // 6. Eccentricity
+    float eccentricity = fe.Eccentricity(largeEig, smallEig);
+    std::cout << "Eccentricity: " << eccentricity << std::endl;
+
+    // 7. A3 -> D4
+    //// A3
+    fe.A3(positions, 10000, 20);
+    //// D1
+    fe.D1(positions, barycenter, 10000, 20);
+    //// D2
+    fe.D2(positions, 10000, 20);
+    //// D3
+    fe.D3(positions, 10000, 20);
+    //// D4
 	fe.D4(positions, 10000, 20);
 
-	float diameter = fe.Diameter(positions);
-	std::cout << "Diameter: " << diameter << std::endl;
-	float eccentricity = fe.Eccentricity(largeEig, smallEig);
-	std::cout << "Eccentricity: " << eccentricity << std::endl;
-
-    MeshData normalizedData;
-    normalizedData.positions = positions;
-    normalizedData.indices = indices;
-    fo.WriteNewObj(inputFile, normalizedData);
-    prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp_norm.csv");
-    prep.DatabaseStatistics("./shape_analysis_resamp_norm.csv");
+	std::cout << "--- END FEATURE EXTRACTION ---" << std::endl;
+	// --------------------------------------------------------------------------------- 
 
     unsigned int vao;
     glGenVertexArrays(1, &vao);
