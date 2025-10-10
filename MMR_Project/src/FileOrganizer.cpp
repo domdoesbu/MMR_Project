@@ -159,13 +159,14 @@ void FileOrganizer::WriteNewObj(std::string destinationFilename, MeshData result
 shapeInfo FileOrganizer::getShapeFromDatabase(std::string csvFilename, std::string shapeFilename)
 {
     std::ifstream csvFile(csvFilename);
+    shapeInfo outInfo;
     if (!csvFile.is_open()) {
         std::cerr << "Failed to open input CSV file: " << csvFilename << std::endl;
-        return;
+        return outInfo;
     }
     std::string line;
 
-    shapeInfo outInfo;
+    
 
     while (std::getline(csvFile, line)) {
         std::istringstream iss(line);
