@@ -165,7 +165,7 @@ int main(void)
 	//std::string databsePath = "./ShapeDatabase_INFOMR-master/";
 	std::string databsePath = "./test2/";
     std::string databsePathResampled = "./ResampledDatabase/";
-    std::string databsePathResampled2 = "./ResampledDatabase2/";
+
 	std::cout << "--- PREPROCESSING ---" << std::endl;
 
     prep.AnalyzeShapes(databsePath, "./shape_analysis.csv");
@@ -173,22 +173,27 @@ int main(void)
 
     // Remeshing
 	std::cout << "--- REMESHING ---" << std::endl;
+
     prep.Resampling(databsePath, databsePathResampled);
+
     std::cout << "--- REMESHING END---" << std::endl;
 
-    prep.AnalyzeShapes(databsePathResampled2, "./shape_analysis_resamp.csv");
+    prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp.csv");
     prep.DatabaseStatistics("./shape_analysis_resamp.csv");
+
     std::cout << "Specify path for the desired object:" << std::endl;
+
     std::string userInput;
     std::cin >> userInput;
     std::string inputFile = userInput;
 	std::string fileName = fs::path(inputFile).filename().string();
+
 	if (!fo.LoadObj(inputFile.c_str(), positions, indices))
 	{
 		std::cerr << "Failed to load obj" << std::endl;
 		return -1;
 	}
-
+	std::cout << positions.size() / 6 << " vertices and " << indices.size() / 3 << " faces" << std::endl;
     // -------------------------------------------------------------------------------
 	// PREPROCESSING
 
@@ -215,12 +220,12 @@ int main(void)
         glm::vec3 v(positions[i], positions[i + 1], positions[i + 2]);
         maxRadius = std::max(maxRadius, glm::length(v));
     }
-    std::cout << "Mesh radius  " << maxRadius << std::endl;
+
     fs::path sourcePath = inputFile;
 
     // Size
     positions = prep.NormalizeScale(positions, sourcePath);
-    prep.CheckNormalOrientation(positions, indices, barycenter);
+    // prep.CheckNormalOrientation(positions, indices, barycenter);
 
     MeshData data;
     data.positions = positions;
@@ -228,7 +233,6 @@ int main(void)
     fo.WriteNewObj(inputFile, data);
     prep.AnalyzeShapes(databsePathResampled, "./shape_analysis_resamp.csv");
     prep.DatabaseStatistics("./shape_analysis_resamp.csv");
-
     
     prep.CheckHoles(inputFile);
     positions.clear();
@@ -265,7 +269,7 @@ int main(void)
     std::cout << "Diameter: " << diameter << std::endl;
 
     // 5. Convexity
-	float convexity = fe.Convexity(positions, barycenter, fileName);
+	float convexity = fe.Convexity(positions, barycenter, fileName, inputFile);
 	std::cout << "Convexity: " << convexity << std::endl;
 
     // 6. Eccentricity

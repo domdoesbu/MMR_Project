@@ -369,15 +369,15 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
             if (positions.size() / 6 < 5000) { // Refinement
 
                 std::string path = fullTargetPath.string() + file.path().filename().string();
-                std::cout << path << std::endl;
+                std::cout << "Refinement :: " << path << std::endl;
                 int maxEdgeSplits = 5000 - (positions.size()/6);
-				ref.Refine(file.path(), path, maxEdgeSplits);
+				ref.Refine(fullFilePath, path);
 				resmapledCount++;
             }
             else if (positions.size() / 6 > 10000) { //Simplification
 
                 std::string path = fullTargetPath.string() + file.path().filename().string();
-                std::cout << path << std::endl;
+                std::cout << "Simplification :: " << path << std::endl;
 
                 int maxDeletedVerts = (positions.size() / 6) - 9000;
                 simp.Simplify(file.path(), path, maxDeletedVerts);
@@ -609,7 +609,9 @@ void Preprocessing::CheckHoles(const std::string& filename) {
    MR::Mesh mesh = *MR::MeshLoad::fromAnySupportedFormat(filename);  
 
    std::vector<MR::EdgeId> holeEdges = mesh.topology.findHoleRepresentiveEdges();  
+   std::cout << "Found " << holeEdges.size() << " holes in the mesh." << std::endl;
    for (MR::EdgeId e : holeEdges) {  
+
        MR::FillHoleParams params;  
        params.metric = MR::getUniversalMetric(mesh);  
        MR::fillHole(mesh, e, params);  

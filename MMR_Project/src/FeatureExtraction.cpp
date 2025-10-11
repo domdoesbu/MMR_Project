@@ -13,17 +13,6 @@ float FeatureExtraction::ComputeLocalArea(glm::vec3 v1, glm::vec3 v2, glm::vec3 
 
 float FeatureExtraction::SurfaceArea(std::string& fileName)
 {
-	//float sumOfAreas = 0.0;
-	//for (int i = 0; i + 14 < positions.size(); i += 18) {
-	//	glm::vec3 v1(positions[i + 0], positions[i + 1], positions[i + 2]);
-	//	glm::vec3 v2(positions[i + 6], positions[i + 7], positions[i + 8]);
-	//	glm::vec3 v3(positions[i + 12], positions[i + 13], positions[i + 14]);
-
-	//	float localArea = ComputeLocalArea(v1, v2, v3); // triangle area
-
-	//	sumOfAreas += localArea;
-	//}
-	//return sumOfAreas;
 	MR::Mesh mesh = *MR::MeshLoad::fromAnySupportedFormat(fileName);
 
 	return mesh.area();
@@ -88,7 +77,7 @@ float FeatureExtraction::Diameter(std::vector<float>& positions)
 
 // 5. Convexity
 //// Helper for generation
-void FeatureExtraction::GenerateConvexHull(std::string filename, std::string outputDir)
+std::vector<float> FeatureExtraction::GenerateConvexHull(std::string filename, std::string outputDir)
 {
 	MR::Mesh mesh = *MR::MeshLoad::fromAnySupportedFormat(filename);
 
@@ -98,27 +87,34 @@ void FeatureExtraction::GenerateConvexHull(std::string filename, std::string out
 
 	MR::Mesh convexHull = MR::makeConvexHull(mesh);
 	//ask Dom how this works
-	MR::MeshSave::toAnySupportedFormat(mesh, outputDir);
-	return;
+	MR::MeshSave::toAnySupportedFormat(convexHull, outputDir);
+
+	convexHull.points.vec_;
+
+	std::vector<float> positions;
+	positions.resize(convexHull.points.size() * 3);
+	for (int i = 0; i < convexHull.points.size(); i++) {
+		positions[i * 3 + 0] = convexHull.points.vec_[i].x;
+		positions[i * 3 + 1] = convexHull.points.vec_[i].y;
+		positions[i * 3 + 2] = convexHull.points.vec_[i].z;
+	}
+
+	return positions;
 }
 
-float FeatureExtraction::Convexity(std::vector<float> positions, glm::vec3 barycenter, std::string filename)
+float FeatureExtraction::Convexity(std::vector<float> positions, glm::vec3 barycenter, std::string filename, std::string filePath)
 {
 	// Generate the convex hull mesh using MeshLib
 	std::string chPath = "./ConvexHulls/" + filename; // I dont like how Im saving these and loading them, feels like a waste of time
-	GenerateConvexHull(filename, "./ConvexHulls/" + filename);
+	std::vector<float> chPositions = GenerateConvexHull(filePath, "./ConvexHulls/" + filename);
 	FileOrganizer fo;
-	std::vector<float> chPositions;
-	std::vector<unsigned int> chIndices;
-	fo.LoadObj(chPath.c_str(), chPositions, chIndices);
+	//std::vector<unsigned int> chIndices;
+	//fo.LoadObj(chPath.c_str(), chPositions, chIndices);
 
-	// compute the volume of the convex hull
-	Preprocessing prep;
-	glm::vec3 chBarycenter = prep.ComputeBarycenter(chPositions);
 	float chVolume = Volume(chPositions);
 
 	// compute the volume of the shape
-	float shapeVolume = Volume(chPositions);
+	float shapeVolume = Volume(filePath);
 
 	// return the ratio
 	return shapeVolume / chVolume;

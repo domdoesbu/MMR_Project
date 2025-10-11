@@ -7,6 +7,7 @@
 #include <MRMesh/MRBuffer.h>
 #include <string>
 #include <filesystem>
+#include <iostream>
 
 class Simplification
 {

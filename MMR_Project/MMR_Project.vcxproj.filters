@@ -39,6 +39,18 @@
     <ClCompile Include="src\FeatureExtraction.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\CodeFromProf\Grid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CodeFromProf\ScalarAttributes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CodeFromProf\UnstructuredGrid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CodeFromProf\UnstructuredGrid3D.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
@@ -49,6 +61,8 @@
     <None Include="src\MMRLibrary\include\UnstructuredGrid3D.h~" />
     <None Include="src\MMRLibrary\Makefile" />
     <None Include="src\MMRLibrary\refined.ply" />
+    <None Include="src\CodeFromProf\UnstructuredGrid.h~" />
+    <None Include="src\CodeFromProf\UnstructuredGrid3D.h~" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h">
@@ -118,6 +132,33 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\FeatureExtraction.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\Grid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\Point3d.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\RectilinearGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\ScalarAttributes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\StructuredGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\UniformGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\UnstructuredGrid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\UnstructuredGrid3D.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\VectorAttributes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

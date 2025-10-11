@@ -2,6 +2,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "FileOrganizer.h"
 
+
 bool FileOrganizer::LoadObj(const char* inputFile, std::vector<float>& outVertices, std::vector<unsigned int>& outIndices)
 {
     tinyobj::ObjReaderConfig readerConfig;
@@ -26,12 +27,15 @@ bool FileOrganizer::LoadObj(const char* inputFile, std::vector<float>& outVertic
 
     // Temporary arrays
     std::vector<glm::vec3> positions(attrib.vertices.size() / 3);
+
+
     for (size_t i = 0; i < positions.size(); i++) {
         positions[i] = glm::vec3(
             attrib.vertices[3 * i + 0],
             attrib.vertices[3 * i + 1],
             attrib.vertices[3 * i + 2]
         );
+		
     }
 
     std::vector<glm::vec3> normals;
@@ -59,13 +63,13 @@ bool FileOrganizer::LoadObj(const char* inputFile, std::vector<float>& outVertic
                 index_offset += fv;
                 continue;
             }
-
+            std::array<int, 3> faceIndices;
             glm::vec3 faceNormal(0.0f);
 
             for (int v = 0; v < fv; v++) {
                 tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
                 outIndices.push_back(idx.vertex_index);
-
+                faceIndices[v] = idx.vertex_index;
                 // If normals are missing, compute face normal
                 if (!hasNormals) {
                     glm::vec3 v0 = positions[shape.mesh.indices[index_offset + 0].vertex_index];
@@ -74,7 +78,6 @@ bool FileOrganizer::LoadObj(const char* inputFile, std::vector<float>& outVertic
                     faceNormal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
                 }
             }
-
             if (!hasNormals) {
                 // Accumulate face normal into vertex normals
                 for (int v = 0; v < fv; v++) {
@@ -105,6 +108,113 @@ bool FileOrganizer::LoadObj(const char* inputFile, std::vector<float>& outVertic
     }
 
     return true;
+}
+
+UnstructuredGrid3D* FileOrganizer::LoadObjGrid(const char* inputFile)
+{
+    tinyobj::ObjReaderConfig readerConfig;
+    tinyobj::ObjReader reader;
+
+    if (!reader.ParseFromFile(inputFile, readerConfig)) {
+        if (!reader.Error().empty()) {
+            std::cerr << "TinyObjReader: " << reader.Error() << std::endl;
+        }
+        return nullptr;
+    }
+
+    if (!reader.Warning().empty()) {
+        std::cout << "TinyObjReader: " << reader.Warning() << std::endl;
+    }
+
+    const tinyobj::attrib_t& attrib = reader.GetAttrib();
+    const std::vector<tinyobj::shape_t>& shapes = reader.GetShapes();
+
+    // Temporary arrays
+    std::vector<glm::vec3> positions(attrib.vertices.size() / 3);
+
+    std::vector<std::array<float, 3>> verticesForGrid(positions.size());
+
+    for (size_t i = 0; i < positions.size(); i++) {
+        positions[i] = glm::vec3(
+            attrib.vertices[3 * i + 0],
+            attrib.vertices[3 * i + 1],
+            attrib.vertices[3 * i + 2]
+        );
+
+        verticesForGrid[i] = { attrib.vertices[3 * i + 0], attrib.vertices[3 * i + 1], attrib.vertices[3 * i + 0] };
+    }
+
+    std::vector<glm::vec3> normals;
+    bool hasNormals = !attrib.normals.empty();
+    if (hasNormals) {
+        normals.resize(attrib.normals.size() / 3);
+        for (size_t i = 0; i < normals.size(); i++) {
+            normals[i] = glm::vec3(
+                attrib.normals[3 * i + 0],
+                attrib.normals[3 * i + 1],
+                attrib.normals[3 * i + 2]
+            );
+        }
+    }
+    else {
+        normals.resize(positions.size(), glm::vec3(0.0f));
+    }
+
+    std::vector<std::array<int, 3>> facesForGrid;
+
+    for (const auto& shape : shapes) {
+        size_t index_offset = 0;
+        for (size_t f = 0; f < shape.mesh.num_face_vertices.size(); f++) {
+            int fv = shape.mesh.num_face_vertices[f];
+            if (fv != 3) {
+                std::cerr << "Warning: non-triangle face detected. Skipping.\n";
+                index_offset += fv;
+                continue;
+            }
+            std::array<int, 3> faceIndices;
+            glm::vec3 faceNormal(0.0f);
+
+            for (int v = 0; v < fv; v++) {
+                tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
+                faceIndices[v] = idx.vertex_index;
+                // If normals are missing, compute face normal
+                if (!hasNormals) {
+                    glm::vec3 v0 = positions[shape.mesh.indices[index_offset + 0].vertex_index];
+                    glm::vec3 v1 = positions[shape.mesh.indices[index_offset + 1].vertex_index];
+                    glm::vec3 v2 = positions[shape.mesh.indices[index_offset + 2].vertex_index];
+                    faceNormal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
+                }
+            }
+            facesForGrid.push_back(faceIndices);
+            if (!hasNormals) {
+                // Accumulate face normal into vertex normals
+                for (int v = 0; v < fv; v++) {
+                    tinyobj::index_t idx = shape.mesh.indices[index_offset + v];
+                    normals[idx.vertex_index] += faceNormal;
+                }
+            }
+
+            index_offset += fv;
+        }
+    }
+
+    if (!hasNormals) {
+        for (auto& n : normals) {
+            n = glm::normalize(n);
+        }
+    }
+
+    UnstructuredGrid3D* grid = new UnstructuredGrid3D(positions.size(), shapes.size());
+
+    for (size_t i = 0; i < verticesForGrid.size(); i++) {
+        grid->setPoint(i, verticesForGrid[i].data());
+    }
+
+    for (size_t i = 0; i < facesForGrid.size(); ++i) {
+        grid->setCell(i, facesForGrid[i].data());
+    }
+
+    return grid;
 }
 
 void FileOrganizer::WriteNewObj(std::string destinationFilename, MeshData results) {
@@ -146,6 +256,34 @@ void FileOrganizer::WriteNewObj(std::string destinationFilename, MeshData result
         std::cout << "[ResamplingOutliers] Wrote OBJ: " << destinationFilename << std::endl;
     }
 }
+
+void FileOrganizer::WriteObjGrid(const char* filename, UnstructuredGrid3D* grid)
+{
+    std::ofstream out(filename);
+    if (!out.is_open()) {
+        std::cerr << "Error: could not open file for writing: " << filename << std::endl;
+        return;
+    }
+
+    out << "# OBJ file written by ObjReader\n";
+
+    // Write vertices
+    for (int i = 0; i < grid->numPoints(); ++i) {
+        float p[3];
+        grid->getPoint(i, p);
+        out << "v " << p[0] << " " << p[1] << " " << p[2] << "\n";
+    }
+
+    // Write faces (assuming triangles)
+    for (int i = 0; i < grid->numCells(); ++i) {
+        int c[3];
+        grid->getCell(i, c);
+        out << "f " << c[0] + 1 << " " << c[1] + 1 << " " << c[2] + 1 << "\n";  // convert to 1-based
+    }
+
+    out.close();
+}
+
 
 shapeInfo FileOrganizer::getShapeFromDatabase(std::string csvFilename, std::string shapeFilename)
 {

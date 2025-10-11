@@ -7,9 +7,11 @@
 #include <string>
 #include <limits>
 #include <vector>
+#include <array>
 #include "glm/gtx/string_cast.hpp"
 #include "glm/glm.hpp"
 #include "./include/tiny_obj_loader.h"
+#include "CodeFromProf/UnstructuredGrid3D.h"
 
 struct MeshData {
 	std::vector<float> positions;
@@ -40,9 +42,9 @@ public:
 	FileOrganizer() {};
 
 	static bool LoadObj(const char* inputFile, std::vector<float>& outVertices, std::vector<unsigned int>& outIndices);
-
+	UnstructuredGrid3D* LoadObjGrid(const char* inputFile);
 	void WriteNewObj(std::string destinationFilename, MeshData results);
-	
+	void WriteObjGrid(const char* filename, UnstructuredGrid3D* grid);
 	shapeInfo getShapeFromDatabase(std::string csvFilename, std::string shapeFilename);
 
 };

@@ -18,6 +18,7 @@
 #include <MRMesh/MRMeshDecimate.h>
 #include <MRMesh/MRBuffer.h>
 #include <MRMesh/MRMeshSubdivide.h>
+#include <MRMesh/MRVector.h>
 class FeatureExtraction
 {
 public:
@@ -35,7 +36,7 @@ public:
 	float Diameter(std::vector<float>& positions);
 
 	// 5. Convexity
-	float Convexity(std::vector<float> positions, glm::vec3 barycenter, std::string filename);
+	float Convexity(std::vector<float> positions, glm::vec3 barycenter, std::string filename, std::string filePath);
 
 	// 6. Eccentricity
 	float Eccentricity(float largeEig, float smallEig);
@@ -62,6 +63,6 @@ private:
 
 	float Distance(glm::vec3 v1, glm::vec3 v2);
 	
-	void GenerateConvexHull(std::string filename, std::string outputDir);
+	std::vector<float> GenerateConvexHull(std::string filename, std::string outputDir);
 };
 
