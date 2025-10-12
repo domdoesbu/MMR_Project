@@ -2,7 +2,7 @@
 
 #include "UnstructuredGrid.h"
 #include "VectorAttributes.h"
-
+#include <cassert>
 using namespace std;
 
 

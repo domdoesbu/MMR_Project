@@ -5,6 +5,7 @@
 
 void UnstructuredGrid3D::getPoint(int i,float* p)
 {
+	assert(i >= 0 && i < numPoints());
 	p[0] = pointsX[i];
 	p[1] = pointsY[i];
 	p[2] = pointsZ[i];
@@ -13,6 +14,7 @@ void UnstructuredGrid3D::getPoint(int i,float* p)
 
 void UnstructuredGrid3D::setPoint(int i,float* p)
 {
+	assert(i >= 0 && i < numPoints());
 	pointsX[i] = p[0];
 	pointsY[i] = p[1];
 	pointsZ[i] = p[2];

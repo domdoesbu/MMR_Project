@@ -21,6 +21,7 @@ class Refinement
 public:
 
     Refinement() {};
+    void DumpGridStats(UnstructuredGrid3D* grid);
     void Refine(std::string& inputFile, std::string& outputFile);
     float computeAverageCell(UnstructuredGrid3D* grid);
     void subdivide(UnstructuredGrid3D*& grid, UnstructuredGrid3D* grid2, float min_area);

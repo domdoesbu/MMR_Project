@@ -18,6 +18,7 @@ void UnstructuredGrid::setPoint(int i,float* p)
 
 int	UnstructuredGrid::getCell(int cell,int* vertices)
 {
+	assert(i >= 0 && i < numCells());
 	vertices[0] = cells[3*cell];
 	vertices[1] = cells[3*cell+1];
 	vertices[2] = cells[3*cell+2];
@@ -27,6 +28,7 @@ int	UnstructuredGrid::getCell(int cell,int* vertices)
 
 void UnstructuredGrid::setCell(int cell,int* vertices)
 {
+	assert(i >= 0 && i < numCells());
 	cells[3*cell]   = vertices[0];
 	cells[3*cell+1] = vertices[1];
 	cells[3*cell+2] = vertices[2];	

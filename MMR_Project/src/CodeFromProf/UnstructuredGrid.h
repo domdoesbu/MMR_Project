@@ -3,7 +3,7 @@
 #include "Grid.h"
 #include "ScalarAttributes.h"
 #include <vector>
-
+#include <cassert>
 using namespace std;
 
 

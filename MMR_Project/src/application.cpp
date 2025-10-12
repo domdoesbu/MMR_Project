@@ -5,7 +5,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-
+#include <crtdbg.h>
 #include "FileOrganizer.h"
 #include "Camera.h"
 #include "Shader.h"
@@ -127,6 +127,7 @@ namespace fs = std::filesystem;
 
 int main(void)
 {
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF | _CRTDBG_CHECK_ALWAYS_DF);
     GLFWwindow* window;
 
     /* Initialize the library */

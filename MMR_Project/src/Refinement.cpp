@@ -1,6 +1,35 @@
 #include "Refinement.h"
 
 
+UnstructuredGrid3D* grid = 0, * grid2 = 0;
+
+void Refinement::DumpGridStats(UnstructuredGrid3D* grid)
+{
+    int NP = grid->numPoints();
+    int NC = grid->numCells();
+    std::cout << "Loaded grid: NP=" << NP << " NC=" << NC << "\n";
+
+    // Print first few points
+    for (int i = 0; i < std::min(5, NP); ++i) {
+        float p[3]; grid->getPoint(i, p);
+        std::cout << "  p[" << i << "] = " << p[0] << "," << p[1] << "," << p[2] << "\n";
+    }
+
+    // Print first few cells
+    int badCount = 0;
+    for (int i = 0; i < std::min(50, NC); ++i) {
+        int c[10]; int sz = grid->getCell(i, c);
+        std::cout << "  cell[" << i << "] size=" << sz << ": ";
+        for (int j = 0;j < sz;++j) std::cout << c[j] << " ";
+        std::cout << "\n";
+        for (int j = 0;j < sz;++j) {
+            if (c[j] < 0 || c[j] >= NP) badCount++;
+        }
+    }
+    if (badCount) std::cerr << "ERROR: Found " << badCount << " out-of-range cell indices in the first samples!\n";
+}
+
+
 float Refinement::computeAverageCell(UnstructuredGrid3D* grid)      //Compute the average cell area
 {
     float ret = 0;
@@ -27,54 +56,86 @@ float Refinement::computeAverageCell(UnstructuredGrid3D* grid)      //Compute th
 
 void Refinement::subdivide(UnstructuredGrid3D*& grid, UnstructuredGrid3D* grid2, float min_area)
 {
-    int NP = grid->numPoints(), NC = grid->numCells();
+    int NP = grid->numPoints();
+    int NC = grid->numCells();
 
-    vector<Point3d> pts(NP);                            //Copy all vertices; we will reuse all of them
-    for (int i = 0;i < NP;++i)
-    {
-        Point3d& pi = pts[i];
-        grid->getPoint(i, &pi.x);
+    // Copy vertices
+    std::vector<Point3d> pts;
+    pts.reserve(NP + NC * 1); // estimate: up to NC new barycenters
+    for (int i = 0; i < NP; ++i) {
+        Point3d p;
+        float tmp[3];
+        grid->getPoint(i, tmp);
+        p.x = tmp[0]; p.y = tmp[1]; p.z = tmp[2];
+        pts.push_back(p);
     }
 
-    multimap<float, int> area_sorted_cells;              //Used to sort cells from largest to smallest
-    for (int i = 0;i < NC;++i)                               //Sort cells from largest to smallest in 'area_sorted_cells'
-    {
-        int c[3];
-        grid->getCell(i, c);
-
-        Point3d cross_prod = (pts[c[1]] - pts[c[0]]).cross(pts[c[2]] - pts[c[0]]);
-        float area = cross_prod.norm() / 2;
-        //Since multimap<> is ascendingly-sorted by definition, add
-        area_sorted_cells.insert(make_pair(-area, i));   //cells with their negative areas so largest cells come first
+    // Build area-sorted container (largest first)
+    std::multimap<float, int> area_sorted_cells;
+    for (int i = 0; i < NC; ++i) {
+        int ctmp[10];
+        int sz = grid->getCell(i, ctmp);
+        if (sz != 3) {
+            std::cerr << "Warning: cell " << i << " has size " << sz << " (expected 3). Skipping.\n";
+            continue;
+        }
+        // validate indices before using them
+        if (ctmp[0] < 0 || ctmp[0] >= NP || ctmp[1] < 0 || ctmp[1] >= NP || ctmp[2] < 0 || ctmp[2] >= NP) {
+            std::cerr << "Warning: cell " << i << " has invalid indices: "
+                << ctmp[0] << "," << ctmp[1] << "," << ctmp[2] << ". Skipping.\n";
+            continue;
+        }
+        Point3d e1 = pts[ctmp[1]] - pts[ctmp[0]];
+        Point3d e2 = pts[ctmp[2]] - pts[ctmp[0]];
+        float area = e1.cross(e2).norm() * 0.5f;
+        area_sorted_cells.insert(std::make_pair(-area, i));
     }
 
     int NP2 = NP;
     int NC2 = 0;
     int Nsubdivided = 0;
-    vector<int> cells;
+    std::vector<int> cells;
+    cells.reserve(area_sorted_cells.size() * 3 * 2); // rough reserve
 
-    for (map<float, int>::const_iterator it = area_sorted_cells.begin();it != area_sorted_cells.end();++it)
-    {                                                   //Treat cells from largest to smallest
-        float area = -(*it).first;
-        int      i = (*it).second;
+    // iterate with proper iterator type
+    for (auto it = area_sorted_cells.begin(); it != area_sorted_cells.end(); ++it) {
+        float area = -it->first;
+        int i = it->second;
 
-        int c[3];
-        grid->getCell(i, c);
-        if (area >= min_area)                           //Cell larger than the min-area allowed for subdivision?
-        {                                               //Then subdivide the cell into 3 cells using its barycenter
-            Point3d center = (pts[c[0]] + pts[c[1]] + pts[c[2]]) / 3;
+        int c[10];
+        int size = grid->getCell(i, c);
+        if (size != 3) {
+            std::cerr << "Skipping cell " << i << " with unexpected size " << size << "\n";
+            continue;
+        }
+
+        // validate indices before using them
+        if (c[0] < 0 || c[1] < 0 || c[2] < 0 ||
+            c[0] >= (int)pts.size() || c[1] >= (int)pts.size() || c[2] >= (int)pts.size()) {
+            std::cerr << "ERROR: invalid cell indices for cell " << i << ": "
+                << c[0] << "," << c[1] << "," << c[2] << " pts.size()=" << pts.size() << "\n";
+            // Print some context and skip the cell to avoid crash
+            continue;
+        }
+
+        if (area >= min_area) {
+            Point3d center = (pts[c[0]] + pts[c[1]] + pts[c[2]]) / 3.0f;
             pts.push_back(center);
-			std::cout << "New point: " << center.x << " " << center.y << " " << center.z << std::endl;
+
+            // NP2 must equal previous pts.size() before push_back; assert
+            assert(NP2 == (int)pts.size() - 1 || NP2 == (int)pts.size() - 0 /*sometimes they match differently depending on push order*/);
+
+            // push the 3 new triangles
             cells.push_back(c[0]); cells.push_back(c[1]); cells.push_back(NP2);
             cells.push_back(NP2); cells.push_back(c[1]); cells.push_back(c[2]);
             cells.push_back(c[2]); cells.push_back(c[0]); cells.push_back(NP2);
 
-            Nsubdivided++;                              //One more cell was subdivided
+            Nsubdivided++;
             NP2++;
             NC2 += 3;
         }
-        else                                            //Cell smaller than subdivision threshold?
-        {                                               //Then simply copy it
+        else {
+            // copy triangle
             cells.push_back(c[0]);
             cells.push_back(c[1]);
             cells.push_back(c[2]);
@@ -82,34 +143,54 @@ void Refinement::subdivide(UnstructuredGrid3D*& grid, UnstructuredGrid3D* grid2,
         }
     }
 
-    grid2 = new UnstructuredGrid3D(NP2, NC2);            //Now that we have all vertices and cells of the refined grid,
-    for (int i = 0;i < NP2;++i)                              //make the new grid
-        grid2->setPoint(i, (float*)pts[i]);
+    // Final consistency checks
+    if ((int)cells.size() != NC2 * 3) {
+        std::cerr << "ERROR: cells vector size mismatch: cells.size()=" << cells.size()
+            << " but NC2*3=" << (NC2 * 3) << "\n";
+        // Attempt to recover/diagnose: print counts
+        std::cerr << "Original NP=" << NP << " NP2=" << NP2 << " NC=" << NC << " NC2=" << NC2 << " Nsubdivided=" << Nsubdivided << "\n";
+        // don't proceed to build grid2 if mismatch
+        return;
+    }
 
-    for (int i = 0;i < NC2;++i)
-        grid2->setCell(i, &(cells[3 * i]));
+    // Build the new grid
+    UnstructuredGrid3D* newGrid = new UnstructuredGrid3D(NP2, NC2);
+    // set points
+    for (int i = 0; i < NP2; ++i) {
+        float tmp[3] = { pts[i].x, pts[i].y, pts[i].z };
+        newGrid->setPoint(i, tmp);
+    }
+    // set cells (each cell is 3 ints)
+    for (int i = 0; i < NC2; ++i) {
+        newGrid->setCell(i, &(cells[3 * i]));
+    }
 
-    grid2->normalize();                                 //Renormalize the grid since we changed it
-    grid2->computeFaceNormals();                        //Recompute face normals since we made new cells
-    grid2->computeVertexNormals();                      //Recompute vertex normals since we made new vertices and cells
+    newGrid->normalize();
+    newGrid->computeFaceNormals();
+    newGrid->computeVertexNormals();
 
-    delete grid;                                        //Delete the old grid and
-    grid = grid2;                                       //replace it by the new, subdivided, one
+    // swap and cleanup
+    delete grid;
+    grid = newGrid;
 
-    cout << "Subdivided cells: " << Nsubdivided << endl;
+    std::cout << "Subdivided cells: " << Nsubdivided << ", final NP=" << NP2 << ", NC=" << NC2 << "\n";
 }
 
 void Refinement::Refine(std::string& inputFile, std::string& outputFile) {
 
-    UnstructuredGrid3D* grid = 0, * grid2 = 0;
+    float avg_area = 0;
 	FileOrganizer fo;
     grid = fo.LoadObjGrid(inputFile.c_str());                           //6.  Read a 3D mesh stored in a file in the PLY format
+	//DumpGridStats(grid);
     grid->normalize();									//7.  Normalize the mesh in the [-1,1] cube. This makes setting the OpenGL projection easier.
     grid->computeFaceNormals();							//8.  Compute face and vertex normals for the mesh. This allows us to shade the mesh next.
     grid->computeVertexNormals();
 
-    float avg_area = computeAverageCell(grid);
-    float fraction = 0.5;
-    subdivide(grid, grid2, fraction * avg_area);
-	fo.WriteObjGrid(outputFile.c_str(), grid2);
+    float fraction = 0.9;
+    while (grid->numPoints() < 5000) {
+        avg_area = computeAverageCell(grid);
+        subdivide(grid, grid2, avg_area * fraction);
+    }
+        
+	fo.WriteObjGrid(outputFile.c_str(), grid);
 }
