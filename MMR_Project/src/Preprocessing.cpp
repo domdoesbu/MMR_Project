@@ -200,27 +200,20 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     // Re-go over
     std::string averageShapeFile = "";
 
-    float minDistanceAvg = avgVertices;
+    float minDistanceAvg = avgVertices + avgFaces;
 
     // Average Shape
     for (const auto& shape : shapes) {
 
-		float currentDistance = sqrt(pow(avgVertices - shape.vertexNum, 2) + pow(avgFaces - shape.faceNum, 2));
+		float currentDistance = std::abs(avgVertices - shape.vertexNum) + std::abs(avgFaces - shape.faceNum);
 		if (currentDistance < minDistanceAvg) {
 			minDistanceAvg = currentDistance;
 			averageShapeFile = shape.fileName;
+            std::cout << "Average shape: " << averageShapeFile << "Vertices: " << shape.vertexNum << "Faces: " << shape.faceNum << std::endl;
 		}
     }
 
-	std::cout << "Average shape by vertices: " << averageShapeFile << std::endl;
-
-    // SD
-    int accumulator = 0;
-	for (const auto& vertex : vertexVals) {
-        accumulator += pow(vertex - avgVertices, 2);
-	}
-	float stdDev = sqrt(accumulator / vertexVals.size());
-	std::cout << "Standard Deviation of vertices: " << stdDev << std::endl;
+	
 
     // Outliers
 

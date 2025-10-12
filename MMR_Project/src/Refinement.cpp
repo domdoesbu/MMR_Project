@@ -186,7 +186,7 @@ void Refinement::Refine(std::string& inputFile, std::string& outputFile) {
     grid->computeFaceNormals();							//8.  Compute face and vertex normals for the mesh. This allows us to shade the mesh next.
     grid->computeVertexNormals();
 
-    float fraction = 0.9;
+    float fraction = 0.95;
     while (grid->numPoints() < 5000) {
         avg_area = computeAverageCell(grid);
         subdivide(grid, grid2, avg_area * fraction);
