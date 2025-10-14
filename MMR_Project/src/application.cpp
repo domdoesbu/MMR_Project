@@ -127,7 +127,7 @@ static void findBarycenter(std::vector<float> positions, std::vector<unsigned in
 // fragment shader is the pixel shader. ran once for each pixel: colour of specific pixel
 // vertex shader is ran once for each vertex, so with a triangle, its ran 3 times
 
-void ExtractFeatures(std::string& inputFile, std::string& fileName, std::vector<float>& positions, glm::vec3 barycenter, float largeEig, float smallEig) {
+void ExtractFeatures(std::string& inputFile, std::string& fileName, std::vector<float>& positions, glm::vec3 barycenter, float largeEig, float smallEig, bool hist) {
     // FEATURE EXTRACTION
     std::cout << "--- FEATURE EXTRACTION ---" << std::endl;
     FeatureExtraction fe;
@@ -159,15 +159,15 @@ void ExtractFeatures(std::string& inputFile, std::string& fileName, std::vector<
 
     //   // 7. A3 -> D4
     //   //// A3
-    fe.A3(positions, 10000, 20, false);
+    fe.A3(positions, 10000, 20, hist);
     //   //// D1
-    fe.D1(positions, barycenter, 10000, 20, false);
+    fe.D1(positions, barycenter, 10000, 20, hist);
     //   //// D2
-    fe.D2(positions, 10000, 20, false);
+    fe.D2(positions, 10000, 20, hist);
     //   //// D3
-    fe.D3(positions, 10000, 20, false);
+    fe.D3(positions, 10000, 20, hist);
     //   //// D4
-    fe.D4(positions, 10000, 20, false);
+    fe.D4(positions, 10000, 20, hist);
 
     std::cout << "--- END FEATURE EXTRACTION ---" << std::endl;
 }
@@ -303,7 +303,7 @@ int main(void)
 
 
     // ---------------------------------------------------------------------------------
-    //ExtractFeatures(inputFile, fileName, positions, barycenter, largeEig, smallEig);
+    ExtractFeatures(inputFile, fileName, positions, barycenter, largeEig, smallEig, true);
     // --------------------------------------------------------------------------------- 
 
     unsigned int vao;
@@ -440,7 +440,7 @@ int main(void)
                 }
 
                 fs::path sourcePath = inputFile;
-
+                ExtractFeatures(inputFile, fileName, positions, barycenter, largeEig, smallEig, true);
                 // Size
                 positions = prep.NormalizeScale(positions, sourcePath);
                 // Update GPU buffers with new mesh data
