@@ -5,10 +5,11 @@
 #include <iostream>
 #include <glm/glm.hpp>
 #include <math.h>
-
+#include <string>
+#include <filesystem>
 #include "FileOrganizer.h"
 #include "Preprocessing.h"
-#include "matplotlibcpp.h"
+
 
 #include <MRMesh/MRConvexHull.h>
 #include <MRMesh/MRMeshFwd.h>
@@ -19,10 +20,13 @@
 #include <MRMesh/MRBuffer.h>
 #include <MRMesh/MRMeshSubdivide.h>
 #include <MRMesh/MRVector.h>
+#include "matplotlibcpp.h"
 class FeatureExtraction
 {
 public:
 	FeatureExtraction() {};
+
+	void ExtractA3Features(std::string& classPath);
 
 	// 1. Surface area S
 	float SurfaceArea(std::string& fileName);
@@ -43,7 +47,7 @@ public:
 
 	// 7. A3 -> D4
 	//// A3
-	void A3(std::vector<float>& positions, int samples, int bins, bool showGraph);
+	std::pair< std::vector<double>, std::vector<double>> A3(std::vector<float>& positions, int samples, int bins, bool showGraph);
 	//// D1
 	void D1(std::vector<float>& positions, glm::vec3 barycenter, int samples, int bins, bool showGraph);
 	//// D2
@@ -56,6 +60,7 @@ public:
 	// Helper
 	float Volume(std::string& fileName);
 
+	
 private:
 	float Volume(std::vector<float> positions);
 

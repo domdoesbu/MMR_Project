@@ -6,6 +6,7 @@
 #include <sstream>
 #include <iostream>
 #include <crtdbg.h>
+#include <filesystem>
 #include "FileOrganizer.h"
 #include "Camera.h"
 #include "Shader.h"
@@ -14,7 +15,7 @@
 #include "Refinement.h"
 #include "FeatureExtraction.h"
 
-
+namespace fs = std::filesystem;
 struct ShaderProgramSource
 {
 	std::string VertexSource;
@@ -127,47 +128,56 @@ static void findBarycenter(std::vector<float> positions, std::vector<unsigned in
 // fragment shader is the pixel shader. ran once for each pixel: colour of specific pixel
 // vertex shader is ran once for each vertex, so with a triangle, its ran 3 times
 
-void ExtractFeatures(std::string& inputFile, std::string& fileName, std::vector<float>& positions, glm::vec3 barycenter, float largeEig, float smallEig, bool hist) {
+void ExtractFeatures(std::string& inputFile, std::string& fileName, std::vector<float>& positions, glm::vec3 barycenter, float largeEig, float smallEig, bool hist, const std::string& databasePath) {
     // FEATURE EXTRACTION
     std::cout << "--- FEATURE EXTRACTION ---" << std::endl;
     FeatureExtraction fe;
 
-    //   // 1. Surface area S
-    float surfaceArea = fe.SurfaceArea(inputFile);
-    std::cout << "Surface Area: " << surfaceArea << std::endl;
+    ////   // 1. Surface area S
+    //float surfaceArea = fe.SurfaceArea(inputFile);
+    //std::cout << "Surface Area: " << surfaceArea << std::endl;
 
-    //   // 2. Compactness
-    float volume = fe.Volume(inputFile);
-    float compactness = fe.Compactness(surfaceArea, volume);
-    std::cout << "Volume : " << volume << "|| Compactness : " << compactness << std::endl;
+    ////   // 2. Compactness
+    //float volume = fe.Volume(inputFile);
+    //float compactness = fe.Compactness(surfaceArea, volume);
+    //std::cout << "Volume : " << volume << "|| Compactness : " << compactness << std::endl;
 
-    //   // 3. Recantgularity
-    float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, fileName, "./shape_analysis_resamp.csv");
-    std::cout << "Rectangularity: " << rectangularity << std::endl;
-    //   
-    //   // 4. Diameter
-    float diameter = fe.Diameter(positions);
-    std::cout << "Diameter: " << diameter << std::endl;
+    ////   // 3. Recantgularity
+    //float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, fileName, "./shape_analysis_resamp.csv");
+    //std::cout << "Rectangularity: " << rectangularity << std::endl;
+    ////   
+    ////   // 4. Diameter
+    //float diameter = fe.Diameter(positions);
+    //std::cout << "Diameter: " << diameter << std::endl;
 
-    //   // 5. Convexity
-    float convexity = fe.Convexity(positions, barycenter, fileName, inputFile);
-    std::cout << "Convexity: " << convexity << std::endl;
+    ////   // 5. Convexity
+    //float convexity = fe.Convexity(positions, barycenter, fileName, inputFile);
+    //std::cout << "Convexity: " << convexity << std::endl;
 
-    //   // 6. Eccentricity
-    float eccentricity = fe.Eccentricity(largeEig, smallEig);
-    std::cout << "Eccentricity: " << eccentricity << std::endl;
+    ////   // 6. Eccentricity
+    //float eccentricity = fe.Eccentricity(largeEig, smallEig);
+    //std::cout << "Eccentricity: " << eccentricity << std::endl;
 
     //   // 7. A3 -> D4
     //   //// A3
-    fe.A3(positions, 10000, 20, hist);
-    //   //// D1
     fe.D1(positions, barycenter, 10000, 20, hist);
-    //   //// D2
-    fe.D2(positions, 10000, 20, hist);
-    //   //// D3
-    fe.D3(positions, 10000, 20, hist);
-    //   //// D4
-    fe.D4(positions, 10000, 20, hist);
+    FileOrganizer fo;
+    fs::path sourcePath = databasePath;
+    for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+        if (!fs::is_directory(classDir)) continue;
+        std::string className = classDir.path().filename().string();
+        // For each obj in the folder, get the information about it
+		std::string classPath = sourcePath.string() + '/' + className;
+        fe.ExtractA3Features(classPath);
+    }
+    //   //// D1
+    
+    ////   //// D2
+    //fe.D2(positions, 10000, 20, hist);
+    ////   //// D3
+    //fe.D3(positions, 10000, 20, hist);
+    ////   //// D4
+    //fe.D4(positions, 10000, 20, hist);
 
     std::cout << "--- END FEATURE EXTRACTION ---" << std::endl;
 }
@@ -179,8 +189,6 @@ void CSVSetup(const std::string& csv, std::string& database) {
     prep.DatabaseStatistics(csv);
 }
 
-
-namespace fs = std::filesystem;
 
 int main(void)
 {
@@ -231,11 +239,11 @@ int main(void)
     // Remeshing
     std::cout << "--- REMESHING ---" << std::endl;
 
-    prep.Resampling(databsePath, databsePathResampled);
+    //prep.Resampling(databsePath, databsePathResampled);
 
     std::cout << "--- REMESHING END---" << std::endl;
 
-    CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
+    //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
     std::cout << "Specify path for the desired object:" << std::endl;
 
@@ -284,26 +292,26 @@ int main(void)
     // prep.CheckNormalOrientation(positions, indices, barycenter);
 
     // CheckHoles reads from input file, so we need this
-    MeshData data;
-    data.positions = positions;
-    data.indices = indices;
-    fo.WriteNewObj(inputFile, data);
-    CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
+    //MeshData data;
+    //data.positions = positions;
+    //data.indices = indices;
+    //fo.WriteNewObj(inputFile, data);
+    //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
-    prep.CheckHoles(inputFile);
-    positions.clear();
-    indices.clear();
-    if (!fo.LoadObj(inputFile.c_str(), positions, indices))
-    {
-        std::cerr << "Failed to load obj" << std::endl;
-        return -1;
-    }
+    //prep.CheckHoles(inputFile);
+    //positions.clear();
+    //indices.clear();
+    //if (!fo.LoadObj(inputFile.c_str(), positions, indices))
+    //{
+    //    std::cerr << "Failed to load obj" << std::endl;
+    //    return -1;
+    //}
     std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
 
 
     // ---------------------------------------------------------------------------------
-    ExtractFeatures(inputFile, fileName, positions, barycenter, largeEig, smallEig, true);
+    ExtractFeatures(inputFile, fileName, positions, barycenter, largeEig, smallEig, true, databsePathResampled);
     // --------------------------------------------------------------------------------- 
 
     unsigned int vao;
@@ -440,7 +448,7 @@ int main(void)
                 }
 
                 fs::path sourcePath = inputFile;
-                ExtractFeatures(inputFile, fileName, positions, barycenter, largeEig, smallEig, true);
+                //ExtractFeatures(inputFile, fileName, positions, barycenter, largeEig, smallEig, true);
                 // Size
                 positions = prep.NormalizeScale(positions, sourcePath);
                 // Update GPU buffers with new mesh data

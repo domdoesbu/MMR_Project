@@ -1,5 +1,59 @@
 #include "FeatureExtraction.h"
 
+namespace plt = matplotlibcpp;
+namespace fs = std::filesystem;
+void FeatureExtraction::ExtractA3Features(std::string& classPath) {
+	FileOrganizer fo;
+	std::vector<std::pair<std::vector<double>, std::vector<double>>> a3Results;
+
+	std::vector<float> positions;
+	std::vector<unsigned int> indices;
+	fs::path sourcePath = classPath;
+	std::string databasePath = sourcePath.string();
+
+	for (const auto& file : fs::directory_iterator(databasePath)) {
+		positions.clear();
+		indices.clear();
+		std::string currentFile = file.path().filename().string();
+		std::string fullFilePath = databasePath + "/" + currentFile;
+		if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
+		{
+			std::cerr << "Failed to load obj" << std::endl;
+
+		}
+
+		std::pair<std::vector<double>, std::vector<double>> results = A3(positions, 1000000, 20, false);
+		
+		a3Results.push_back(results);
+	}
+	if (a3Results.empty()) {
+		std::cerr << "No valid A3 results to plot.\n";
+		return;
+	}
+
+
+
+	plt::figure();
+	for (size_t i = 0; i < a3Results.size(); ++i) {
+		auto& bins = a3Results[i].first;
+		auto& counts = a3Results[i].second;
+
+		// connected line + scatter points
+		plt::plot(bins, counts);
+		plt::scatter(bins, counts, 8.0);
+		
+	}
+	plt::xlabel("Angle (radians)");
+	plt::ylabel("Count");
+	plt::title(classPath);
+	plt::legend();
+	plt::grid(true);
+	plt::show();
+
+	
+}
+
+
 // 1. Surface Area :: S
 //// Helper
 float FeatureExtraction::ComputeLocalArea(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3)
@@ -128,12 +182,12 @@ float FeatureExtraction::Eccentricity(float largeEig, float smallEig)
 }
 
 // 7. A3 -> D4
-namespace plt = matplotlibcpp;
-void FeatureExtraction::A3(std::vector<float>& positions, int samples, int bins, bool showGraph)
+
+std::pair< std::vector<double>, std::vector<double>>  FeatureExtraction::A3(std::vector<float>& positions, int samples, int bins, bool showGraph)
 {
 	// Pick 3 random points on the surface and find the angle between them
 	// Repeat this a large number of times and make a histogram of the angles
-	std::vector<float> vertexVals;
+	std::vector<double> vertexVals;
 	int numVertices = positions.size() / 6;
 	int k = pow(samples, 1.0 / 3.0);
 	for (int i = 0; i < k; i++) {
@@ -157,13 +211,36 @@ void FeatureExtraction::A3(std::vector<float>& positions, int samples, int bins,
 			}
 		}
 	}
-	if (showGraph) {
-		plt::xlabel("Angle");
-		plt::ylabel("Count");
-		plt::title("A3 Histogram");
-		plt::hist(vertexVals, bins);
-		plt::show();
+	
+	float minVal = *std::min_element(vertexVals.begin(), vertexVals.end());
+	float maxVal = *std::max_element(vertexVals.begin(), vertexVals.end());
+
+	// Handle degenerate case (all values identical)
+	if (maxVal == minVal) {
+		maxVal = minVal + 1e-6f;
 	}
+
+	float binWidth = (maxVal - minVal) / bins;
+	std::vector<double> counts(bins, 0.0);
+
+	for (float v : vertexVals) {
+		int binIdx = static_cast<int>((v - minVal) / binWidth);
+		if (binIdx < 0) binIdx = 0;
+		if (binIdx >= bins) binIdx = bins - 1;
+		counts[binIdx]++;
+	}
+
+	double total = std::accumulate(counts.begin(), counts.end(), 0.0);
+	if (total > 0.0) {
+		for (auto& c : counts) c /= total;
+	}
+
+	// Compute bin centers
+	std::vector<double> bin_centers(bins);
+	for (int i = 0; i < bins; ++i) {
+		bin_centers[i] = minVal + (i + 0.5) * binWidth;
+	}
+	return { bin_centers, counts };
 }
 
 void FeatureExtraction::D1(std::vector<float>& positions, glm::vec3 barycenter, int samples, int bins, bool showGraph)
@@ -322,5 +399,7 @@ float FeatureExtraction::Distance(glm::vec3 v1, glm::vec3 v2)
 {	
     return sqrt((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y) + (v2.z - v1.z) * (v2.z - v1.z));
 }
+
+
 
 	
