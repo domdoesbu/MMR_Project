@@ -710,7 +710,7 @@ void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
 		if (!fs::is_directory(classDir)) continue;
 		std::string className = classDir.path().filename().string();
 		// For each obj in the folder, get the information about it
-		std::string classPath = sourcePath.string() + '/' + className;
+		std::string classPath = sourcePath.string()  + className;
 		for (const auto& file : fs::directory_iterator(classDir)) {
 			positions.clear();
 			indices.clear();
