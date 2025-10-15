@@ -2,7 +2,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "FileOrganizer.h"
 
-
+namespace fs = std::filesystem;
 bool FileOrganizer::LoadObj(const char* inputFile, std::vector<float>& outVertices, std::vector<unsigned int>& outIndices)
 {
     tinyobj::ObjReaderConfig readerConfig;
@@ -179,7 +179,7 @@ void FileOrganizer::WriteNewObj(std::string destinationFilename, MeshData result
         std::cerr << "Error: Could not open file for writing: " << destinationFilename << std::endl;
     }
     else {
-        std::cout << results.positions[0] << std::endl;
+
         // Write vertices
         for (size_t i = 0; i < results.positions.size(); i += 6) {
             float x = results.positions[i + 0];
@@ -200,7 +200,7 @@ void FileOrganizer::WriteNewObj(std::string destinationFilename, MeshData result
         }
 
         out.close();
-        std::cout << "[ResamplingOutliers] Wrote OBJ: " << destinationFilename << std::endl;
+        std::cout << "Wrote OBJ: " << destinationFilename << std::endl;
     }
 }
 
@@ -266,4 +266,79 @@ shapeInfo FileOrganizer::getShapeFromDatabase(std::string csvFilename, std::stri
     }
     csvFile.close();
     return outInfo;
+}
+
+baryAndEigInfo FileOrganizer::getBaryAndEigFromCSV(std::string csvFilename, std::string shapeFilename) {
+    std::ifstream csvFile(csvFilename);
+    baryAndEigInfo outInfo;
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open input CSV file: " << csvFilename << std::endl;
+        return outInfo;
+    }
+    std::string line;
+
+    while (std::getline(csvFile, line)) {
+        std::istringstream iss(line);
+        std::string token;
+        std::getline(iss, outInfo.className, ',');
+        std::getline(iss, outInfo.fileName, ',');
+        if (outInfo.fileName == shapeFilename)
+        {
+            std::getline(iss, token, ','); outInfo.baryX = std::stoul(token);
+            std::getline(iss, token, ','); outInfo.baryY = std::stoul(token);
+            std::getline(iss, token, ','); outInfo.baryZ = std::stof(token);
+            std::getline(iss, token, ','); outInfo.eigLarge = std::stof(token);
+            std::getline(iss, token, ','); outInfo.eigSmall = std::stof(token);
+            csvFile.close();
+            return outInfo;
+        }
+    }
+    csvFile.close();
+    return outInfo;
+}
+
+void FileOrganizer::WriteCSVAfterNorm(std::filesystem::path databasePath, std::string csvFilename,std::vector<glm::vec3> barycenter, std::vector<Eigen::Vector3f> eigVals )
+{
+    // Excel file for all the data
+
+
+    // Check if database actually exists
+    if (!fs::exists(databasePath) || !fs::is_directory(databasePath)) {
+        std::cerr << "Database folder does not exist: " << databasePath << std::endl;
+        return;
+    }
+
+    std::ofstream csvFile(csvFilename);
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open output CSV file: " << csvFilename << std::endl;
+        return;
+    }
+
+    csvFile << "Class,File,BaryX,BaryY,BaryZ,LargeEig,SmallEig\n";
+
+    shapeInfo currentShapeInfo;
+    int iterator = 0;
+    // loop over every sub folder, aka the class itself
+    for (const auto& classDir : fs::directory_iterator(databasePath)) {
+        if (!fs::is_directory(classDir)) continue;
+
+        // Get the class
+        currentShapeInfo.className = classDir.path().filename().string();
+
+        // For each obj in the folder, get the information about it
+        for (const auto& file : fs::directory_iterator(classDir)) {
+
+
+            csvFile << classDir << ","
+                << file.path().filename().string() << ","
+                << barycenter.at(iterator).x << ","
+                << barycenter.at(iterator).y << ","
+                << barycenter.at(iterator).z << ","
+                << eigVals.at(iterator)(2) << ","
+                << eigVals.at(iterator)(0)
+                << "\n";
+            iterator++;
+        }
+    }
+    csvFile.close();
 }

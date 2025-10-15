@@ -8,6 +8,7 @@
 #include <limits>
 #include <vector>
 #include <array>
+#include <Eigen/Dense>
 #include "glm/gtx/string_cast.hpp"
 #include "glm/glm.hpp"
 #include "./include/tiny_obj_loader.h"
@@ -36,6 +37,18 @@ struct shapeInfo
 	float maxZ;
 };
 
+struct baryAndEigInfo
+{
+	std::string className;
+	std::string fileName;
+	float baryX;
+	float baryY;
+	float baryZ;
+
+	float eigLarge;
+	float eigSmall;
+};
+
 class FileOrganizer
 {
 public:
@@ -46,6 +59,8 @@ public:
 	void WriteNewObj(std::string destinationFilename, MeshData results);
 	void WriteObjGrid(const char* filename, UnstructuredGrid3D* grid);
 	shapeInfo getShapeFromDatabase(std::string csvFilename, std::string shapeFilename);
+	baryAndEigInfo getBaryAndEigFromCSV(std::string csvFilename, std::string shapeFilename);
+	void WriteCSVAfterNorm(std::filesystem::path database, std::string csvFilename, std::vector<glm::vec3> barycenter, std::vector<Eigen::Vector3f> eigVals);
 
 };
 

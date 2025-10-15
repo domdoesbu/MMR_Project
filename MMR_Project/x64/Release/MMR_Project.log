@@ -6,26 +6,23 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\Unstructu
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
   (compiling source file 'src/FeatureExtraction.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(72,18): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(79,51): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(144,16): warning C4834: discarding return value of function with [[nodiscard]] attribute
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(191,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(192,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(215,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(216,15): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(226,27): warning C4244: 'initializing': conversion from '_Ty' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(226,27): warning C4244:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(226,27): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(226,27): warning C4244:             _Ty=double
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(226,27): warning C4244:         ]
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(250,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(272,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(273,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(300,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(301,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(333,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(334,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(376,20): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(164,18): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(171,51): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(236,16): warning C4834: discarding return value of function with [[nodiscard]] attribute
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(283,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(284,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(313,27): warning C4244: 'initializing': conversion from '_Ty' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(313,27): warning C4244:         with
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(313,27): warning C4244:         [
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(313,27): warning C4244:             _Ty=double
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(313,27): warning C4244:         ]
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(377,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(378,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(420,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(421,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(453,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(454,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(496,20): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
@@ -41,14 +38,43 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1006,5
   (compiling source file 'src/FeatureExtraction.cpp')
       C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1006,55):
       the template instantiation context (the oldest one first) is
-          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(43,8):
+          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(40,8):
           see reference to function template instantiation 'bool matplotlibcpp::scatter<double,double>(const std::vector<double,std::allocator<double>> &,const std::vector<double,std::allocator<double>> &,const double,const std::map<std::string,std::string,std::less<std::string>,std::allocator<std::pair<const std::string,std::string>>> &)' being compiled
+  
+  application.cpp
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+  (compiling source file 'src/application.cpp')
+  
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
+  (compiling source file 'src/application.cpp')
+  
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\minwindef.h(130,9): warning C4005: 'APIENTRY': macro redefinition
+  (compiling source file 'src/application.cpp')
+      C:\Users\Dom\Documents\GitHub\MMR_Project\Dependencies\GLFW\include\GLFW\glfw3.h(123,11):
+      see previous definition of 'APIENTRY'
+  
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(113,23): warning C4267: 'initializing': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(386,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(387,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(407,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(438,50): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(451,54): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
+  (compiling source file 'src/application.cpp')
+      C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
+      the template instantiation context (the oldest one first) is
+          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
+          see reference to function template instantiation 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' being compiled
   
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  11 of 3697 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    69 functions had inline decision re-evaluated but remain unchanged
+  109 of 2585 functions ( 4.2%) were compiled, the rest were copied from previous compilation.
+    2 functions were new in current compilation
+    149 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\vc120.pdb'; linking object as if no debug info
   MMR_Project.vcxproj -> C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\MMR_Project.exe

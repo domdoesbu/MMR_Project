@@ -93,6 +93,14 @@ struct Vertex {
 	float texcoord[2];
 };
 
+void CSVSetup(const std::string& csv, std::string& database) {
+    std::cout << "Creating " << csv << std::endl;
+    Preprocessing prep;
+
+    prep.AnalyzeShapes(database, csv);
+    prep.DatabaseStatistics(csv);
+}
+
 static void findBarycenter(std::vector<float> positions, std::vector<unsigned int> indices, std::vector<float>&outBarycenter)
 {
     float sumX = 0.0, sumY = 0.0, sumZ = 0.0;
@@ -125,68 +133,136 @@ static void findBarycenter(std::vector<float> positions, std::vector<unsigned in
     outBarycenter = { avgPosX, avgPosY, avgPosZ };
 }
 
-// fragment shader is the pixel shader. ran once for each pixel: colour of specific pixel
-// vertex shader is ran once for each vertex, so with a triangle, its ran 3 times
+void NormalizeDatabase(std::string& databasePath) {
 
-void ExtractFeatures(std::string& inputFile, std::string& fileName, std::vector<float>& positions, glm::vec3 barycenter, float largeEig, float smallEig, bool hist, const std::string& databasePath) {
-    // FEATURE EXTRACTION
-    std::cout << "--- FEATURE EXTRACTION ---" << std::endl;
-    FeatureExtraction fe;
-
-    ////   // 1. Surface area S
-    //float surfaceArea = fe.SurfaceArea(inputFile);
-    //std::cout << "Surface Area: " << surfaceArea << std::endl;
-
-    ////   // 2. Compactness
-    //float volume = fe.Volume(inputFile);
-    //float compactness = fe.Compactness(surfaceArea, volume);
-    //std::cout << "Volume : " << volume << "|| Compactness : " << compactness << std::endl;
-
-    ////   // 3. Recantgularity
-    //float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, fileName, "./shape_analysis_resamp.csv");
-    //std::cout << "Rectangularity: " << rectangularity << std::endl;
-    ////   
-    ////   // 4. Diameter
-    //float diameter = fe.Diameter(positions);
-    //std::cout << "Diameter: " << diameter << std::endl;
-
-    ////   // 5. Convexity
-    //float convexity = fe.Convexity(positions, barycenter, fileName, inputFile);
-    //std::cout << "Convexity: " << convexity << std::endl;
-
-    ////   // 6. Eccentricity
-    //float eccentricity = fe.Eccentricity(largeEig, smallEig);
-    //std::cout << "Eccentricity: " << eccentricity << std::endl;
-
-    //   // 7. A3 -> D4
-    //   //// A3
-    fe.D1(positions, barycenter, 10000, 20, hist);
     FileOrganizer fo;
+    Preprocessing prep;
     fs::path sourcePath = databasePath;
+    std::vector<float> positions;
+    std::vector<unsigned int> indices;
+    std::vector<glm::vec3> barycenters;
+    std::vector<Eigen::Vector3f> eigenValues;
     for (const auto& classDir : fs::directory_iterator(sourcePath)) {
         if (!fs::is_directory(classDir)) continue;
         std::string className = classDir.path().filename().string();
         // For each obj in the folder, get the information about it
-		std::string classPath = sourcePath.string() + '/' + className;
-        fe.ExtractA3Features(classPath);
+        std::string classPath = sourcePath.string() + '/' + className;
+        for (const auto& file : fs::directory_iterator(classDir)) {
+            positions.clear();
+            indices.clear();
+            std::string currentFile = file.path().filename().string();
+            std::string fullFilePath = classPath + "/" + currentFile;
+            if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
+            {
+                std::cerr << "Failed to load obj" << std::endl;
+
+            }
+            glm::vec3 barycenter = prep.ComputeBarycenter(positions);
+            barycenters.push_back(barycenter);
+            for (int i = 0; i < positions.size(); i += 6) {
+                positions[i + 0] -= barycenter.x;
+                positions[i + 1] -= barycenter.y;
+                positions[i + 2] -= barycenter.z;
+            }
+
+            // Pose
+            Eigen::Vector3f eigVals = prep.NormalizeAlign(positions, 6, 0);
+            eigenValues.push_back(eigVals);
+         
+
+            // Flipping
+            prep.NormalizeFlipping(positions, indices, 6, 0);
+
+            // Size
+            positions = prep.NormalizeScale(positions, fullFilePath);
+            prep.CheckNormalOrientation(positions, indices, barycenter);
+            MeshData data;
+            data.positions = positions;
+            data.indices = indices;
+            fo.WriteNewObj(fullFilePath, data);
+        }
     }
-    //   //// D1
+    CSVSetup("./shape_analysis_resamp_norm.csv", databasePath);
+    fo.WriteCSVAfterNorm(databasePath, "Bary_Eigs.csv", barycenters, eigenValues);
+}
+
+void ExtractFeaturesOneShape(std::string inputFile, std::vector<float> positions) {
+
+    FeatureExtraction fe;
+
+    FileOrganizer fo;
+    fs::path path = inputFile;
+    baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", path.filename().string());
+
+    // InputFile is the full path
+
+    // 1. Surface area S
+    float surfaceArea = fe.SurfaceArea(inputFile);
+    std::cout << "Surface Area: " << surfaceArea << std::endl;
+
+    // 2. Compactness
+    float volume = fe.Volume(inputFile);
+    float compactness = fe.Compactness(surfaceArea, volume);
+    std::cout << "Volume : " << volume << "|| Compactness : " << compactness << std::endl;
+
+    // 3. Recantgularity
+    glm::vec3 barycenter = { info.baryX, info.baryY, info.baryZ };
+    float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, path.filename().string(), "./shape_analysis_resamp.csv");
+    std::cout << "Rectangularity: " << rectangularity << std::endl;
+  
+    // 4. Diameter
+    float diameter = fe.Diameter(positions);
+    std::cout << "Diameter: " << diameter << std::endl;
+
+    // 5. Convexity
+    float convexity = fe.Convexity(positions, barycenter, path.filename().string(), inputFile);
+    std::cout << "Convexity: " << convexity << std::endl;
+
+    // 6. Eccentricity
+    float eccentricity = fe.Eccentricity(info.eigLarge, info.eigSmall);
+    std::cout << "Eccentricity: " << eccentricity << std::endl;
+}
+
+void ExtractFeatures( const std::string& databasePath) {
+    // FEATURE EXTRACTION
+    std::cout << "--- FEATURE EXTRACTION ---" << std::endl;
+    FeatureExtraction fe;
+    FileOrganizer fo;
+    fs::path sourcePath = databasePath;
+    // 7. A3 -> D4
+    //// A3
     
+  //  for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+  //      if (!fs::is_directory(classDir)) continue;
+  //      std::string className = classDir.path().filename().string();
+  //      // For each obj in the folder, get the information about it
+		//std::string classPath = sourcePath.string() + '/' + className;
+  //      fe.ExtractA3Features(classPath);
+  //  }
+  // 
+    //// D1
+    //for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+    //    if (!fs::is_directory(classDir)) continue;
+    //    std::string className = classDir.path().filename().string();
+    //    // For each obj in the folder, get the information about it
+    //    std::string classPath = sourcePath.string() + '/' + className;
+    //    fe.ExtractD1Features(classPath);
+    //}
+
     ////   //// D2
-    //fe.D2(positions, 10000, 20, hist);
+    //for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+    //    if (!fs::is_directory(classDir)) continue;
+    //    std::string className = classDir.path().filename().string();
+    //    // For each obj in the folder, get the information about it
+    //    std::string classPath = sourcePath.string() + '/' + className;
+    //    fe.ExtractD2Features(classPath);
+    //}
     ////   //// D3
     //fe.D3(positions, 10000, 20, hist);
     ////   //// D4
     //fe.D4(positions, 10000, 20, hist);
 
     std::cout << "--- END FEATURE EXTRACTION ---" << std::endl;
-}
-
-void CSVSetup(const std::string& csv, std::string& database) {
-    Preprocessing prep;
-
-    prep.AnalyzeShapes(database, csv);
-    prep.DatabaseStatistics(csv);
 }
 
 
@@ -228,9 +304,14 @@ int main(void)
     FileOrganizer fo;
     Preprocessing prep;
 
-    //std::string databsePath = "./ShapeDatabase_INFOMR-master/";
-    std::string databsePath = "./test2/";
+    std::string databsePath = "./ShapeDatabaseFixed/";
+    //std::string databsePath = "./test2/";
     std::string databsePathResampled = "./ResampledDatabase/";
+
+    /*
+        DO NOT UNCOMMENT!!!!!!!
+        WE HAVE STATS FOR THE WHOLE DATABASE NOW AND IF YOU UNCOMMENT I HAVE TO RERUN THE WHOLE DATABASEEEEEE
+    */
 
     std::cout << "--- PREPROCESSING ---" << std::endl;
 
@@ -245,6 +326,20 @@ int main(void)
 
     //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
+    // -------------------------------------------------------------------------------
+    // PREPROCESSING
+    std::cout << "--- PREPROCESSING START ---" << std::endl;
+
+    //NormalizeDatabase(databsePathResampled);
+
+    std::cout << "--- PREPROCESSING END ---" << std::endl;
+    // -------------------------------------------------------------------------------
+
+
+    // ---------------------------------------------------------------------------------
+    ExtractFeatures(databsePathResampled);
+    // --------------------------------------------------------------------------------- 
+
     std::cout << "Specify path for the desired object:" << std::endl;
 
     std::string userInput;
@@ -257,63 +352,8 @@ int main(void)
         std::cerr << "Failed to load obj" << std::endl;
         return -1;
     }
-    std::cout << positions.size() / 6 << " vertices and " << indices.size() / 3 << " faces" << std::endl;
-    // -------------------------------------------------------------------------------
-    // PREPROCESSING
 
-    // Translation
-
-    glm::vec3 barycenter = prep.ComputeBarycenter(positions);
-    for (int i = 0; i < positions.size(); i += 6) {
-        positions[i + 0] -= barycenter.x;
-        positions[i + 1] -= barycenter.y;
-        positions[i + 2] -= barycenter.z;
-    }
-
-    // Pose
-    Eigen::Vector3f eigVals = prep.NormalizeAlign(positions, 6, 0);
-
-    float largeEig = eigVals(2);
-    float smallEig = eigVals(0);
-
-    // Flipping
-    prep.NormalizeFlipping(positions, indices, 6, 0);
-
-    float maxRadius = 0.0f;
-    for (int i = 0; i + 2 < positions.size(); i += 6) {
-        glm::vec3 v(positions[i], positions[i + 1], positions[i + 2]);
-        maxRadius = std::max(maxRadius, glm::length(v));
-    }
-
-    fs::path sourcePath = inputFile;
-
-    // Size
-    positions = prep.NormalizeScale(positions, sourcePath);
-    // prep.CheckNormalOrientation(positions, indices, barycenter);
-
-    // CheckHoles reads from input file, so we need this
-    //MeshData data;
-    //data.positions = positions;
-    //data.indices = indices;
-    //fo.WriteNewObj(inputFile, data);
-    //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
-
-    //prep.CheckHoles(inputFile);
-    //positions.clear();
-    //indices.clear();
-    //if (!fo.LoadObj(inputFile.c_str(), positions, indices))
-    //{
-    //    std::cerr << "Failed to load obj" << std::endl;
-    //    return -1;
-    //}
-    std::cout << "--- PREPROCESSING END ---" << std::endl;
-    // -------------------------------------------------------------------------------
-
-
-    // ---------------------------------------------------------------------------------
-    ExtractFeatures(inputFile, fileName, positions, barycenter, largeEig, smallEig, true, databsePathResampled);
-    // --------------------------------------------------------------------------------- 
-
+    ExtractFeaturesOneShape(inputFile, positions);
     unsigned int vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
@@ -373,12 +413,9 @@ int main(void)
 
 
         glm::mat4 model = glm::mat4(1.0f);
-        //model = glm::translate(model, barycenter);
-        //model = glm::translate(barycenter, glm::vec3(0.0,0.0,0.0));
         model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1, 0, 0));
 
         solidShader.use();
-        //glUniform3f(glGetUniformLocation(solidShader.ID, "barycenter"), barycenter.x, barycenter.y, barycenter.z);
         glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
         glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -425,32 +462,7 @@ int main(void)
             indices.clear();
             if (fo.LoadObj(newPath.c_str(), positions, indices))
             {
-                glm::vec3 barycenter = prep.ComputeBarycenter(positions);
-                for (int i = 0; i < positions.size(); i += 6) {
-                    positions[i + 0] -= barycenter.x;
-                    positions[i + 1] -= barycenter.y;
-                    positions[i + 2] -= barycenter.z;
-                }
-
-                // Pose
-                Eigen::Vector3f eigVals = prep.NormalizeAlign(positions, 6, 0);
-
-                float largeEig = eigVals(2);
-                float smallEig = eigVals(0);
-
-                // Flipping
-                prep.NormalizeFlipping(positions, indices, 6, 0);
-
-                float maxRadius = 0.0f;
-                for (int i = 0; i + 2 < positions.size(); i += 6) {
-                    glm::vec3 v(positions[i], positions[i + 1], positions[i + 2]);
-                    maxRadius = std::max(maxRadius, glm::length(v));
-                }
-
-                fs::path sourcePath = inputFile;
-                //ExtractFeatures(inputFile, fileName, positions, barycenter, largeEig, smallEig, true);
-                // Size
-                positions = prep.NormalizeScale(positions, sourcePath);
+               
                 // Update GPU buffers with new mesh data
                 glBindBuffer(GL_ARRAY_BUFFER, buffer);
                 glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(float), positions.data(), GL_STATIC_DRAW);

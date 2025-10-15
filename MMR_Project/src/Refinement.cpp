@@ -173,7 +173,6 @@ void Refinement::subdivide(UnstructuredGrid3D*& grid, UnstructuredGrid3D* grid2,
     delete grid;
     grid = newGrid;
 
-    std::cout << "Subdivided cells: " << Nsubdivided << ", final NP=" << NP2 << ", NC=" << NC2 << "\n";
 }
 
 void Refinement::Refine(std::string& inputFile, std::string& outputFile) {

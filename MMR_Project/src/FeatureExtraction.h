@@ -26,7 +26,7 @@ class FeatureExtraction
 public:
 	FeatureExtraction() {};
 
-	void ExtractA3Features(std::string& classPath);
+	
 
 	// 1. Surface area S
 	float SurfaceArea(std::string& fileName);
@@ -47,11 +47,14 @@ public:
 
 	// 7. A3 -> D4
 	//// A3
-	std::pair< std::vector<double>, std::vector<double>> A3(std::vector<float>& positions, int samples, int bins, bool showGraph);
+	void ExtractA3Features(std::string& classPath);
+	std::pair< std::vector<double>, std::vector<double>> A3(std::vector<float>& positions, int samples, int bins);
 	//// D1
-	void D1(std::vector<float>& positions, glm::vec3 barycenter, int samples, int bins, bool showGraph);
+	void ExtractD1Features(std::string& classPath);
+	std::pair< std::vector<double>, std::vector<double>> D1(std::vector<float>& positions, glm::vec3 barycenter, int bins);
 	//// D2
-	void D2(std::vector<float>& positions, int samples, int bins, bool showGraph);
+	void ExtractD2Features(std::string& classPath);
+	std::pair< std::vector<double>, std::vector<double>> D2(std::vector<float>& positions, int samples, int bins);
 	//// D3
 	void D3(std::vector<float>& positions, int samples, int bins, bool showGraph);
 	//// D4
