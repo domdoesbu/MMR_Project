@@ -21,12 +21,21 @@
 #include <MRMesh/MRMeshSubdivide.h>
 #include <MRMesh/MRVector.h>
 #include "matplotlibcpp.h"
+
+struct ShapeFeatures {
+	float surfaceArea;
+	float volume;
+	float compactness;
+	float rectangularity;
+	float diameter;
+	float convexity;
+	float eccentricity;
+};
+
 class FeatureExtraction
 {
 public:
 	FeatureExtraction() {};
-
-	
 
 	// 1. Surface area S
 	float SurfaceArea(std::string& fileName);
@@ -56,14 +65,17 @@ public:
 	void ExtractD2Features(std::string& classPath);
 	std::pair< std::vector<double>, std::vector<double>> D2(std::vector<float>& positions, int samples, int bins);
 	//// D3
-	void D3(std::vector<float>& positions, int samples, int bins, bool showGraph);
+	void ExtractD3Features(std::string& classPath);
+	std::pair< std::vector<double>, std::vector<double>> D3(std::vector<float>& positions, int samples, int bins);
 	//// D4
-	void D4(std::vector<float>& positions, int samples, int bins, bool showGraph);
+	void ExtractD4Features(std::string& classPath);
+	std::pair< std::vector<double>, std::vector<double>> D4(std::vector<float>& positions, int samples, int bins);
 
 	// Helper
 	float Volume(std::string& fileName);
-
-	
+	void ExtractFeaturesAtoD(const std::string& databasePath);
+	void ExtractFeaturesOthers(const std::string& databasePath);
+	ShapeFeatures ExtractFeaturesOneShape(std::string inputFile, std::vector<float>& positions);
 private:
 	float Volume(std::vector<float> positions);
 

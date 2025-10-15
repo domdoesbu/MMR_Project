@@ -101,170 +101,6 @@ void CSVSetup(const std::string& csv, std::string& database) {
     prep.DatabaseStatistics(csv);
 }
 
-static void findBarycenter(std::vector<float> positions, std::vector<unsigned int> indices, std::vector<float>&outBarycenter)
-{
-    float sumX = 0.0, sumY = 0.0, sumZ = 0.0;
-    for (int i = 0; i < positions.size() - 3; ++i) 
-    {
-        sumX += positions[i + 0];
-        sumY += positions[i + 1];
-        sumZ += positions[i + 2];
-    }
-    unsigned int size = positions.size()/3;
-
-    float avgX = sumX / size;
-    float avgY = sumY / size;
-    float avgZ = sumZ / size;
-
-    std::vector<float> distX, distY, distZ;
-    for (int i = 0; i < positions.size() - 3; ++i)
-    {
-        distX.push_back(abs(avgX - positions[i + 0]));
-        distY.push_back(abs(avgY - positions[i + 1]));
-        distZ.push_back(abs(avgZ - positions[i + 2]));
-    }
-
-    float avgPosX = *std::min_element(distX.begin(), distX.end());
-    float avgPosY= *std::min_element(distY.begin(), distY.end());
-    float avgPosZ = *std::min_element(distZ.begin(), distZ.end());
-
-    std::cout << avgPosX << std::endl;
-
-    outBarycenter = { avgPosX, avgPosY, avgPosZ };
-}
-
-void NormalizeDatabase(std::string& databasePath) {
-
-    FileOrganizer fo;
-    Preprocessing prep;
-    fs::path sourcePath = databasePath;
-    std::vector<float> positions;
-    std::vector<unsigned int> indices;
-    std::vector<glm::vec3> barycenters;
-    std::vector<Eigen::Vector3f> eigenValues;
-    for (const auto& classDir : fs::directory_iterator(sourcePath)) {
-        if (!fs::is_directory(classDir)) continue;
-        std::string className = classDir.path().filename().string();
-        // For each obj in the folder, get the information about it
-        std::string classPath = sourcePath.string() + '/' + className;
-        for (const auto& file : fs::directory_iterator(classDir)) {
-            positions.clear();
-            indices.clear();
-            std::string currentFile = file.path().filename().string();
-            std::string fullFilePath = classPath + "/" + currentFile;
-            if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
-            {
-                std::cerr << "Failed to load obj" << std::endl;
-
-            }
-            glm::vec3 barycenter = prep.ComputeBarycenter(positions);
-            barycenters.push_back(barycenter);
-            for (int i = 0; i < positions.size(); i += 6) {
-                positions[i + 0] -= barycenter.x;
-                positions[i + 1] -= barycenter.y;
-                positions[i + 2] -= barycenter.z;
-            }
-
-            // Pose
-            Eigen::Vector3f eigVals = prep.NormalizeAlign(positions, 6, 0);
-            eigenValues.push_back(eigVals);
-         
-
-            // Flipping
-            prep.NormalizeFlipping(positions, indices, 6, 0);
-
-            // Size
-            positions = prep.NormalizeScale(positions, fullFilePath);
-            prep.CheckNormalOrientation(positions, indices, barycenter);
-            MeshData data;
-            data.positions = positions;
-            data.indices = indices;
-            fo.WriteNewObj(fullFilePath, data);
-        }
-    }
-    CSVSetup("./shape_analysis_resamp_norm.csv", databasePath);
-    fo.WriteCSVAfterNorm(databasePath, "Bary_Eigs.csv", barycenters, eigenValues);
-}
-
-void ExtractFeaturesOneShape(std::string inputFile, std::vector<float> positions) {
-
-    FeatureExtraction fe;
-
-    FileOrganizer fo;
-    fs::path path = inputFile;
-    baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", path.filename().string());
-
-    // InputFile is the full path
-
-    // 1. Surface area S
-    float surfaceArea = fe.SurfaceArea(inputFile);
-    std::cout << "Surface Area: " << surfaceArea << std::endl;
-
-    // 2. Compactness
-    float volume = fe.Volume(inputFile);
-    float compactness = fe.Compactness(surfaceArea, volume);
-    std::cout << "Volume : " << volume << "|| Compactness : " << compactness << std::endl;
-
-    // 3. Recantgularity
-    glm::vec3 barycenter = { info.baryX, info.baryY, info.baryZ };
-    float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, path.filename().string(), "./shape_analysis_resamp.csv");
-    std::cout << "Rectangularity: " << rectangularity << std::endl;
-  
-    // 4. Diameter
-    float diameter = fe.Diameter(positions);
-    std::cout << "Diameter: " << diameter << std::endl;
-
-    // 5. Convexity
-    float convexity = fe.Convexity(positions, barycenter, path.filename().string(), inputFile);
-    std::cout << "Convexity: " << convexity << std::endl;
-
-    // 6. Eccentricity
-    float eccentricity = fe.Eccentricity(info.eigLarge, info.eigSmall);
-    std::cout << "Eccentricity: " << eccentricity << std::endl;
-}
-
-void ExtractFeatures( const std::string& databasePath) {
-    // FEATURE EXTRACTION
-    std::cout << "--- FEATURE EXTRACTION ---" << std::endl;
-    FeatureExtraction fe;
-    FileOrganizer fo;
-    fs::path sourcePath = databasePath;
-    // 7. A3 -> D4
-    //// A3
-    
-  //  for (const auto& classDir : fs::directory_iterator(sourcePath)) {
-  //      if (!fs::is_directory(classDir)) continue;
-  //      std::string className = classDir.path().filename().string();
-  //      // For each obj in the folder, get the information about it
-		//std::string classPath = sourcePath.string() + '/' + className;
-  //      fe.ExtractA3Features(classPath);
-  //  }
-  // 
-    //// D1
-    //for (const auto& classDir : fs::directory_iterator(sourcePath)) {
-    //    if (!fs::is_directory(classDir)) continue;
-    //    std::string className = classDir.path().filename().string();
-    //    // For each obj in the folder, get the information about it
-    //    std::string classPath = sourcePath.string() + '/' + className;
-    //    fe.ExtractD1Features(classPath);
-    //}
-
-    ////   //// D2
-    //for (const auto& classDir : fs::directory_iterator(sourcePath)) {
-    //    if (!fs::is_directory(classDir)) continue;
-    //    std::string className = classDir.path().filename().string();
-    //    // For each obj in the folder, get the information about it
-    //    std::string classPath = sourcePath.string() + '/' + className;
-    //    fe.ExtractD2Features(classPath);
-    //}
-    ////   //// D3
-    //fe.D3(positions, 10000, 20, hist);
-    ////   //// D4
-    //fe.D4(positions, 10000, 20, hist);
-
-    std::cout << "--- END FEATURE EXTRACTION ---" << std::endl;
-}
-
 
 int main(void)
 {
@@ -302,6 +138,7 @@ int main(void)
     std::vector<unsigned int> indices;
 
     FileOrganizer fo;
+    FeatureExtraction fe;
     Preprocessing prep;
 
     std::string databsePath = "./ShapeDatabaseFixed/";
@@ -330,14 +167,20 @@ int main(void)
     // PREPROCESSING
     std::cout << "--- PREPROCESSING START ---" << std::endl;
 
-    //NormalizeDatabase(databsePathResampled);
-
+    //prep.NormalizeDatabase(databsePathResampled);
+    //CSVSetup("./shape_analysis_resamp_norm.csv", databsePath);
     std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
 
 
     // ---------------------------------------------------------------------------------
-    ExtractFeatures(databsePathResampled);
+     
+    //fe.ExtractFeaturesOthers(databsePathResampled);
+
+    //fe.ExtractFeaturesAtoD(databsePathResampled);
+    
+    
+    
     // --------------------------------------------------------------------------------- 
 
     std::cout << "Specify path for the desired object:" << std::endl;
@@ -353,7 +196,6 @@ int main(void)
         return -1;
     }
 
-    ExtractFeaturesOneShape(inputFile, positions);
     unsigned int vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);

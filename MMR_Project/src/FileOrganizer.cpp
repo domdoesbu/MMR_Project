@@ -231,7 +231,6 @@ void FileOrganizer::WriteObjGrid(const char* filename, UnstructuredGrid3D* grid)
     out.close();
 }
 
-
 shapeInfo FileOrganizer::getShapeFromDatabase(std::string csvFilename, std::string shapeFilename)
 {
     std::ifstream csvFile(csvFilename);
@@ -316,14 +315,12 @@ void FileOrganizer::WriteCSVAfterNorm(std::filesystem::path databasePath, std::s
 
     csvFile << "Class,File,BaryX,BaryY,BaryZ,LargeEig,SmallEig\n";
 
-    shapeInfo currentShapeInfo;
     int iterator = 0;
     // loop over every sub folder, aka the class itself
     for (const auto& classDir : fs::directory_iterator(databasePath)) {
         if (!fs::is_directory(classDir)) continue;
 
         // Get the class
-        currentShapeInfo.className = classDir.path().filename().string();
 
         // For each obj in the folder, get the information about it
         for (const auto& file : fs::directory_iterator(classDir)) {
@@ -336,6 +333,54 @@ void FileOrganizer::WriteCSVAfterNorm(std::filesystem::path databasePath, std::s
                 << barycenter.at(iterator).z << ","
                 << eigVals.at(iterator)(2) << ","
                 << eigVals.at(iterator)(0)
+                << "\n";
+            iterator++;
+        }
+    }
+    csvFile.close();
+}
+
+void FileOrganizer::WriteCSVFeatureExtraction(std::filesystem::path databasePath, std::string csvFilename,
+    std::vector<float> surfaceArea, 
+    std::vector<float> volume,
+    std::vector<float> compactness,
+    std::vector<float> rectangularity,
+    std::vector<float> diameter,
+    std::vector<float> convexity,
+    std::vector<float> eccentricity
+) {
+
+    if (!fs::exists(databasePath) || !fs::is_directory(databasePath)) {
+        std::cerr << "Database folder does not exist: " << databasePath << std::endl;
+        return;
+    }
+
+    std::ofstream csvFile(csvFilename);
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open output CSV file: " << csvFilename << std::endl;
+        return;
+    }
+
+    csvFile << "Class,File,SurfaceArea,Volume,Compactness,Rectangularity,Diameter,Convexity,Eccentricity\n";
+
+    int iterator = 0;
+    // loop over every sub folder, aka the class itself
+    for (const auto& classDir : fs::directory_iterator(databasePath)) {
+        if (!fs::is_directory(classDir)) continue;
+
+        // For each obj in the folder, get the information about it
+        for (const auto& file : fs::directory_iterator(classDir)) {
+
+
+            csvFile << classDir << ","
+                << file.path().filename().string() << ","
+                << surfaceArea.at(iterator) << ","
+                << volume.at(iterator) << ","
+                << compactness.at(iterator) << ","
+                << rectangularity.at(iterator) << ","
+                << diameter.at(iterator) << ","
+                << convexity.at(iterator) << ","
+                << eccentricity.at(iterator)
                 << "\n";
             iterator++;
         }

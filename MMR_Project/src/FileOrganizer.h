@@ -61,6 +61,12 @@ public:
 	shapeInfo getShapeFromDatabase(std::string csvFilename, std::string shapeFilename);
 	baryAndEigInfo getBaryAndEigFromCSV(std::string csvFilename, std::string shapeFilename);
 	void WriteCSVAfterNorm(std::filesystem::path database, std::string csvFilename, std::vector<glm::vec3> barycenter, std::vector<Eigen::Vector3f> eigVals);
-
+	void WriteCSVFeatureExtraction(std::filesystem::path database, std::string csvFilename, std::vector<float> surfaceArea,
+		std::vector<float> volume,
+		std::vector<float> compactness,
+		std::vector<float> rectangularity,
+		std::vector<float> diameter,
+		std::vector<float> convexity,
+		std::vector<float> eccentricity);
 };
 

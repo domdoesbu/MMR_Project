@@ -213,10 +213,6 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
 		}
     }
 
-	
-
-    // Outliers
-
     // Vertices
     std::string highVertOutlier = "";
 	std::string lowVertOutlier = "";
@@ -328,8 +324,6 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     std::cout << "----- Database Statistics End-----" << std::endl;
 }
 
-
-namespace fs = std::filesystem;
 int Preprocessing::Resampling(const std::string& source, const std::string& target)
 {
     FileOrganizer fo;
@@ -568,6 +562,7 @@ void Preprocessing::NormalizeFlipping(std::vector<float>& positions, std::vector
         }
     }
 }
+
 void Preprocessing::CheckNormalOrientation(std::vector<float>& vertices, std::vector<unsigned int>& indices, glm::vec3& barycenter) {
     const int floatsPerVertex = 6; // 3 position + 3 normal
 
@@ -616,4 +611,56 @@ void Preprocessing::CheckHoles(const std::string& filename) {
    }  
  
    MR::MeshSave::toAnySupportedFormat(mesh, filename);  
+}
+
+void Preprocessing::NormalizeDatabase(std::string& databasePath) {
+
+    FileOrganizer fo;
+    Preprocessing prep;
+    fs::path sourcePath = databasePath;
+    std::vector<float> positions;
+    std::vector<unsigned int> indices;
+    std::vector<glm::vec3> barycenters;
+    std::vector<Eigen::Vector3f> eigenValues;
+    for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+        if (!fs::is_directory(classDir)) continue;
+        std::string className = classDir.path().filename().string();
+        // For each obj in the folder, get the information about it
+        std::string classPath = sourcePath.string() + '/' + className;
+        for (const auto& file : fs::directory_iterator(classDir)) {
+            positions.clear();
+            indices.clear();
+            std::string currentFile = file.path().filename().string();
+            std::string fullFilePath = classPath + "/" + currentFile;
+            if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
+            {
+                std::cerr << "Failed to load obj" << std::endl;
+
+            }
+            glm::vec3 barycenter = prep.ComputeBarycenter(positions);
+            barycenters.push_back(barycenter);
+            for (int i = 0; i < positions.size(); i += 6) {
+                positions[i + 0] -= barycenter.x;
+                positions[i + 1] -= barycenter.y;
+                positions[i + 2] -= barycenter.z;
+            }
+
+            // Pose
+            Eigen::Vector3f eigVals = prep.NormalizeAlign(positions, 6, 0);
+            eigenValues.push_back(eigVals);
+
+
+            // Flipping
+            prep.NormalizeFlipping(positions, indices, 6, 0);
+
+            // Size
+            positions = prep.NormalizeScale(positions, fullFilePath);
+            prep.CheckNormalOrientation(positions, indices, barycenter);
+            MeshData data;
+            data.positions = positions;
+            data.indices = indices;
+            fo.WriteNewObj(fullFilePath, data);
+        }
+    }
+    fo.WriteCSVAfterNorm(databasePath, "Bary_Eigs.csv", barycenters, eigenValues);
 }
