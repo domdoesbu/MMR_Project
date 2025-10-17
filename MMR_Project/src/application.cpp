@@ -152,32 +152,32 @@ int main(void)
 
     std::cout << "--- PREPROCESSING ---" << std::endl;
 
-    CSVSetup("./shape_analysis.csv", databsePath);
+    //CSVSetup("./shape_analysis.csv", databsePath);
 
     // Remeshing
     std::cout << "--- REMESHING ---" << std::endl;
 
-    prep.Resampling(databsePath, databsePathResampled);
+    //prep.Resampling(databsePath, databsePathResampled);
 
     std::cout << "--- REMESHING END---" << std::endl;
 
-    CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
+    //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
     // -------------------------------------------------------------------------------
     // PREPROCESSING
     std::cout << "--- PREPROCESSING START ---" << std::endl;
 
-    prep.NormalizeDatabase(databsePathResampled);
-    CSVSetup("./shape_analysis_resamp_norm.csv", databsePath);
+    //prep.NormalizeDatabase(databsePathResampled);
+    //CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
     std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
 
 
     // ---------------------------------------------------------------------------------
-     
-    fe.ExtractFeaturesOthers(databsePathResampled);
+    
+   // fe.ExtractFeaturesOthers(databsePathResampled);
 
-    //fe.ExtractFeaturesAtoD(databsePathResampled);
+    fe.ExtractFeaturesAtoD(databsePathResampled);
     
     
     

@@ -240,7 +240,9 @@ std::pair< std::vector<double>, std::vector<double>>  FeatureExtraction::A3(std:
 
 void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 	FileOrganizer fo;
+	Preprocessing prep;
 	std::vector<std::pair<std::vector<double>, std::vector<double>>> d1Results;
+	d1Results.clear();
 
 	std::vector<float> positions;
 	std::vector<unsigned int> indices;
@@ -257,9 +259,8 @@ void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 			std::cerr << "Failed to load obj" << std::endl;
 		}
 
-		baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", currentFile);
-		glm::vec3 barycenter = { info.baryX, info.baryY, info.baryZ };
-		glm::vec3 origin = { 0,0,0 };
+		//baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", currentFile);
+		glm::vec3 barycenter = prep.ComputeBarycenter(positions);
 
 		std::pair<std::vector<double>, std::vector<double>> results = D1(positions, barycenter, 20);
 
@@ -269,7 +270,7 @@ void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 		std::cerr << "No valid D1 results to plot.\n";
 		return;
 	}
-
+	std::cout << d1Results.size() << std::endl;
 	plt::figure();
 	for (size_t i = 0; i < d1Results.size(); ++i) {
 		auto& bins = d1Results[i].first;
@@ -283,7 +284,6 @@ void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 	plt::xlabel("Distance");
 	plt::ylabel("Count");
 	plt::title("D1 " + classPath);
-	plt::legend();
 	plt::grid(true);
 	plt::show();
 }
@@ -292,7 +292,7 @@ std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D1(std::
 	// Pick a random point on the surface and find the distance to the barycenter
 	std::vector<float> vertexVals;
 
-	for (int i = 0; i + 6 < positions.size(); i += 6) {
+	for (int i = 0; i + 3 < positions.size(); i += 3) {
 		glm::vec3 p(positions[i], positions[i + 1], positions[i + 2]);
 		float distance = glm::distance(p, barycenter);
 		vertexVals.push_back(distance);
@@ -317,7 +317,6 @@ std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D1(std::
 	if (total > 0.0) {
 		for (auto& c : counts) c /= total;
 	}
-
 
 	// Compute bin centers
 	std::vector<double> bin_centers(bins);
@@ -655,38 +654,36 @@ float FeatureExtraction::Distance(glm::vec3 v1, glm::vec3 v2)
 }
 
 ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, std::vector<float>& positions) {
-
-	std::cout << "In extract" << std::endl;
 	FeatureExtraction fe;
-
 	FileOrganizer fo;
+	
 	fs::path path = inputFile;
-	std::cout << "bary" << std::endl;
+	//std::cout << "bary" << std::endl;
 	baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", path.filename().string());
 
 	// InputFile is the full path
-	std::cout << "surface" << std::endl;
+	//std::cout << "surface" << std::endl;
 	// 1. Surface area S
 	float surfaceArea = fe.SurfaceArea(inputFile);
-	std::cout << "Surface Area: " << surfaceArea << std::endl;
+	//std::cout << "Surface Area: " << surfaceArea << std::endl;
 	// 2. Compactness
 	float volume = fe.Volume(inputFile);
 	float compactness = fe.Compactness(surfaceArea, volume);
-	std::cout << "Volume : " << volume << " || Compactness : " << compactness << std::endl;
+	//std::cout << "Volume : " << volume << " || Compactness : " << compactness << std::endl;
 	// 3. Recantgularity
 	glm::vec3 barycenter = { info.baryX, info.baryY, info.baryZ };
 	float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, path.filename().string(), "./shape_analysis_resamp.csv");
-	std::cout << "Rectangularity: " << rectangularity << std::endl;
+	//std::cout << "Rectangularity: " << rectangularity << std::endl;
 	// 4. Diameter
 	float diameter = fe.Diameter(positions);
-	std::cout << "Diameter: " << diameter << std::endl;
+	//std::cout << "Diameter: " << diameter << std::endl;
 	// 5. Convexity
 	float convexity = fe.Convexity(positions, barycenter, path.filename().string(), inputFile);
-	std::cout << "Convexity: " << convexity << std::endl;
+	//std::cout << "Convexity: " << convexity << std::endl;
 	// 6. Eccentricity
 	float eccentricity = fe.Eccentricity(info.eigLarge, info.eigSmall);
 
-	std::cout << "Eccentricity: " << eccentricity << std::endl;
+	//std::cout << "Eccentricity: " << eccentricity << std::endl;
 
 	return { surfaceArea, volume, compactness, rectangularity, diameter, convexity, eccentricity };
 }
@@ -721,8 +718,6 @@ void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
 				std::cerr << "Failed to load obj" << std::endl;
 
 			}
-			std::cout << "Loaded obj: verts=" << positions.size() / 3 << " tris=" << indices.size() / 3
-				<< " positions.size()=" << positions.size() << " indices.size()=" << indices.size() << std::endl;
 			std::cout << fullFilePath << std::endl;
 			
 			ShapeFeatures features = ExtractFeaturesOneShape(fullFilePath, positions);
@@ -756,14 +751,14 @@ void FeatureExtraction::ExtractFeaturesAtoD(const std::string& databasePath) {
 	// 7. A3 -> D4
 	//// A3
 
-    for (const auto& classDir : fs::directory_iterator(sourcePath)) {
-        if (!fs::is_directory(classDir)) continue;
-        std::string className = classDir.path().filename().string();
-        // For each obj in the folder, get the information about it
-		std::string classPath = sourcePath.string() + '/' + className;
-        fe.ExtractA3Features(classPath);
-    }
-   
+  //  for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+  //      if (!fs::is_directory(classDir)) continue;
+  //      std::string className = classDir.path().filename().string();
+  //      // For each obj in the folder, get the information about it
+		//std::string classPath = sourcePath.string() + '/' + className;
+  //      fe.ExtractA3Features(classPath);
+  //  }
+  // 
 	//// D1
 	for (const auto& classDir : fs::directory_iterator(sourcePath)) {
 	    if (!fs::is_directory(classDir)) continue;
@@ -774,29 +769,29 @@ void FeatureExtraction::ExtractFeaturesAtoD(const std::string& databasePath) {
 	}
 
 	//// D2
-	for (const auto& classDir : fs::directory_iterator(sourcePath)) {
-	    if (!fs::is_directory(classDir)) continue;
-	    std::string className = classDir.path().filename().string();
-	    // For each obj in the folder, get the information about it
-	    std::string classPath = sourcePath.string() + '/' + className;
-	    fe.ExtractD2Features(classPath);
-	}
+	//for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+	//    if (!fs::is_directory(classDir)) continue;
+	//    std::string className = classDir.path().filename().string();
+	//    // For each obj in the folder, get the information about it
+	//    std::string classPath = sourcePath.string() + '/' + className;
+	//    fe.ExtractD2Features(classPath);
+	//}
 	//// D3
-	for (const auto& classDir : fs::directory_iterator(sourcePath)) {
-	    if (!fs::is_directory(classDir)) continue;
-	    std::string className = classDir.path().filename().string();
-	    // For each obj in the folder, get the information about it
-	    std::string classPath = sourcePath.string() + '/' + className;
-	    fe.ExtractD3Features(classPath);
-	}
+	//for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+	//    if (!fs::is_directory(classDir)) continue;
+	//    std::string className = classDir.path().filename().string();
+	//    // For each obj in the folder, get the information about it
+	//    std::string classPath = sourcePath.string() + '/' + className;
+	//    fe.ExtractD3Features(classPath);
+	//}
 	//// D4
-	for (const auto& classDir : fs::directory_iterator(sourcePath)) {
-	    if (!fs::is_directory(classDir)) continue;
-	    std::string className = classDir.path().filename().string();
-	    // For each obj in the folder, get the information about it
-	    std::string classPath = sourcePath.string() + '/' + className;
-	    fe.ExtractD4Features(classPath);
-	}
+	//for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+	//    if (!fs::is_directory(classDir)) continue;
+	//    std::string className = classDir.path().filename().string();
+	//    // For each obj in the folder, get the information about it
+	//    std::string classPath = sourcePath.string() + '/' + className;
+	//    fe.ExtractD4Features(classPath);
+	//}
 
 	std::cout << "--- END FEATURE EXTRACTION ---" << std::endl;
 }

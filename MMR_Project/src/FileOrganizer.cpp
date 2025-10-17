@@ -51,6 +51,7 @@ bool FileOrganizer::LoadObj(const char* inputFile, std::vector<float>& outVertic
         }
     }
     else {
+        std::cout << "No normals" << std::endl;
         normals.resize(positions.size(), glm::vec3(0.0f));
     }
 
@@ -283,8 +284,8 @@ baryAndEigInfo FileOrganizer::getBaryAndEigFromCSV(std::string csvFilename, std:
         std::getline(iss, outInfo.fileName, ',');
         if (outInfo.fileName == shapeFilename)
         {
-            std::getline(iss, token, ','); outInfo.baryX = std::stoul(token);
-            std::getline(iss, token, ','); outInfo.baryY = std::stoul(token);
+            std::getline(iss, token, ','); outInfo.baryX = std::stof(token);
+            std::getline(iss, token, ','); outInfo.baryY = std::stof(token);
             std::getline(iss, token, ','); outInfo.baryZ = std::stof(token);
             std::getline(iss, token, ','); outInfo.eigLarge = std::stof(token);
             std::getline(iss, token, ','); outInfo.eigSmall = std::stof(token);
