@@ -29,7 +29,6 @@
 *.out
 *.app
 
-*.csv
 .vs/
 
 Dependencies/MeshLib/app/Debug/meshlib/mrmeshpy.pyd
