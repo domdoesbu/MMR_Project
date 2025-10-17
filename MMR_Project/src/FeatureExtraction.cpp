@@ -164,6 +164,16 @@ void FeatureExtraction::ExtractA3Features(std::string& classPath) {
 		return;
 	}
 
+	fs::path outputDir = "./A3Plots";
+	if (!fs::exists(outputDir)) {
+		fs::create_directory(outputDir);
+	}
+
+	// Get class name from path
+	std::string className = sourcePath.filename().string();
+
+	// Create class-specific subfolder
+
 	plt::figure();
 	for (size_t i = 0; i < a3Results.size(); ++i) {
 		auto& bins = a3Results[i].first;
@@ -176,11 +186,19 @@ void FeatureExtraction::ExtractA3Features(std::string& classPath) {
 	}
 	plt::xlabel("Angle (radians)");
 	plt::ylabel("Count");
-	plt::title(classPath);
+	plt::title("A1: " + classPath);
 	plt::legend();
 	plt::grid(true);
 	plt::ylim(0.0, 1.0);
-	plt::show();
+	fs::path outputFile = className + "_A3.png";
+
+	// Save the plot
+	plt::save(outputFile.string());
+
+	std::cout << "Saved A3 plot to: " << outputFile.string() << std::endl;
+
+	// Optional: clear the figure
+	plt::clf();
 }
 std::pair< std::vector<double>, std::vector<double>>  FeatureExtraction::A3(std::vector<float>& positions, int samples, int bins)
 {
@@ -260,9 +278,9 @@ void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 		}
 
 		//baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", currentFile);
-		glm::vec3 barycenter = prep.ComputeBarycenter(positions);
+		glm::vec3 barycenter = { 0.0,0.0,0.0 };
 
-		std::pair<std::vector<double>, std::vector<double>> results = D1(positions, barycenter, 20);
+		std::pair<std::vector<double>, std::vector<double>> results = D1(positions, barycenter, 30);
 
 		d1Results.push_back(results);
 	}
@@ -270,7 +288,18 @@ void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 		std::cerr << "No valid D1 results to plot.\n";
 		return;
 	}
-	std::cout << d1Results.size() << std::endl;
+
+	fs::path outputDir = "./D1Plots";
+	if (!fs::exists(outputDir)) {
+		fs::create_directory(outputDir);
+	}
+
+	// Get class name from path
+	std::string className = sourcePath.filename().string();
+
+	// Create class-specific subfolder
+
+
 	plt::figure();
 	for (size_t i = 0; i < d1Results.size(); ++i) {
 		auto& bins = d1Results[i].first;
@@ -283,16 +312,27 @@ void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 	}
 	plt::xlabel("Distance");
 	plt::ylabel("Count");
-	plt::title("D1 " + classPath);
+	plt::title("D1: " + classPath);
+	plt::legend();
 	plt::grid(true);
-	plt::show();
+	plt::ylim(0.0, 1.0);
+	fs::path outputFile = outputDir.string() + + "/" +  className + "_D1.png";
+
+	// Save the plot
+	plt::save(outputFile.string());
+
+	std::cout << "Saved D1 plot to: " << outputFile.string() << std::endl;
+
+	// Optional: clear the figure
+	plt::clf();
+
 }
 std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D1(std::vector<float>& positions, glm::vec3 barycenter, int bins)
 {
 	// Pick a random point on the surface and find the distance to the barycenter
 	std::vector<float> vertexVals;
 
-	for (int i = 0; i + 3 < positions.size(); i += 3) {
+	for (int i = 0; i + 6 < positions.size(); i += 6) {
 		glm::vec3 p(positions[i], positions[i + 1], positions[i + 2]);
 		float distance = glm::distance(p, barycenter);
 		vertexVals.push_back(distance);
@@ -353,6 +393,16 @@ void FeatureExtraction::ExtractD2Features(std::string& classPath) {
 		std::cerr << "No valid D2 results to plot.\n";
 		return;
 	}
+	fs::path outputDir = "./D2Plots";
+	if (!fs::exists(outputDir)) {
+		fs::create_directory(outputDir);
+	}
+
+	// Get class name from path
+	std::string className = sourcePath.filename().string();
+
+
+
 
 	plt::figure();
 	for (size_t i = 0; i < d2Results.size(); ++i) {
@@ -367,9 +417,19 @@ void FeatureExtraction::ExtractD2Features(std::string& classPath) {
 	plt::xlabel("Distance");
 	plt::ylabel("Count");
 	plt::title("D2 " + classPath);
-	plt::legend();
+	plt::ylim(0.0, 0.8);
 	plt::grid(true);
-	plt::show();
+	fs::path outputFile = outputDir.string() + +"/" + className + "_D2.png";
+
+	// Save the plot
+	plt::save(outputFile.string());
+
+	std::cout << "Saved D2 plot to: " << outputFile.string() << std::endl;
+
+	// Optional: clear the figure
+	plt::clf();
+
+	
 }
 std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D2(std::vector<float>& positions, int samples, int bins)
 {
@@ -443,7 +503,15 @@ void FeatureExtraction::ExtractD3Features(std::string& classPath) {
 		std::cerr << "No valid D3 results to plot.\n";
 		return;
 	}
+	fs::path outputDir = "./D3Plots";
+	if (!fs::exists(outputDir)) {
+		fs::create_directory(outputDir);
+	}
 
+	// Get class name from path
+	std::string className = sourcePath.filename().string();
+
+	
 	plt::figure();
 	for (size_t i = 0; i < d3Results.size(); ++i) {
 		auto& bins = d3Results[i].first;
@@ -454,12 +522,21 @@ void FeatureExtraction::ExtractD3Features(std::string& classPath) {
 		plt::scatter(bins, counts, 8.0);
 
 	}
+
 	plt::xlabel("Area");
 	plt::ylabel("Count");
 	plt::title("D3 " + classPath);
-	plt::legend();
+	plt::ylim(0.0, 0.5);
 	plt::grid(true);
-	plt::show();
+	fs::path outputFile = outputDir.string() + +"/" + className + "_D3.png";
+
+	// Save the plot
+	plt::save(outputFile.string());
+
+	std::cout << "Saved D3 plot to: " << outputFile.string() << std::endl;
+
+	// Optional: clear the figure
+	plt::clf();
 }
 std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D3(std::vector<float>& positions, int samples, int bins)
 {
@@ -475,13 +552,15 @@ std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D3(std::
 			for (int l = 0; l < k; l++) {
 				int vl = rand() % numVertices;
 				if (vl == vi || vl == vj) continue;
+				// Area of p1 p2 p3
 				glm::vec3 p1(positions[vi * 6 + 0], positions[vi * 6 + 1], positions[vi * 6 + 2]);
 				glm::vec3 p2(positions[vj * 6 + 0], positions[vj * 6 + 1], positions[vj * 6 + 2]);
 				glm::vec3 p3(positions[vl * 6 + 0], positions[vl * 6 + 1], positions[vl * 6 + 2]);
+
 				glm::vec3 v1 = p2 - p1;
 				glm::vec3 v2 = p3 - p1;
 				glm::vec3 crossProduct = glm::cross(v1, v2);
-				float area = glm::length(crossProduct) / 2.0f;
+				float area = sqrt(glm::length(crossProduct) / 2.0f);
 				vertexVals.push_back(area);
 			}
 		}
@@ -543,7 +622,13 @@ void FeatureExtraction::ExtractD4Features(std::string& classPath) {
 		std::cerr << "No valid D4 results to plot.\n";
 		return;
 	}
+	fs::path outputDir = "./D4Plots";
+	if (!fs::exists(outputDir)) {
+		fs::create_directory(outputDir);
+	}
 
+	// Get class name from path
+	std::string className = sourcePath.filename().string();
 	plt::figure();
 	for (size_t i = 0; i < d4Results.size(); ++i) {
 		auto& bins = d4Results[i].first;
@@ -560,7 +645,16 @@ void FeatureExtraction::ExtractD4Features(std::string& classPath) {
 	plt::legend();
 	plt::grid(true);
 	plt::ylim(0.0, 1.0);
-	plt::show();
+	plt::xlim(0.0, 0.8);
+	fs::path outputFile = outputDir.string() + +"/" + className + "_D4.png";
+
+	// Save the plot
+	plt::save(outputFile.string());
+
+	std::cout << "Saved D4 plot to: " << outputFile.string() << std::endl;
+
+	// Optional: clear the figure
+	plt::clf();
 }
 std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D4(std::vector<float>& positions, int samples, int bins)
 {
@@ -751,46 +845,50 @@ void FeatureExtraction::ExtractFeaturesAtoD(const std::string& databasePath) {
 	// 7. A3 -> D4
 	//// A3
 
-  //  for (const auto& classDir : fs::directory_iterator(sourcePath)) {
-  //      if (!fs::is_directory(classDir)) continue;
-  //      std::string className = classDir.path().filename().string();
-  //      // For each obj in the folder, get the information about it
-		//std::string classPath = sourcePath.string() + '/' + className;
-  //      fe.ExtractA3Features(classPath);
-  //  }
-  // 
+	//for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+	//	if (!fs::is_directory(classDir)) continue;
+	//	std::string className = classDir.path().filename().string();
+	//	// For each obj in the folder, get the information about it
+	//	
+	//	std::string classPath = sourcePath.string() + className;
+	//	fe.ExtractA3Features(classPath);
+	//}
+   
 	//// D1
-	for (const auto& classDir : fs::directory_iterator(sourcePath)) {
-	    if (!fs::is_directory(classDir)) continue;
-	    std::string className = classDir.path().filename().string();
-	    // For each obj in the folder, get the information about it
-	    std::string classPath = sourcePath.string() + '/' + className;
-	    fe.ExtractD1Features(classPath);
-	}
+	//for (const auto& classDir : fs::directory_iterator(sourcePath)) {
+	//    if (!fs::is_directory(classDir)) continue;
+	//    std::string className = classDir.path().filename().string();
+	//    // For each obj in the folder, get the information about it
+	//	std::string classPath = sourcePath.string() + className;
+	//	fe.ExtractD1Features(classPath);
+	//}
 
-	//// D2
+	////// D2
 	//for (const auto& classDir : fs::directory_iterator(sourcePath)) {
 	//    if (!fs::is_directory(classDir)) continue;
 	//    std::string className = classDir.path().filename().string();
 	//    // For each obj in the folder, get the information about it
-	//    std::string classPath = sourcePath.string() + '/' + className;
-	//    fe.ExtractD2Features(classPath);
+	//	
+	//	std::string classPath = sourcePath.string() + className;
+	//	fe.ExtractD2Features(classPath);
 	//}
-	//// D3
+	//
+	////// D3
 	//for (const auto& classDir : fs::directory_iterator(sourcePath)) {
 	//    if (!fs::is_directory(classDir)) continue;
 	//    std::string className = classDir.path().filename().string();
 	//    // For each obj in the folder, get the information about it
-	//    std::string classPath = sourcePath.string() + '/' + className;
-	//    fe.ExtractD3Features(classPath);
+	//	std::string classPath = sourcePath.string() + className;
+	//	fe.ExtractD3Features(classPath);
 	//}
-	//// D4
+	//
+	////// D4
 	//for (const auto& classDir : fs::directory_iterator(sourcePath)) {
 	//    if (!fs::is_directory(classDir)) continue;
 	//    std::string className = classDir.path().filename().string();
 	//    // For each obj in the folder, get the information about it
-	//    std::string classPath = sourcePath.string() + '/' + className;
-	//    fe.ExtractD4Features(classPath);
+	//	std::string classPath = sourcePath.string() + className;
+	//	fe.ExtractD4Features(classPath);
 	//}
 
 	std::cout << "--- END FEATURE EXTRACTION ---" << std::endl;

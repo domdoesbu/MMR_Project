@@ -51,7 +51,6 @@ bool FileOrganizer::LoadObj(const char* inputFile, std::vector<float>& outVertic
         }
     }
     else {
-        std::cout << "No normals" << std::endl;
         normals.resize(positions.size(), glm::vec3(0.0f));
     }
 
@@ -383,6 +382,44 @@ void FileOrganizer::WriteCSVFeatureExtraction(std::filesystem::path databasePath
                 << convexity.at(iterator) << ","
                 << eccentricity.at(iterator)
                 << "\n";
+            iterator++;
+        }
+    }
+    csvFile.close();
+}
+
+void FileOrganizer::WriteCSVD3(std::filesystem::path databasePath, std::string csvFilename,
+    std::vector<std::vector<float>> bins, std::vector<std::vector<float>> counts) {
+
+    if (!fs::exists(databasePath) || !fs::is_directory(databasePath)) {
+        std::cerr << "Database folder does not exist: " << databasePath << std::endl;
+        return;
+    }
+
+    std::ofstream csvFile(csvFilename);
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open output CSV file: " << csvFilename << std::endl;
+        return;
+    }
+
+    csvFile << "Class,File,Bins,Counts\n";
+
+    int iterator = 0;
+    // loop over every sub folder, aka the class itself
+    for (const auto& classDir : fs::directory_iterator(databasePath)) {
+        if (!fs::is_directory(classDir)) continue;
+
+        // For each obj in the folder, get the information about it
+        for (const auto& file : fs::directory_iterator(classDir)) {
+
+            for (int i = 0; i < 20; i++) {
+                csvFile << classDir << ","
+                << file.path().filename().string() << ","
+                << bins.at(iterator).at(i) << ","
+                << counts.at(iterator).at(i)
+                << "\n";
+            }
+            
             iterator++;
         }
     }
