@@ -75,6 +75,7 @@ public:
 	float Volume(std::string& fileName);
 	void ExtractFeaturesAtoD(const std::string& databasePath);
 	void ExtractFeaturesOthers(const std::string& databasePath);
+	void ExtractFeaturesCH(const std::string& databasePath);
 	ShapeFeatures ExtractFeaturesOneShape(std::string inputFile, std::vector<float>& positions);
 private:
 	float Volume(std::vector<float> positions);

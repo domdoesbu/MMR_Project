@@ -131,7 +131,6 @@ float FeatureExtraction::Convexity(std::vector<float> positions, glm::vec3 baryc
 // 6. Eccentricity
 float FeatureExtraction::Eccentricity(float largeEig, float smallEig)
 {
-	std::cout << "Large Eig: " << largeEig << " Small Eig: " << smallEig << std::endl;
 	return largeEig / smallEig;
 }
 
@@ -782,7 +781,7 @@ ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, 
 	return { surfaceArea, volume, compactness, rectangularity, diameter, convexity, eccentricity };
 }
 
-void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
+void FeatureExtraction::ExtractFeaturesCH(const std::string& databasePath) {
 
 	FileOrganizer fo;
 	std::vector<float> surfaceArea;
@@ -797,6 +796,56 @@ void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
 	std::vector<unsigned int> indices;
 	std::vector<glm::vec3> barycenters;
 	std::vector<Eigen::Vector3f> eigenValues;
+
+		for (const auto& file : fs::directory_iterator(databasePath)) {
+			positions.clear();
+			indices.clear();
+			std::string currentFile = file.path().filename().string();
+			std::string fullFilePath = databasePath + "/" + currentFile;
+			if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
+			{
+				std::cerr << "Failed to load obj" << std::endl;
+
+			}
+			std::cout << fullFilePath << std::endl;
+
+			ShapeFeatures features = ExtractFeaturesOneShape(fullFilePath, positions);
+			surfaceArea.push_back(features.surfaceArea);
+			volume.push_back(features.volume);
+			compactness.push_back(features.compactness);
+			rectangularity.push_back(features.rectangularity);
+			diameter.push_back(features.diameter);
+			
+			eccentricity.push_back(features.eccentricity);
+		}
+	
+
+	fo.WriteCSVFeatureExtraction(databasePath, "feature_extraction_CH.csv",
+		surfaceArea,
+		volume,
+		compactness,
+		rectangularity,
+		diameter,
+		convexity,
+		eccentricity
+	);
+}
+
+
+void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
+
+	FileOrganizer fo;
+	std::vector<float> surfaceArea;
+	std::vector<float> volume;
+	std::vector<float> compactness;
+	std::vector<float> rectangularity;
+	std::vector<float> diameter;
+	std::vector<float> convexity;
+	std::vector<float> eccentricity;
+	fs::path sourcePath = databasePath;
+	std::vector<float> positions;
+	std::vector<unsigned int> indices;
+
 	for (const auto& classDir : fs::directory_iterator(sourcePath)) {
 		if (!fs::is_directory(classDir)) continue;
 		std::string className = classDir.path().filename().string();

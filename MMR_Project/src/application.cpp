@@ -144,6 +144,7 @@ int main(void)
     std::string databsePath = "./ShapeDatabaseFixed/";
     //std::string databsePath = "./test2/";
     std::string databsePathResampled = "./ResampledDatabase/";
+    std::string CHdatabase = "./ConvexHulls/";
 
     /*
         DO NOT UNCOMMENT!!!!!!!
@@ -152,30 +153,30 @@ int main(void)
 
     std::cout << "--- PREPROCESSING ---" << std::endl;
 
-    CSVSetup("./shape_analysis.csv", databsePath);
+    //CSVSetup("./shape_analysis.csv", databsePath);
 
     // Remeshing
     std::cout << "--- REMESHING ---" << std::endl;
 
-    prep.Resampling(databsePath, databsePathResampled);
+   // prep.Resampling(databsePath, databsePathResampled);
 
     std::cout << "--- REMESHING END---" << std::endl;
 
-    CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
+   // CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
     // -------------------------------------------------------------------------------
     // PREPROCESSING
     std::cout << "--- PREPROCESSING START ---" << std::endl;
 
-    prep.NormalizeDatabase(databsePathResampled);
-    CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
+    //prep.NormalizeDatabase(databsePathResampled);
+    //CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
     std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
 
 
     // ---------------------------------------------------------------------------------
-    
     fe.ExtractFeaturesOthers(databsePathResampled);
+    fe.ExtractFeaturesCH(CHdatabase);
 
     //fe.ExtractFeaturesAtoD(databsePathResampled);
     
