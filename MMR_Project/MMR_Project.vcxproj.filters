@@ -51,6 +51,9 @@
     <ClCompile Include="src\CodeFromProf\UnstructuredGrid3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Querying.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
@@ -159,6 +162,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\CodeFromProf\VectorAttributes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Querying.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Querying.cpp" />
     <ClCompile Include="src\CodeFromProf\Grid.cpp" />
     <ClCompile Include="src\CodeFromProf\ScalarAttributes.cpp" />
     <ClCompile Include="src\CodeFromProf\UnstructuredGrid.cpp" />
@@ -163,6 +164,7 @@
     <None Include="src\MMRLibrary\refined.ply" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Querying.h" />
     <ClInclude Include="src\CodeFromProf\Grid.h" />
     <ClInclude Include="src\CodeFromProf\Point3d.h" />
     <ClInclude Include="src\CodeFromProf\RectilinearGrid.h" />

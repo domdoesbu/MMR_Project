@@ -175,12 +175,10 @@ int main(void)
 
 
     // ---------------------------------------------------------------------------------
-    fe.ExtractFeaturesOthers(databsePathResampled);
-    fe.ExtractFeaturesCH(CHdatabase);
+    /*fe.ExtractFeaturesOthers(databsePathResampled);
+    fe.ExtractFeaturesCH(CHdatabase);*/
 
     //fe.ExtractFeaturesAtoD(databsePathResampled);
-    
-    
     
     // --------------------------------------------------------------------------------- 
 
