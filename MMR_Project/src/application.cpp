@@ -14,6 +14,7 @@
 #include "Simplification.h"
 #include "Refinement.h"
 #include "FeatureExtraction.h"
+#include "Querying.h"
 
 namespace fs = std::filesystem;
 struct ShaderProgramSource
@@ -177,7 +178,10 @@ int main(void)
     // ---------------------------------------------------------------------------------
     /*fe.ExtractFeaturesOthers(databsePathResampled);
     fe.ExtractFeaturesCH(CHdatabase);*/
-    fe.ExtractFeaturesOthers(databsePathResampled);
+    fe.ExtractFeaturesOthers(databsePath);
+
+    Querying q;
+    q.Normalization(databsePath, "feature_extraction_complete.csv");
 
     //fe.ExtractFeaturesAtoD(databsePathResampled);
     

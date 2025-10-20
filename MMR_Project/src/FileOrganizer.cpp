@@ -366,32 +366,26 @@ void FileOrganizer::WriteCSVFeatureExtraction(std::filesystem::path databasePath
         return;
     }
 
-    std::string columnName;
     csvFile << "Class,File,SurfaceArea,Volume,Compactness,Rectangularity,Diameter,Convexity,Eccentricity";
     for (int i = 0; i < 20; ++i)
     {
-        csvFile << ",A3bin";
-        csvFile << i;
+        csvFile << ",A3bin" << i;
     }
     for (int i = 0; i < 30; ++i)
     {
-        csvFile << ",D1bin";
-        csvFile << i;
+        csvFile << ",D1bin" << i;
     }
     for (int i = 0; i < 20; ++i)
     {
-        csvFile << ",D2bin";
-        csvFile << i;
+        csvFile << ",D2bin" << i;
     }
     for (int i = 0; i < 20; ++i)
     {
-        csvFile << ",D3bin";
-        csvFile << i;
+        csvFile << ",D3bin" << i;
     }
     for (int i = 0; i < 20; ++i)
     {
-        csvFile << ",D4bin";
-        csvFile << i;
+        csvFile << ",D4bin" << i;
     }
     csvFile << '\n';
 
