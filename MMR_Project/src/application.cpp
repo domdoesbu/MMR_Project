@@ -141,8 +141,8 @@ int main(void)
     FeatureExtraction fe;
     Preprocessing prep;
 
-    std::string databsePath = "./ShapeDatabaseFixed/";
-    //std::string databsePath = "./test2/";
+    //std::string databsePath = "./ShapeDatabaseFixed/";
+    std::string databsePath = "./test_objs/";
     std::string databsePathResampled = "./ResampledDatabase/";
     std::string CHdatabase = "./ConvexHulls/";
 
@@ -176,7 +176,6 @@ int main(void)
 
     // ---------------------------------------------------------------------------------
     fe.ExtractFeaturesOthers(databsePathResampled);
-    fe.ExtractFeaturesCH(CHdatabase);
 
     //fe.ExtractFeaturesAtoD(databsePathResampled);
     

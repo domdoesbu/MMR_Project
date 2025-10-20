@@ -67,7 +67,12 @@ public:
 		std::vector<float> rectangularity,
 		std::vector<float> diameter,
 		std::vector<float> convexity,
-		std::vector<float> eccentricity);
+		std::vector<float> eccentricity,
+		std::vector<std::vector<double>> a3,
+		std::vector<std::vector<double>> d1,
+		std::vector<std::vector<double>> d2,
+		std::vector<std::vector<double>> d3,
+		std::vector<std::vector<double>> d4);
 	void WriteCSVD3(std::filesystem::path databasePath, std::string csvFilename,
 		std::vector<std::vector<float>> bins, std::vector<std::vector<float>> counts);
 };

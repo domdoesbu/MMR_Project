@@ -347,7 +347,12 @@ void FileOrganizer::WriteCSVFeatureExtraction(std::filesystem::path databasePath
     std::vector<float> rectangularity,
     std::vector<float> diameter,
     std::vector<float> convexity,
-    std::vector<float> eccentricity
+    std::vector<float> eccentricity,
+    std::vector<std::vector<double>> a3,
+    std::vector<std::vector<double>> d1,
+    std::vector<std::vector<double>> d2,
+    std::vector<std::vector<double>> d3,
+    std::vector<std::vector<double>> d4
 ) {
 
     if (!fs::exists(databasePath) || !fs::is_directory(databasePath)) {
@@ -361,7 +366,34 @@ void FileOrganizer::WriteCSVFeatureExtraction(std::filesystem::path databasePath
         return;
     }
 
-    csvFile << "Class,File,SurfaceArea,Volume,Compactness,Rectangularity,Diameter,Convexity,Eccentricity\n";
+    std::string columnName;
+    csvFile << "Class,File,SurfaceArea,Volume,Compactness,Rectangularity,Diameter,Convexity,Eccentricity";
+    for (int i = 0; i < 20; ++i)
+    {
+        csvFile << ",A3bin";
+        csvFile << i;
+    }
+    for (int i = 0; i < 30; ++i)
+    {
+        csvFile << ",D1bin";
+        csvFile << i;
+    }
+    for (int i = 0; i < 20; ++i)
+    {
+        csvFile << ",D2bin";
+        csvFile << i;
+    }
+    for (int i = 0; i < 20; ++i)
+    {
+        csvFile << ",D3bin";
+        csvFile << i;
+    }
+    for (int i = 0; i < 20; ++i)
+    {
+        csvFile << ",D4bin";
+        csvFile << i;
+    }
+    csvFile << '\n';
 
     int iterator = 0;
     // loop over every sub folder, aka the class itself
@@ -380,9 +412,25 @@ void FileOrganizer::WriteCSVFeatureExtraction(std::filesystem::path databasePath
                 << rectangularity.at(iterator) << ","
                 << diameter.at(iterator) << ","
                 << convexity.at(iterator) << ","
-                << eccentricity.at(iterator)
-                << "\n";
+                << eccentricity.at(iterator) << ",";
+                
+            for(int i = 0; i < 20; i++){
+                csvFile << a3.at(iterator)[i] << ",";
+            }
+            for(int i = 0; i < 30; i++){
+                csvFile << d1.at(iterator)[i] << ",";
+            }
+            for(int i = 0; i < 20; i++){
+                csvFile << d2.at(iterator)[i] << ",";
+            }
+            for(int i = 0; i < 20; i++){
+                csvFile << d3.at(iterator)[i] << ",";
+            }
+            for(int i = 0; i < 20; i++){
+                csvFile << d4.at(iterator)[i] << ",";
+            }
             iterator++;
+            csvFile << "\n";
         }
     }
     csvFile.close();
