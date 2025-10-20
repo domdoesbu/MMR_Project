@@ -281,6 +281,8 @@ void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 
 		std::pair<std::vector<double>, std::vector<double>> results = D1(positions, barycenter, 30);
 
+		// Save to csv database
+
 		d1Results.push_back(results);
 	}
 	if (d1Results.empty()) {
@@ -343,7 +345,7 @@ std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D1(std::
 	float minVal = 0.0f;
 	float maxVal = 1;
 	float binWidth = (maxVal - minVal) / bins;
-	std::vector<double> counts(bins, 0.0);
+	std::vector<double> counts(bins, 0);
 
 	for (float v : vertexVals) {
 		int binIdx = static_cast<int>((v - minVal) / binWidth);
@@ -453,7 +455,7 @@ std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D2(std::
 	float minVal = 0.0f;
 	float maxVal = 1;
 	float binWidth = (maxVal - minVal) / bins;
-	std::vector<double> counts(bins, 0.0);
+	std::vector<double> counts(bins, 0);
 
 	for (float v : vertexVals) {
 		int binIdx = static_cast<int>((v - minVal) / binWidth);
@@ -778,59 +780,24 @@ ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, 
 
 	//std::cout << "Eccentricity: " << eccentricity << std::endl;
 
-	return { surfaceArea, volume, compactness, rectangularity, diameter, convexity, eccentricity };
+	std::pair<std::vector<double>, std::vector<double>> a3pair = A3(positions, 1000000, 20);
+	std::vector<double> a3count = a3pair.second;
+
+	std::pair<std::vector<double>, std::vector<double>> d1pair = D1(positions, barycenter, 30);
+	std::vector<double> d1count = d1pair.second;
+
+	std::pair<std::vector<double>, std::vector<double>> d2pair = D2(positions, 1000000, 20);
+	std::vector<double> d2count = d2pair.second;
+
+	std::pair<std::vector<double>, std::vector<double>> d3pair = D3(positions, 1000000, 20);
+	std::vector<double> d3count = d3pair.second;
+
+	std::pair<std::vector<double>, std::vector<double>> d4pair = D4(positions, 1000000, 20);
+	std::vector<double> d4count = d4pair.second;
+
+
+	return { surfaceArea, volume, compactness, rectangularity, diameter, convexity, eccentricity, a3count, d1count, d2count, d3count, d4count };
 }
-
-void FeatureExtraction::ExtractFeaturesCH(const std::string& databasePath) {
-
-	FileOrganizer fo;
-	std::vector<float> surfaceArea;
-	std::vector<float> volume;
-	std::vector<float> compactness;
-	std::vector<float> rectangularity;
-	std::vector<float> diameter;
-	std::vector<float> convexity;
-	std::vector<float> eccentricity;
-	fs::path sourcePath = databasePath;
-	std::vector<float> positions;
-	std::vector<unsigned int> indices;
-	std::vector<glm::vec3> barycenters;
-	std::vector<Eigen::Vector3f> eigenValues;
-
-		for (const auto& file : fs::directory_iterator(databasePath)) {
-			positions.clear();
-			indices.clear();
-			std::string currentFile = file.path().filename().string();
-			std::string fullFilePath = databasePath + "/" + currentFile;
-			if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
-			{
-				std::cerr << "Failed to load obj" << std::endl;
-
-			}
-			std::cout << fullFilePath << std::endl;
-
-			ShapeFeatures features = ExtractFeaturesOneShape(fullFilePath, positions);
-			surfaceArea.push_back(features.surfaceArea);
-			volume.push_back(features.volume);
-			compactness.push_back(features.compactness);
-			rectangularity.push_back(features.rectangularity);
-			diameter.push_back(features.diameter);
-			
-			eccentricity.push_back(features.eccentricity);
-		}
-	
-
-	fo.WriteCSVFeatureExtraction(databasePath, "feature_extraction_CH.csv",
-		surfaceArea,
-		volume,
-		compactness,
-		rectangularity,
-		diameter,
-		convexity,
-		eccentricity
-	);
-}
-
 
 void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
 
@@ -842,6 +809,11 @@ void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
 	std::vector<float> diameter;
 	std::vector<float> convexity;
 	std::vector<float> eccentricity;
+	std::vector<std::vector<double>> a3Count;
+	std::vector<std::vector<double>> d1Count;
+	std::vector<std::vector<double>> d2Count;
+	std::vector<std::vector<double>> d3Count;
+	std::vector<std::vector<double>> d4Count;
 	fs::path sourcePath = databasePath;
 	std::vector<float> positions;
 	std::vector<unsigned int> indices;
@@ -871,17 +843,28 @@ void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
 			diameter.push_back(features.diameter);
 			convexity.push_back(features.convexity);
 			eccentricity.push_back(features.eccentricity);
+			a3Count.push_back(features.A3);
+			d1Count.push_back(features.D1);
+			d2Count.push_back(features.D2);
+			d3Count.push_back(features.D3);
+			d4Count.push_back(features.D4);
+
 		}
 	}
 
-	fo.WriteCSVFeatureExtraction(databasePath, "feature_extraction.csv",
+	fo.WriteCSVFeatureExtraction(databasePath, "feature_extraction_complete.csv",
 		surfaceArea,
 		volume,
 		compactness,
 		rectangularity,
 		diameter,
 		convexity,
-		eccentricity
+		eccentricity,
+		a3Count,
+		d1Count,
+		d2Count,
+		d3Count,
+		d4Count
 	);
 }
 

@@ -30,6 +30,11 @@ struct ShapeFeatures {
 	float diameter;
 	float convexity;
 	float eccentricity;
+	std::vector<double> A3;
+	std::vector<double> D1;
+	std::vector<double> D2;
+	std::vector<double> D3;
+	std::vector<double> D4;
 };
 
 class FeatureExtraction
@@ -75,7 +80,6 @@ public:
 	float Volume(std::string& fileName);
 	void ExtractFeaturesAtoD(const std::string& databasePath);
 	void ExtractFeaturesOthers(const std::string& databasePath);
-	void ExtractFeaturesCH(const std::string& databasePath);
 	ShapeFeatures ExtractFeaturesOneShape(std::string inputFile, std::vector<float>& positions);
 private:
 	float Volume(std::vector<float> positions);
