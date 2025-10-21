@@ -32,8 +32,9 @@ void Querying::Normalization(std::string databasePath, std::string csvFilename)
         std::getline(iss, token, ',');
         std::getline(iss, token, ',');
         std::getline(iss, token, ','); 
-        currentFeatures.surfaceArea = std::stof(token); 
-        avgArea += std::stof(token);
+        float v = std::stof(token);
+        currentFeatures.surfaceArea = v;
+        avgArea += v;
         std::getline(iss, token, ','); currentFeatures.volume = std::stof(token); avgVolume += std::stof(token);
         std::getline(iss, token, ','); currentFeatures.compactness = std::stof(token); avgCompactness += std::stof(token);
         std::getline(iss, token, ','); currentFeatures.rectangularity = std::stof(token); avgRectangularity += std::stof(token);
@@ -41,42 +42,43 @@ void Querying::Normalization(std::string databasePath, std::string csvFilename)
         std::getline(iss, token, ','); currentFeatures.convexity = std::stof(token); avgConvexity += std::stof(token);
         std::getline(iss, token, ','); currentFeatures.eccentricity = std::stof(token); avgEccentricity += std::stof(token);
         
-        int totalBinSize = 20 + 30 + 20 + 20 + 20;
-        std::vector<double> a3(totalBinSize);
-        std::vector<double> d1(totalBinSize);
-        std::vector<double> d2(totalBinSize);
-        std::vector<double> d3(totalBinSize);
-        std::vector<double> d4(totalBinSize);
-
-        for (int i = 0; i < totalBinSize; i++)
+        std::vector<double> a3vector;
+        std::vector<double> d1;
+        std::vector<double> d2;
+        std::vector<double> d3;
+        std::vector<double> d4;
+        for (int i = 0; i < 20; i++)
         {
-            if (i < 20)
-            {
-                std::getline(iss, token, ','); 
-                a3[i] = std::stof(token);
-            }
-            else if (i < (20 + 30))
-            {
-                std::getline(iss, token, ','); 
-                d1[i] = std::stof(token);
-            }
-            else if (i < (20 + 30 + 20))
-            {
-                std::getline(iss, token, ','); 
-                d2[i] = std::stof(token);
-            }
-            else if (i < (20 + 30 + 20 + 20))
-            {
-                std::getline(iss, token, ',');
-                d3[i] = std::stof(token);
-            }
-            else
-            {
-                std::getline(iss, token, ','); 
-                d4[i] = std::stof(token);
-            }
+            std::getline(iss, token, ','); 
+            float a = std::stof(token);
+            a3vector.push_back(a);
         }
-        currentFeatures.A3 = a3;
+        for (int i = 0; i < 30; i++)
+        {
+            std::getline(iss, token, ',');
+            float a = std::stof(token);
+            d1.push_back(a);
+        }
+        for (int i = 0; i < 20; i++)
+        {
+            std::getline(iss, token, ',');
+            float a = std::stof(token);
+            d2.push_back(a);
+        }
+        for (int i = 0; i < 20; i++)
+        {
+            std::getline(iss, token, ',');
+            float a = std::stof(token);
+            d3.push_back(a);
+        }
+        for (int i = 0; i < 20; i++)
+        {
+            std::getline(iss, token, ',');
+            float a = std::stof(token);
+            d4.push_back(a);
+        }
+
+        currentFeatures.A3 = a3vector;
         currentFeatures.D1 = d1;
         currentFeatures.D2 = d2;
         currentFeatures.D3 = d3;

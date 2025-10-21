@@ -142,10 +142,9 @@ int main(void)
     FeatureExtraction fe;
     Preprocessing prep;
 
-    //std::string databsePath = "./ShapeDatabaseFixed/";
-    std::string databsePath = "./test_objs/";
+    std::string databsePath = "./ShapeDatabaseFixed/";
+    //std::string databsePath = "./test_objs/";
     std::string databsePathResampled = "./ResampledDatabase/";
-    std::string CHdatabase = "./ConvexHulls/";
 
     /*
         DO NOT UNCOMMENT!!!!!!!
@@ -159,11 +158,11 @@ int main(void)
     // Remeshing
     std::cout << "--- REMESHING ---" << std::endl;
 
-   // prep.Resampling(databsePath, databsePathResampled);
+    //prep.Resampling(databsePath, databsePathResampled);
 
     std::cout << "--- REMESHING END---" << std::endl;
 
-   // CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
+    //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
     // -------------------------------------------------------------------------------
     // PREPROCESSING
@@ -176,14 +175,14 @@ int main(void)
 
 
     // ---------------------------------------------------------------------------------
-    /*fe.ExtractFeaturesOthers(databsePathResampled);
-    fe.ExtractFeaturesCH(CHdatabase);*/
-    fe.ExtractFeaturesOthers(databsePath);
+    //fe.ExtractFeaturesOthers(databsePathResampled);
+    //fe.ExtractFeaturesAtoD(databsePathResampled);
+    
 
     Querying q;
-    q.Normalization(databsePath, "feature_extraction_complete.csv");
+    q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
 
-    //fe.ExtractFeaturesAtoD(databsePathResampled);
+    
     
     // --------------------------------------------------------------------------------- 
 

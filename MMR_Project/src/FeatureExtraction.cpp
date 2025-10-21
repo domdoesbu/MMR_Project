@@ -749,7 +749,7 @@ float FeatureExtraction::Distance(glm::vec3 v1, glm::vec3 v2)
 }
 
 ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, std::vector<float>& positions) {
-	FeatureExtraction fe;
+
 	FileOrganizer fo;
 	
 	fs::path path = inputFile;
@@ -759,24 +759,24 @@ ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, 
 	// InputFile is the full path
 	//std::cout << "surface" << std::endl;
 	// 1. Surface area S
-	float surfaceArea = fe.SurfaceArea(inputFile);
+	float surfaceArea = SurfaceArea(inputFile);
 	//std::cout << "Surface Area: " << surfaceArea << std::endl;
 	// 2. Compactness
-	float volume = fe.Volume(inputFile);
-	float compactness = fe.Compactness(surfaceArea, volume);
+	float volume = Volume(positions);
+	float compactness = Compactness(surfaceArea, volume);
 	//std::cout << "Volume : " << volume << " || Compactness : " << compactness << std::endl;
 	// 3. Recantgularity
 	glm::vec3 barycenter = { info.baryX, info.baryY, info.baryZ };
-	float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, path.filename().string(), "./shape_analysis_resamp.csv");
+	float rectangularity = Rectangularity(positions, barycenter, inputFile, path.filename().string(), "./shape_analysis_resamp.csv");
 	//std::cout << "Rectangularity: " << rectangularity << std::endl;
 	// 4. Diameter
-	float diameter = fe.Diameter(positions);
+	float diameter = Diameter(positions);
 	//std::cout << "Diameter: " << diameter << std::endl;
 	// 5. Convexity
-	float convexity = fe.Convexity(positions, barycenter, path.filename().string(), inputFile);
+	float convexity = Convexity(positions, barycenter, path.filename().string(), inputFile);
 	//std::cout << "Convexity: " << convexity << std::endl;
 	// 6. Eccentricity
-	float eccentricity = fe.Eccentricity(info.eigLarge, info.eigSmall);
+	float eccentricity = Eccentricity(info.eigLarge, info.eigSmall);
 
 	//std::cout << "Eccentricity: " << eccentricity << std::endl;
 
