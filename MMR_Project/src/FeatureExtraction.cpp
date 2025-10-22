@@ -95,7 +95,7 @@ std::vector<float> FeatureExtraction::GenerateConvexHull(std::string filename, s
 
 	MR::Mesh convexHull = MR::makeConvexHull(mesh);
 	//ask Dom how this works
-	MR::MeshSave::toAnySupportedFormat(convexHull, outputDir);
+	//MR::MeshSave::toAnySupportedFormat(convexHull, outputDir);
 
 	convexHull.points.vec_;
 
@@ -796,7 +796,7 @@ ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, 
 	std::vector<double> d4count = d4pair.second;
 
 
-	return { surfaceArea, volume, compactness, rectangularity, diameter, convexity, eccentricity, a3count, d1count, d2count, d3count, d4count };
+	return { inputFile, surfaceArea, volume, compactness, rectangularity, diameter, convexity, eccentricity, a3count, d1count, d2count, d3count, d4count };
 }
 
 void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
