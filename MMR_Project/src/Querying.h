@@ -24,12 +24,14 @@ public:
 private:
 	std::vector<double> GetFeatureVecFromShapeFeatures(ShapeFeatures feats);
 
-	std::vector<std::vector<double>> Querying::GetFeatVecFromCsv(std::string databasePath, std::vector<ShapeFeatures>& outshapeFeatVec);
+	std::vector<std::vector<double>> GetFeatVecFromCsv(std::string databasePath, std::vector<ShapeFeatures>& outshapeFeatVec);
 
 	std::vector<ShapeFeatures> ReadShapeFeaturesFromCsv(std::string csvFilename);
 
 	// calculates euclidean distance between two feature vectors of the same size
 	double nDimEuDistance(std::vector<double> feat1, std::vector<double> feat2);
+
+	std::vector<int> GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k);
 
 };
 

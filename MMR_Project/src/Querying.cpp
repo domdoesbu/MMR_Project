@@ -149,10 +149,10 @@ std::vector<std::string> Querying::ExecuteQuery(std::string shapePath, std::stri
     }
 
     // find the minimum k distances
-    std::vector<int> minDistIndices = GetKSmallestDistanceIndices(distanceVec);
+    std::vector<int> minDistIndices = GetKSmallestDistanceIndices(distanceVec, 3);
     std::vector<std::string> resultFilenames;
 
-    for (int i = 0, i < minDistIndices.size(); ++i)
+    for (int i = 0; i < minDistIndices.size(); ++i)
     {
         resultFilenames.push_back(shapeFeatVecs[minDistIndices[i]].fileName); // i am so smart
     }
@@ -304,10 +304,38 @@ double Querying::nDimEuDistance(std::vector<double> feat1, std::vector<double> f
 }
 
 // this gets a distance vector and returns the k indices of the shapes with the smallest distance
-std::vector<int> GetKSmallestDistanceIndices(std::vector<double> distanceVec) 
+std::vector<int> Querying::GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k) 
 {
-    // sort this shit
-    std::sort(distanceVec.begin(), distanceVec.end());
+    // initialize index vector that we'll use to keep track of shape indices during sorting to get filenames later
+    std::vector<int> indexVec(distanceVec.size());
+    for (int i = 0; i < distanceVec.size(); ++i)
+    {
+        indexVec[i] = i;
+    }
+
+    // Chat implementation of bubblesort cause I cant even implement bubblesort correctly on my own I am going to cry
+    bool swapped;
+    for (int i = 0; i < distanceVec.size() - 1; ++i)
+    {
+        swapped = false;
+        for (int j = 0; j < distanceVec.size() - i - 1; ++j)
+        {
+            if (distanceVec[j] > distanceVec[j + 1])
+            {
+                std::swap(distanceVec[j], distanceVec[j + 1]);
+                swapped = true;
+                std::swap(indexVec[j], indexVec[j + 1]);
+            }
+        }
+        if (!swapped)
+            break; // already sorted
+    }
 
     // get the first k elements and return them
+    std::vector<int> outIndices;
+    for (int i = 0; i < k; ++i)
+    {
+        outIndices.push_back(indexVec[i]);
+    }
+    return outIndices;
 }
