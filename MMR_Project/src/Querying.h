@@ -6,7 +6,6 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <string>
 #include <limits>
 #include <vector>
 #include <array>
@@ -17,6 +16,8 @@ public:
 	Querying() {};
 
 	void Normalization(std::string databasePath, std::string csvFile);
+
+	void NormalizeQueriedShape(ShapeFeatures& shape);
 
 	// Takes in the path of the shape and returns the k most similar shapes using a naive approach
 	std::vector<std::string> ExecuteQuery(std::string shapePath, std::string databasePath);

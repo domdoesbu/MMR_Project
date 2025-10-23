@@ -1,11 +1,13 @@
 #include "Querying.h"
 
+
+namespace fs = std::filesystem;
 // massive horrible function from hell to normalize the single value features
 void Querying::Normalization(std::string databasePath, std::string csvFilename)
 {
     std::ifstream csvFile(csvFilename);
 
-	std::vector<ShapeFeatures> totalFeatures;
+	
     if (!csvFile.is_open()) {
         std::cerr << "Failed to open input CSV file: " << csvFilename << std::endl;
         return;
@@ -96,6 +98,34 @@ void Querying::Normalization(std::string databasePath, std::string csvFilename)
         d4.push_back(totalFeatures[i].D4);
     }
 
+
+  
+    std::ofstream csvFileAvg("avg_and_sd.csv");
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open output CSV file: avg_and_sd"<< std::endl;
+        return;
+    }
+
+    csvFileAvg << "avgArea,stdDevArea,avgVolume,stdDevVolume,avgCompactness,stdDevCompactness,avgRectangularity,stdDevRectangularity,avgDiameter,stdDevDiameter,avgConvexity,stdDevConvexity,avgEccentricity,stdDevEccentricity\n";
+
+
+    csvFileAvg << avgArea << "," <<
+            stdDevArea << "," <<
+            avgVolume << "," <<
+            stdDevVolume << "," <<
+            avgCompactness << "," <<
+            stdDevCompactness << "," <<
+            avgRectangularity << "," <<
+            stdDevRectangularity << "," <<
+            avgDiameter << "," <<
+            stdDevDiameter << "," <<
+            avgConvexity << "," <<
+            stdDevConvexity << "," <<
+            avgEccentricity << "," <<
+            stdDevEccentricity 
+            << "\n";
+
+    
     FileOrganizer fo;
     
     fo.WriteCSVFeatureExtraction(databasePath, "feature_extraction_complete_normalized.csv",
@@ -115,6 +145,77 @@ void Querying::Normalization(std::string databasePath, std::string csvFilename)
 
 }
 
+void Querying::NormalizeQueriedShape(ShapeFeatures& shape) {
+    std::ifstream csvFile("avg_and_sd.csv");
+
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open input CSV file: avg_and_sd.csv" << std::endl;
+        return;
+    }
+    float avgArea = 0.0;
+    float avgVolume = 0.0;
+    float avgCompactness = 0.0;
+    float avgRectangularity = 0.0;
+    float avgDiameter = 0.0;
+    float avgConvexity = 0.0;
+    float avgEccentricity = 0.0;
+    float stdDevArea = 0.0;
+    float stdDevVolume = 0.0;
+    float stdDevCompactness = 0.0;
+    float stdDevRectangularity = 0.0;
+    float stdDevDiameter = 0.0;
+    float stdDevConvexity = 0.0;
+    float stdDevEccentricity = 0.0;
+
+
+    std::string line;
+    std::getline(csvFile, line);
+    std::getline(csvFile, line);
+
+    std::istringstream iss(line);   
+
+    std::string token;
+    std::getline(iss, token, ','); 
+    avgArea = std::stof(token);
+    std::getline(iss, token, ','); 
+    stdDevArea = std::stof(token);
+    std::getline(iss, token, ','); 
+    avgVolume = std::stof(token);
+    std::getline(iss, token, ','); 
+    stdDevVolume = std::stof(token);
+    std::getline(iss, token, ','); 
+    avgCompactness = std::stof(token);
+    std::getline(iss, token, ','); 
+    stdDevCompactness = std::stof(token);
+    std::getline(iss, token, ','); 
+    avgRectangularity = std::stof(token);
+    std::getline(iss, token, ','); 
+    stdDevRectangularity = std::stof(token);
+    std::getline(iss, token, ','); 
+    avgDiameter = std::stof(token);
+    std::getline(iss, token, ','); 
+    stdDevDiameter = std::stof(token);
+    std::getline(iss, token, ','); 
+    avgConvexity = std::stof(token);
+    std::getline(iss, token, ','); 
+    stdDevConvexity = std::stof(token);
+    std::getline(iss, token, ','); 
+    avgEccentricity = std::stof(token);
+    std::getline(iss, token, ','); 
+    stdDevEccentricity = std::stof(token);
+
+    shape.surfaceArea = (shape.surfaceArea - avgArea) / stdDevArea;
+    shape.volume = (shape.volume - avgVolume) / stdDevVolume;
+    shape.compactness = (shape.compactness - avgCompactness) / stdDevCompactness;
+    shape.rectangularity = (shape.rectangularity - avgRectangularity) / stdDevRectangularity;
+    shape.diameter = (shape.diameter - avgDiameter) / stdDevDiameter;
+    shape.convexity = (shape.convexity - avgConvexity) / stdDevConvexity;
+    shape.eccentricity = (shape.eccentricity - avgEccentricity) / stdDevEccentricity;
+
+    csvFile.close();
+
+}
+
 // Takes in the path of the shape and returns the k most similar shapes using a naive approach
 std::vector<std::string> Querying::ExecuteQuery(std::string shapePath, std::string databasePath)
 {
@@ -128,7 +229,7 @@ std::vector<std::string> Querying::ExecuteQuery(std::string shapePath, std::stri
     FeatureExtraction fe;
     ShapeFeatures features;
     features = fe.ExtractFeaturesOneShape(shapePath, positions);
-
+    NormalizeQueriedShape(features);
     // transform feat extr. results into one big feat vector
     std::vector<double> inputFeatureVec;
     inputFeatureVec = GetFeatureVecFromShapeFeatures(features);
@@ -136,7 +237,7 @@ std::vector<std::string> Querying::ExecuteQuery(std::string shapePath, std::stri
     std::vector<ShapeFeatures> shapeFeatVecs; // save these in order to retrieve the file names later
 
     // get all of the feature vectors from the csv file
-    std::vector<std::vector<double>> dbFeatureVecs = GetFeatVecFromCsv(databasePath, shapeFeatVecs);
+    std::vector<std::vector<double>> dbFeatureVecs = GetFeatVecFromCsv("feature_extraction_complete_normalized.csv", shapeFeatVecs);
 
     // declare distance vector with same size as the database feature vectors
     // at position i, we have distance between the input shape and the i th shape in the db
@@ -154,6 +255,7 @@ std::vector<std::string> Querying::ExecuteQuery(std::string shapePath, std::stri
 
     for (int i = 0; i < minDistIndices.size(); ++i)
     {
+        std::cout << shapeFeatVecs[minDistIndices[i]].fileName << std::endl;
         resultFilenames.push_back(shapeFeatVecs[minDistIndices[i]].fileName); // i am so smart
     }
 
@@ -201,13 +303,13 @@ std::vector<double> Querying::GetFeatureVecFromShapeFeatures(ShapeFeatures feats
 std::vector<std::vector<double>> Querying::GetFeatVecFromCsv(std::string databasePath, std::vector<ShapeFeatures>& outshapeFeatVec)
 {
     // cycle through every line and fill up the shapefeature vector
-    std::vector<ShapeFeatures> shapeFeatVec = ReadShapeFeaturesFromCsv(databasePath);
+    outshapeFeatVec = ReadShapeFeaturesFromCsv(databasePath);
     
     // transform the shapefeature vector into a vector of feature vectors
     std::vector<std::vector<double>> featVecs;
-    for (int i = 0; i < shapeFeatVec.size(); ++i) 
+    for (int i = 0; i < outshapeFeatVec.size(); ++i)
     {
-        featVecs.push_back(GetFeatureVecFromShapeFeatures(shapeFeatVec[i]));
+        featVecs.push_back(GetFeatureVecFromShapeFeatures(outshapeFeatVec[i]));
     }
 
     return featVecs;
@@ -220,7 +322,7 @@ std::vector<ShapeFeatures> Querying::ReadShapeFeaturesFromCsv(std::string csvFil
     std::vector<ShapeFeatures> totalFeatures;
     if (!csvFile.is_open()) {
         std::cerr << "Failed to open input CSV file: " << csvFilename << std::endl;
-        return;
+        return totalFeatures;
     }
     std::string line;
 
@@ -234,7 +336,7 @@ std::vector<ShapeFeatures> Querying::ReadShapeFeaturesFromCsv(std::string csvFil
         ShapeFeatures currentFeatures;
         std::getline(iss, token, ',');
         std::getline(iss, token, ',');
-        currentFeatures.fileName = std::stof(token);
+        currentFeatures.fileName = std::string(token);
         std::getline(iss, token, ',');
         float v = std::stof(token);
         currentFeatures.surfaceArea = v;
@@ -289,6 +391,7 @@ std::vector<ShapeFeatures> Querying::ReadShapeFeaturesFromCsv(std::string csvFil
         totalFeatures.push_back(currentFeatures);
     }
     csvFile.close();
+    return totalFeatures;
 }
 
 // calculates euclidean distance between two feature vectors of the same size

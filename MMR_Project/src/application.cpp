@@ -199,6 +199,9 @@ int main(void)
         return -1;
     }
 
+    std::vector<std::string> queryResults = q.ExecuteQuery(inputFile, databsePathResampled);
+    
+
     unsigned int vao;
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
