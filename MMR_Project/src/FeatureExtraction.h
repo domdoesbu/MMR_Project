@@ -23,6 +23,7 @@
 #include "matplotlibcpp.h"
 
 struct ShapeFeatures {
+	std::string className;
 	std::string fileName;
 
 	float surfaceArea;

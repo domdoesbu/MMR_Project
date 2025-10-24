@@ -752,9 +752,9 @@ ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, 
 
 	FileOrganizer fo;
 	
-	fs::path path = inputFile;
+	fs::path filepath = inputFile;
 	//std::cout << "bary" << std::endl;
-	baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", path.filename().string());
+	baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", filepath.filename().string());
 
 	// InputFile is the full path
 	//std::cout << "surface" << std::endl;
@@ -767,13 +767,13 @@ ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, 
 	//std::cout << "Volume : " << volume << " || Compactness : " << compactness << std::endl;
 	// 3. Recantgularity
 	glm::vec3 barycenter = { info.baryX, info.baryY, info.baryZ };
-	float rectangularity = Rectangularity(positions, barycenter, inputFile, path.filename().string(), "./shape_analysis_resamp.csv");
+	float rectangularity = Rectangularity(positions, barycenter, inputFile, filepath.filename().string(), "./shape_analysis_resamp.csv");
 	//std::cout << "Rectangularity: " << rectangularity << std::endl;
 	// 4. Diameter
 	float diameter = Diameter(positions);
 	//std::cout << "Diameter: " << diameter << std::endl;
 	// 5. Convexity
-	float convexity = Convexity(positions, barycenter, path.filename().string(), inputFile);
+	float convexity = Convexity(positions, barycenter, filepath.filename().string(), inputFile);
 	//std::cout << "Convexity: " << convexity << std::endl;
 	// 6. Eccentricity
 	float eccentricity = Eccentricity(info.eigLarge, info.eigSmall);
@@ -794,9 +794,9 @@ ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, 
 
 	std::pair<std::vector<double>, std::vector<double>> d4pair = D4(positions, 1000000, 20);
 	std::vector<double> d4count = d4pair.second;
+	std::string fileName = filepath.filename().string();
 
-
-	return { inputFile, surfaceArea, volume, compactness, rectangularity, diameter, convexity, eccentricity, a3count, d1count, d2count, d3count, d4count };
+	return { inputFile,fileName, surfaceArea, volume, compactness, rectangularity, diameter, convexity, eccentricity, a3count, d1count, d2count, d3count, d4count };
 }
 
 void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {

@@ -255,8 +255,9 @@ std::vector<std::string> Querying::ExecuteQuery(std::string shapePath, std::stri
 
     for (int i = 0; i < minDistIndices.size(); ++i)
     {
-        std::cout << shapeFeatVecs[minDistIndices[i]].fileName << std::endl;
-        resultFilenames.push_back(shapeFeatVecs[minDistIndices[i]].fileName); // i am so smart
+        std::string filePath = shapeFeatVecs[minDistIndices[i]].className + "/" + shapeFeatVecs[minDistIndices[i]].fileName;
+        std::cout << filePath << std::endl;
+        resultFilenames.push_back(filePath); // i am so smart
     }
 
     // return the path of the files
@@ -317,6 +318,10 @@ std::vector<std::vector<double>> Querying::GetFeatVecFromCsv(std::string databas
 
 std::vector<ShapeFeatures> Querying::ReadShapeFeaturesFromCsv(std::string csvFilename)
 {
+    auto stripQuotes = [](std::string& s) {
+        if (!s.empty() && s.front() == '"') s.erase(0, 1);
+        if (!s.empty() && s.back() == '"') s.pop_back();
+        };
     std::ifstream csvFile(csvFilename);
 
     std::vector<ShapeFeatures> totalFeatures;
@@ -335,6 +340,8 @@ std::vector<ShapeFeatures> Querying::ReadShapeFeaturesFromCsv(std::string csvFil
         std::string token;
         ShapeFeatures currentFeatures;
         std::getline(iss, token, ',');
+        stripQuotes(token);
+        currentFeatures.className =token;
         std::getline(iss, token, ',');
         currentFeatures.fileName = std::string(token);
         std::getline(iss, token, ',');
