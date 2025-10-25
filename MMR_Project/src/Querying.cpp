@@ -217,7 +217,7 @@ void Querying::NormalizeQueriedShape(ShapeFeatures& shape) {
 }
 
 // Takes in the path of the shape and returns the k most similar shapes using a naive approach
-std::vector<std::string> Querying::ExecuteQuery(std::string shapePath, std::string databasePath)
+std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(std::string shapePath, std::string databasePath)
 {
     // load object from path
     FileOrganizer fo;
@@ -250,7 +250,9 @@ std::vector<std::string> Querying::ExecuteQuery(std::string shapePath, std::stri
     }
 
     // find the minimum k distances
-    std::vector<int> minDistIndices = GetKSmallestDistanceIndices(distanceVec, 3);
+    std::pair<std::vector<int>, std::vector<float>> results = GetKSmallestDistanceIndices(distanceVec, 3);
+    std::vector<int> minDistIndices = results.first;
+    std::vector<float> distanceValues = results.second;
     std::vector<std::string> resultFilenames;
 
     for (int i = 0; i < minDistIndices.size(); ++i)
@@ -261,7 +263,7 @@ std::vector<std::string> Querying::ExecuteQuery(std::string shapePath, std::stri
     }
 
     // return the path of the files
-    return resultFilenames;
+    return { resultFilenames, distanceValues };
 }
 
 std::vector<double> Querying::GetFeatureVecFromShapeFeatures(ShapeFeatures feats)
@@ -414,10 +416,11 @@ double Querying::nDimEuDistance(std::vector<double> feat1, std::vector<double> f
 }
 
 // this gets a distance vector and returns the k indices of the shapes with the smallest distance
-std::vector<int> Querying::GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k) 
+std::pair <std::vector<int>, std::vector<float>> Querying::GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k) 
 {
     // initialize index vector that we'll use to keep track of shape indices during sorting to get filenames later
     std::vector<int> indexVec(distanceVec.size());
+    std::vector<float> distanceValues;
     for (int i = 0; i < distanceVec.size(); ++i)
     {
         indexVec[i] = i;
@@ -445,7 +448,9 @@ std::vector<int> Querying::GetKSmallestDistanceIndices(std::vector<double> dista
     std::vector<int> outIndices;
     for (int i = 0; i < k; ++i)
     {
+        distanceValues.push_back(distanceVec[i]);
+        std::cout << distanceVec[i] << std::endl;
         outIndices.push_back(indexVec[i]);
     }
-    return outIndices;
+    return { outIndices, distanceValues };
 }

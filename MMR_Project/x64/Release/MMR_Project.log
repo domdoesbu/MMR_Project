@@ -32,10 +32,10 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(50
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'initializing': truncation from 'double' to 'float'
   (compiling source file 'src/application.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(52,28): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(238,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(239,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(251,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(107,28): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(299,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(300,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(312,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
@@ -49,10 +49,9 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,4
   
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(386): warning C4715: 'Preprocessing::Resampling': not all control paths return a value
-  3050 of 4885 functions (62.4%) were compiled, the rest were copied from previous compilation.
-    16 functions were new in current compilation
-    186 functions had inline decision re-evaluated but remain unchanged
+  1 of 2647 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    4 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\vc120.pdb'; linking object as if no debug info
   MMR_Project.vcxproj -> C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\MMR_Project.exe

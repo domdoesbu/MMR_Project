@@ -15,17 +15,72 @@
 #include "Refinement.h"
 #include "FeatureExtraction.h"
 #include "Querying.h"
-
+#include "stb_easy_font.h"
 namespace fs = std::filesystem;
-struct ShaderProgramSource
-{
-	std::string VertexSource;
-	std::string FragmentSource;
-};
+
 struct Mesh {
     unsigned int vao;
     unsigned int indexCount;
 };
+
+void drawText(const std::string& text, float screenX, float screenY, int windowWidth, int windowHeight, Shader& textShader)
+{
+    char buffer[99999];
+    int num_quads = stb_easy_font_print(0, 0, (char*)text.c_str(), nullptr, buffer, sizeof(buffer));
+    float* rawVerts = (float*)buffer;
+
+    std::vector<float> verts;
+    verts.reserve(num_quads * 6 * 2); // 6 vertices per quad (2 triangles), 2 floats each
+
+    for (int q = 0; q < num_quads; ++q)
+    {
+        float* quad = &rawVerts[q * 16];
+
+        // Convert all 4 quad vertices to NDC
+        float v[8];
+        for (int i = 0; i < 4; i++)
+        {
+            float x = quad[i * 4 + 0] + screenX;
+            float y = windowHeight - (quad[i * 4 + 1] + screenY); // Flip Y
+
+            // Normalize to NDC [-1, 1]
+            float ndcX = (x / (float)windowWidth) * 2.0f - 1.0f;
+            float ndcY = (y / (float)windowHeight) * 2.0f - 1.0f;
+
+            v[i * 2 + 0] = ndcX;
+            v[i * 2 + 1] = ndcY;
+        }
+
+        // Two triangles per quad
+        verts.insert(verts.end(), { v[0], v[1], v[2], v[3], v[4], v[5] });
+        verts.insert(verts.end(), { v[0], v[1], v[4], v[5], v[6], v[7] });
+    }
+
+    // Upload to GPU
+    GLuint vao, vbo;
+    glGenVertexArrays(1, &vao);
+    glGenBuffers(1, &vbo);
+
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    glBufferData(GL_ARRAY_BUFFER, verts.size() * sizeof(float), verts.data(), GL_DYNAMIC_DRAW);
+
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    textShader.use();
+    glUniform3f(glGetUniformLocation(textShader.ID, "uColor"), 0.0f, 0.0f, 0.0f);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_DEPTH_TEST);
+    glDrawArrays(GL_TRIANGLES, 0, num_quads * 6);
+
+    glEnable(GL_DEPTH_TEST);
+
+    glDeleteBuffers(1, &vbo);
+    glDeleteVertexArrays(1, &vao);
+}
 
 Mesh createMesh(const std::vector<float>& pos,const std::vector<unsigned int>& idx)
 {
@@ -142,6 +197,10 @@ int main(void)
     if (!glfwInit())
         return -1;
 
+    int windowWidth = 1400;
+    int windowHeight = 1050;
+
+
     window = glfwCreateWindow(1400, 1050, "MMR Project", NULL, NULL);
     if (!window)
     {
@@ -196,10 +255,10 @@ int main(void)
     std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
     // FEATURE EXTRACTION
-    fe.ExtractFeaturesOthers(databsePathResampled);
+    //fe.ExtractFeaturesOthers(databsePathResampled);
     //fe.ExtractFeaturesAtoD(databsePathResampled);
     
-    q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
+    //q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
 
     // --------------------------------------------------------------------------------- 
 
@@ -216,12 +275,14 @@ int main(void)
         return -1;
     }
 
-    std::vector<std::string> queryResults = q.ExecuteQuery(inputFile, databsePathResampled);
+    std::pair<std::vector<std::string>, std::vector<float>> resultsAll= q.ExecuteQuery(inputFile, databsePathResampled);
+    std::vector<std::string> queryResults = resultsAll.first;
+    std::vector<float> distances = resultsAll.second;
     
     std::vector<Mesh> meshes;
     meshes.push_back(createMesh(positions, indices));
 
-
+    
     for (auto& path : queryResults) {
         positions.clear();
         indices.clear();
@@ -232,7 +293,7 @@ int main(void)
 
     Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
     Shader solidShader("res/shaders/Vertex.shader", "res/shaders/Fragment.shader");
-
+    Shader textShader("res/shaders/text_vertex_shader.shader", "res/shaders/text_fragment_shader.shader");
     solidShader.use();
 
     float previousTime = glfwGetTime();
@@ -269,10 +330,12 @@ int main(void)
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        float x = 3.25f;
-        for (const auto& m : meshes) {
+        float x = 2.75f;
+        for (size_t i = 0; i < meshes.size(); ++i) {
+
+            const auto& m = meshes[i];
             glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, 0.0f));
-            x -= 2.5f;
+            x -= 1.5f;
 
             glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
             glBindVertexArray(m.vao);
@@ -283,6 +346,29 @@ int main(void)
                 glUniformMatrix4fv(glGetUniformLocation(wireframeShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
                 glBindVertexArray(m.vao);
                 glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, nullptr);
+                solidShader.use();
+            }
+
+            glm::vec3 meshCenter = glm::vec3(model * glm::vec4(0, 0, 0, 1));
+            glm::vec3 screenPos = glm::project(meshCenter, camera.GetViewMatrix(), camera.GetProjectionMatrix(),
+                glm::vec4(0, 0, windowWidth, windowHeight));
+            screenPos.y -= 100.0f;
+            screenPos.x -= 100.0f;
+            if (i == 0) {
+                textShader.use();
+                glDisable(GL_DEPTH_TEST);
+                drawText("Queried Shape", screenPos.x, screenPos.y - 20.0f, windowWidth, windowHeight, textShader);
+                drawText(inputFile, screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File Name
+                glEnable(GL_DEPTH_TEST);
+                solidShader.use();
+            }
+
+            if (i > 0 && i - 1 < queryResults.size()) {
+                textShader.use();
+                glDisable(GL_DEPTH_TEST);
+                drawText(queryResults[i - 1], screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File name
+                drawText("Distance: " + std::to_string(distances[i]), screenPos.x, screenPos.y + 200.0f, windowWidth, windowHeight, textShader); // Distance
+                glEnable(GL_DEPTH_TEST);
                 solidShader.use();
             }
         }

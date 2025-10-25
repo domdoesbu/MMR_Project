@@ -20,7 +20,7 @@ public:
 	void NormalizeQueriedShape(ShapeFeatures& shape);
 
 	// Takes in the path of the shape and returns the k most similar shapes using a naive approach
-	std::vector<std::string> ExecuteQuery(std::string shapePath, std::string databasePath);
+	std::pair<std::vector<std::string>, std::vector<float>>  ExecuteQuery(std::string shapePath, std::string databasePath);
 
 private:
 	std::vector<double> GetFeatureVecFromShapeFeatures(ShapeFeatures feats);
@@ -32,7 +32,7 @@ private:
 	// calculates euclidean distance between two feature vectors of the same size
 	double nDimEuDistance(std::vector<double> feat1, std::vector<double> feat2);
 
-	std::vector<int> GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k);
+	std::pair <std::vector<int>, std::vector<float>> GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k);
 
 };
 

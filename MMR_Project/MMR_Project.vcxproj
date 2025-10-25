@@ -154,6 +154,8 @@
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\Fragment.shader" />
+    <None Include="res\shaders\text_fragment_shader.shader" />
+    <None Include="res\shaders\text_vertex_shader.shader" />
     <None Include="res\shaders\Vertex.shader" />
     <None Include="res\shaders\wireframeFragment.shader" />
     <None Include="src\CodeFromProf\UnstructuredGrid.h~" />
@@ -197,6 +199,7 @@
     <ClInclude Include="src\Preprocessing.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\stb_easy_font.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -700,6 +700,11 @@ void Preprocessing::NormalizeDatabase(std::string& databasePath) {
             // Size
             positions = NormalizeScale(positions, fullFilePath);
            
+            MeshData data;
+            data.positions = positions;
+            data.indices = indices;
+            fo.WriteNewObj(fullFilePath, data);
+
         }
     }
     fo.WriteCSVAfterNorm(databasePath, "Bary_Eigs.csv", barycenters, eigenValues);
