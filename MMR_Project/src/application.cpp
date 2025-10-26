@@ -15,6 +15,7 @@
 #include "Refinement.h"
 #include "FeatureExtraction.h"
 #include "Querying.h"
+#include "Evidence.h"
 
 namespace fs = std::filesystem;
 struct ShaderProgramSource
@@ -142,9 +143,10 @@ int main(void)
     FeatureExtraction fe;
     Preprocessing prep;
 
-    std::string databsePath = "./ShapeDatabaseFixed/";
-    //std::string databsePath = "./test_objs/";
-    std::string databsePathResampled = "./ResampledDatabase/";
+    //std::string databsePath = "./ShapeDatabaseFixed/";
+    std::string databsePath = "./test_objs/";
+    std::string databsePathResampled = "./test_objs_resampled/";
+    //std::string databsePathResampled = "./ResampledDatabase/";
 
     /*
         DO NOT UNCOMMENT!!!!!!!
@@ -154,22 +156,27 @@ int main(void)
     std::cout << "--- PREPROCESSING ---" << std::endl;
 
     //CSVSetup("./shape_analysis.csv", databsePath);
+    CSVSetup("./shape_analysis_test.csv", databsePath);
 
     // Remeshing
     std::cout << "--- REMESHING ---" << std::endl;
 
-    //prep.Resampling(databsePath, databsePathResampled);
+    prep.Resampling(databsePath, databsePathResampled);
 
     std::cout << "--- REMESHING END---" << std::endl;
 
     //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
+    CSVSetup("./shape_analysis_resamp_test.csv", databsePathResampled);
+
 
     // -------------------------------------------------------------------------------
     // PREPROCESSING
     std::cout << "--- PREPROCESSING START ---" << std::endl;
 
-    //prep.NormalizeDatabase(databsePathResampled);
+    prep.NormalizeDatabase(databsePathResampled);
     //CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
+    CSVSetup("./shape_analysis_resamp_norm_test.csv", databsePathResampled);
+
     std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
 
@@ -180,9 +187,10 @@ int main(void)
     
 
     Querying q;
-    q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
+    //q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
 
-    
+    Evidence e;
+    e.ResamplingEvidence(databsePath, databsePathResampled);
     
     // --------------------------------------------------------------------------------- 
 
