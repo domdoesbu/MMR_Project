@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\CodeFromProf\MeshDecimator.cpp" />
     <ClCompile Include="src\Querying.cpp" />
     <ClCompile Include="src\CodeFromProf\Grid.cpp" />
     <ClCompile Include="src\CodeFromProf\ScalarAttributes.cpp" />
@@ -158,6 +159,7 @@
     <None Include="res\shaders\text_vertex_shader.shader" />
     <None Include="res\shaders\Vertex.shader" />
     <None Include="res\shaders\wireframeFragment.shader" />
+    <None Include="src\CodeFromProf\mdVector.inl" />
     <None Include="src\CodeFromProf\UnstructuredGrid.h~" />
     <None Include="src\CodeFromProf\UnstructuredGrid3D.h~" />
     <None Include="src\MMRLibrary\include\UnstructuredGrid.h~" />
@@ -166,6 +168,9 @@
     <None Include="src\MMRLibrary\refined.ply" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\CodeFromProf\mdSArray.h" />
+    <ClInclude Include="src\CodeFromProf\mdVector.h" />
+    <ClInclude Include="src\CodeFromProf\MeshDecimator.h" />
     <ClInclude Include="src\Querying.h" />
     <ClInclude Include="src\CodeFromProf\Grid.h" />
     <ClInclude Include="src\CodeFromProf\Point3d.h" />

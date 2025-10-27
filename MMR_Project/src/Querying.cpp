@@ -230,6 +230,7 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(s
     ShapeFeatures features;
     features = fe.ExtractFeaturesOneShape(shapePath, positions);
     NormalizeQueriedShape(features);
+    
     // transform feat extr. results into one big feat vector
     std::vector<double> inputFeatureVec;
     inputFeatureVec = GetFeatureVecFromShapeFeatures(features);

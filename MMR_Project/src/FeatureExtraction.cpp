@@ -58,6 +58,7 @@ float FeatureExtraction::Rectangularity(std::vector<float> positions, glm::vec3 
 	return shapeVolume / OBBvolume;
 }
 
+
 // 4. Diameter
 float FeatureExtraction::Diameter(std::vector<float>& positions)
 {
@@ -926,5 +927,65 @@ void FeatureExtraction::ExtractFeaturesAtoD(const std::string& databasePath) {
 	std::cout << "--- END FEATURE EXTRACTION ---" << std::endl;
 }
 
+void FeatureExtraction::NormProof(std::string databasePath, std::string csvFilename) {
+
+
+	// 1. Get eigen vector aligned bounding volume (which after full normalization is just the axis aligned one) from the csv database
+	shapeInfo info;
+	FileOrganizer fo;
+	vector<float> positions;
+	vector<unsigned int> indices;
+	vector<float> bbVolume;
+	for (const auto& classDir : fs::directory_iterator(databasePath)) {
+		if (!fs::is_directory(classDir)) continue;
+		std::string className = classDir.path().filename().string();
+		// For each obj in the folder, get the information about it
+		std::string classPath = databasePath + className;
+		for (const auto& file : fs::directory_iterator(classDir)) {
+			positions.clear();
+			indices.clear();
+			std::string currentFile = file.path().filename().string();
+			std::string fullFilePath = classPath + "/" + currentFile;
+			info = fo.getShapeFromDatabase(csvFilename, currentFile);
+
+			glm::vec3 OBBp1(info.minX, info.maxY, info.minZ);
+			glm::vec3 OBBp2(info.maxX, info.maxY, info.maxZ);
+			glm::vec3 OBBp3(info.maxX, info.minY, info.minZ);
+			glm::vec3 OBBp4(info.maxX, info.maxY, info.minZ);
+
+			float OBBbase = Distance(OBBp1, OBBp4);
+			float OBBheight = Distance(OBBp3, OBBp4);
+			float OBBdepth = Distance(OBBp4, OBBp2);
+
+			float OBBvolume = OBBbase * OBBheight * OBBdepth;
+			bbVolume.push_back(OBBvolume);
+		}
+	}
+
+	float minVal = 0;
+	float maxVal = *std::max_element(bbVolume.begin(), bbVolume.end());
+	float binWidth = (maxVal - minVal) / 20;
+	std::vector<double> counts(20, 0.0);
+
+	for (float v : bbVolume) {
+		int binIdx = static_cast<int>((v - minVal) / binWidth);
+		if (binIdx < 0) binIdx = 0;
+		if (binIdx >= 20) binIdx = 20 - 1;
+		counts[binIdx]++;
+	}
+
+	// Compute bin centers
+	std::vector<double> bin_centers(20);
+	for (int i = 0; i < 20; ++i) {
+		bin_centers[i] = minVal + (i + 0.5) * binWidth;
+	}
+	plt::bar(bin_centers, counts, "black", "-", 1.0);
+	plt::xlabel("Bounding Box Volume");
+	plt::ylabel("Count");
+	plt::title("Volume");
+
+	plt::grid(true);
+	plt::show();
+}
 
 	
