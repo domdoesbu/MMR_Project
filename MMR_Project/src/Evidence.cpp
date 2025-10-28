@@ -33,7 +33,14 @@ void Evidence::ScaleNormEvidence()
 
 void Evidence::AlignmentNormEvidence()
 {
+    std::vector<float> positions;
+    std::vector<int> indices;
 
+    // Get each vector's length
+    for (int i = 0; i < resampledShapes.size(); ++i)
+    {
+
+    }
 }
 
 std::vector<shapeInfo> Evidence::GetShapeInfoEntireDB(std::string databasePath)
