@@ -11,15 +11,19 @@ void Simplification::Simplify(std::string& inputFile, std::string& outputFile) {
     simpGrid->computeFaceNormals();							//8.  Compute face and vertex normals for the mesh. This allows us to shade the mesh next.
     simpGrid->computeVertexNormals();
     float maxDecError = std::numeric_limits<float>::infinity();
-    MeshDecimator dec;
+   
     int last = 0;
+    MeshDecimator dec;
     dec.Initialize(*simpGrid);
     while (simpGrid->numPoints() > 10000) {
+        
         last = simpGrid->numPoints();
 
-        int decPoints = simpGrid->numPoints() * 0.9;
-        int decCells = simpGrid->numCells() * 0.9;
-        dec.Decimate(decPoints, decCells, std::numeric_limits<float>::infinity());
+        int decPoints = simpGrid->numPoints() * 0.8;
+        int decCells = simpGrid->numCells() * 0.4;
+        
+        
+        dec.Decimate(decPoints, decCells, maxDecError);
         dec.GetDecimatedOutput(simpGrid);
         std::cout << simpGrid->numPoints() << std::endl;
         if (simpGrid->numPoints() == last) {

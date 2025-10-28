@@ -453,10 +453,12 @@ namespace MeshDecimation
         for(size_t e = 0; e < nE; ++e)
         {
             progress = e * 100.0 / nE;
-            if (fabs(progress-progressOld) > ptgStep && m_callBack)
+            if (fabs(progress-progressOld) > ptgStep 
+                //&& m_callBack
+                )
             {
                 sprintf(msg, "%3.2f %% \t \t \r", progress);
-                (*m_callBack)(msg);
+                //(*m_callBack)(msg);
                 progressOld = progress;
             }
 
@@ -629,7 +631,9 @@ namespace MeshDecimation
                 m_pqueue.pop();
             }
         }
-        while ( (!m_edges[currentEdge.m_name].m_tag) || (m_edges[currentEdge.m_name].m_qem != currentEdge.m_qem));
+        while ( (!m_edges[currentEdge.m_name].m_tag) 
+            || (m_edges[currentEdge.m_name].m_qem != currentEdge.m_qem)
+            );
         
         if (done) return false;
         v1 = m_edges[currentEdge.m_name].m_v1;
@@ -702,10 +706,13 @@ namespace MeshDecimation
         InitializePriorityQueue();
         if (m_callBack) (*m_callBack)("+ Simplification \n");
         double invDiag = 1.0 / m_diagBB;
+
+        
+
         while((m_pqueue.size() > 0) && 
               (m_nEdges > 0) && 
               (m_nVertices > targetNVertices) 
-            //&& (m_nTriangles > targetNTriangles) 
+            && (m_nTriangles > targetNTriangles) 
             &&(qem <= targetError)
             )
         {
@@ -720,6 +727,11 @@ namespace MeshDecimation
 			if (qem < 0.0) qem = 0.0;
 			else           qem = sqrt(qem) * invDiag;
 		}
+        std::cout << "Vertices: " << m_nVertices << std::endl;
+        std::cout << "Target: " << targetNVertices << std::endl;
+        std::cout << "m_nEdges: " << m_nEdges << std::endl;
+        std::cout << "Priority queue: " << m_pqueue.size() << std::endl;
+
         if (m_callBack)
         {
             std::ostringstream msg;
