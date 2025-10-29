@@ -224,8 +224,8 @@ int main(void)
     Preprocessing prep;
     Querying q;
 
-    //std::string databsePath = "./ShapeDatabaseFixed/";
-    std::string databsePath = "./test_objs/";
+    std::string databsePath = "./ShapeDatabaseFixed/";
+    //std::string databsePath = "./test_objs/";
     std::string databsePathResampled = "./ResampledDatabase/";
 
     /*
@@ -240,11 +240,11 @@ int main(void)
     // Remeshing
     std::cout << "--- REMESHING ---" << std::endl;
 
-    prep.Resampling(databsePath, databsePathResampled);
+    //prep.Resampling(databsePath, databsePathResampled);
     
     std::cout << "--- REMESHING END---" << std::endl;
 
-    CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
+    //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
     // -------------------------------------------------------------------------------
     // PREPROCESSING
@@ -255,10 +255,10 @@ int main(void)
     //std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
     // FEATURE EXTRACTION
-    //fe.ExtractFeaturesOthers(databsePathResampled);
+    fe.ExtractFeaturesOthers(databsePathResampled);
     //fe.ExtractFeaturesAtoD(databsePathResampled);
     
-    //q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
+    q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
 
     // --------------------------------------------------------------------------------- 
     //prep.DatabaseStatistics("shape_analysis_resamp_norm.csv");

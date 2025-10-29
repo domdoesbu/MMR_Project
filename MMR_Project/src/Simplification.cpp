@@ -22,7 +22,6 @@ void Simplification::Simplify(std::string& inputFile, std::string& outputFile) {
         int decPoints = simpGrid->numPoints() * 0.8;
         int decCells = simpGrid->numCells() * 0.4;
         
-        
         dec.Decimate(decPoints, decCells, maxDecError);
         dec.GetDecimatedOutput(simpGrid);
         std::cout << simpGrid->numPoints() << std::endl;
@@ -31,5 +30,6 @@ void Simplification::Simplify(std::string& inputFile, std::string& outputFile) {
         }
     }
     fo.WriteObjGrid(outputFile.c_str(), simpGrid);
+    delete simpGrid;
 }
 
