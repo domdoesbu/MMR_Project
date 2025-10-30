@@ -16,6 +16,9 @@
 #include "FeatureExtraction.h"
 #include "Querying.h"
 #include "stb_easy_font.h"
+#include "imgui/imgui.h"
+#include "imgui/backends/imgui_impl_glfw.h"
+
 namespace fs = std::filesystem;
 
 struct Mesh {
@@ -213,6 +216,10 @@ int main(void)
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
 
+    // imgui initialization
+    ImGui::CreateContext();
+    ImGui_ImplGlfw_InitForOpenGL(window, false);
+
     if (glewInit() != GLEW_OK) { std::cout << "Error!" << std::endl; }
 
     // Load Obj
@@ -309,6 +316,9 @@ int main(void)
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         currentTime = glfwGetTime(); 
         HandleInput(window, camera, currentTime - previousTime);
 
@@ -389,6 +399,7 @@ int main(void)
             }
         }
 
+        ImGui::Render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -397,7 +408,8 @@ int main(void)
         glDisable(GL_POLYGON_OFFSET_LINE);
     }
 
-
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     glDeleteProgram(solidShader.ID);
     glfwTerminate();
     return 0;
