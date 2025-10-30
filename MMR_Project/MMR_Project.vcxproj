@@ -123,7 +123,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;VCG_USEPLY;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\tiny_obj_loader;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\Python\include;$(SolutionDir)Dependencies\numpy;$(SolutionDir)Dependencies\GLUT\include\GL;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\vcg\wrap;$(SolutionDir)Dependencies\vcg\eigenlib;$(SolutionDir)Dependencies\MeshLib\include;$(SolutionDir)Dependencies\ANN</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\tiny_obj_loader;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\Python\include;$(SolutionDir)Dependencies\numpy;$(SolutionDir)Dependencies\GLUT\include\GL;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\vcg\wrap;$(SolutionDir)Dependencies\vcg\eigenlib;$(SolutionDir)Dependencies\MeshLib\include;$(SolutionDir)Dependencies\ANN;$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\imgui\backends</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/bigobj /utf8</AdditionalOptions>
     </ClCompile>

@@ -16,8 +16,9 @@
 #include "FeatureExtraction.h"
 #include "Querying.h"
 #include "stb_easy_font.h"
-#include "imgui/imgui.h"
-#include "imgui/backends/imgui_impl_glfw.h"
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 namespace fs = std::filesystem;
 
@@ -217,8 +218,13 @@ int main(void)
     glfwSwapInterval(1);
 
     // imgui initialization
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGui_ImplGlfw_InitForOpenGL(window, false);
+
+    // Setup Platform/Renderer backends
+    ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+    ImGui_ImplOpenGL3_Init();
 
     if (glewInit() != GLEW_OK) { std::cout << "Error!" << std::endl; }
 
@@ -231,8 +237,8 @@ int main(void)
     Preprocessing prep;
     Querying q;
 
-    std::string databsePath = "./ShapeDatabaseFixed/";
-    //std::string databsePath = "./test_objs/";
+    //std::string databsePath = "./ShapeDatabaseFixed/";
+    std::string databsePath = "./test_objs/";
     std::string databsePathResampled = "./ResampledDatabase/";
 
     /*
@@ -316,8 +322,10 @@ int main(void)
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+        ImGui::ShowDemoWindow(); // Show demo window! :)
 
         currentTime = glfwGetTime(); 
         HandleInput(window, camera, currentTime - previousTime);
@@ -398,8 +406,10 @@ int main(void)
                 std::cerr << "Failed to reload mesh.\n";
             }
         }
-
+        ImGui::ShowDemoWindow(); // Show demo window! :)
+        
         ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -408,8 +418,10 @@ int main(void)
         glDisable(GL_POLYGON_OFFSET_LINE);
     }
 
+    ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
     glDeleteProgram(solidShader.ID);
     glfwTerminate();
     return 0;
