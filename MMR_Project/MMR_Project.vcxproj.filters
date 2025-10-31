@@ -51,6 +51,9 @@
     <ClCompile Include="src\CodeFromProf\UnstructuredGrid3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Querying.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
@@ -63,6 +66,8 @@
     <None Include="src\MMRLibrary\refined.ply" />
     <None Include="src\CodeFromProf\UnstructuredGrid.h~" />
     <None Include="src\CodeFromProf\UnstructuredGrid3D.h~" />
+    <None Include="res\shaders\text_vertex_shader.shader" />
+    <None Include="res\shaders\text_fragment_shader.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h">
@@ -159,6 +164,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\CodeFromProf\VectorAttributes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Querying.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stb_easy_font.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

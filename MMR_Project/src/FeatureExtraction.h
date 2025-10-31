@@ -23,6 +23,9 @@
 #include "matplotlibcpp.h"
 
 struct ShapeFeatures {
+	std::string className;
+	std::string fileName;
+
 	float surfaceArea;
 	float volume;
 	float compactness;
@@ -35,6 +38,19 @@ struct ShapeFeatures {
 	std::vector<double> D2;
 	std::vector<double> D3;
 	std::vector<double> D4;
+
+
+	// these weights all together add up to 1 (single value feats = 0.336 + histoW * 5 = 0.66) idk if this makes sense
+	// Weights for single value features 
+	float areaW = 0.056;
+	float compW = 0.056;
+	float rectW = 0.056;
+	float diamW = 0.056;
+	float convW = 0.056;
+	float ecceW = 0.056;
+
+	// Weights for histo features
+	float histoW = 0.132;
 };
 
 class FeatureExtraction
@@ -42,6 +58,7 @@ class FeatureExtraction
 public:
 	FeatureExtraction() {};
 
+	void NormProof(std::string databasePath, std::string csvFilename);
 	// 1. Surface area S
 	float SurfaceArea(std::string& fileName);
 

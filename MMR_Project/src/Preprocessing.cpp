@@ -302,24 +302,30 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
         sorted_labels.push_back(labels[i]);
     }
 
- //   plt::bar(x, y);
-	//plt::xticks(x, sorted_labels, { {"rotation", "vertical"} });
- //   plt::xlabel("Classes");
- //   plt::ylabel("Count");
- //   plt::title("Class Histogram");
- //   plt::show();
+    float minVal = 0;
+    float maxVal = *std::max_element(vertexVals.begin(), vertexVals.end());
+    float binWidth = (maxVal - minVal) / 20;
+    std::vector<double> counts(20, 0.0);
 
-	//// 2. Number of vertices
-	////plt::hist(vertexVals, 20);
- //   
- //   // 3. Number of faces
- //    plt::xlabel("Faces");
- //   plt::ylabel("Count");
- //   plt::title("Face Histogram");
- //   plt::hist(faceVals, 20);
+    for (float v : vertexVals) {
+        int binIdx = static_cast<int>((v - minVal) / binWidth);
+        if (binIdx < 0) binIdx = 0;
+        if (binIdx >= 20) binIdx = 20 - 1;
+        counts[binIdx]++;
+    }
 
- //   plt::show();
+    // Compute bin centers
+    std::vector<double> bin_centers(20);
+    for (int i = 0; i < 20; ++i) {
+        bin_centers[i] = minVal + (i + 0.5) * binWidth;
+    }
+    plt::bar(bin_centers, counts, "black", "-", 1.0);
+    plt::xlabel("Number of Vertices");
+    plt::ylabel("Count");
+    plt::title("Vertex Count");
 
+    plt::grid(true);
+    plt::show();
     csvFile.close();
     std::cout << "----- Database Statistics End-----" << std::endl;
 }
@@ -352,7 +358,14 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
                 std::cerr << "Failed to load obj" << std::endl;
                 return -1;
             }
+            glm::vec3 barycenter = ComputeBarycenter(positions);
+            //OrientNormalsOutward(positions, indices, barycenter);
 
+            /*MeshData data;
+            data.positions = positions;
+            data.indices = indices;
+            fo.WriteNewObj(fullFilePath, data);*/
+           // CheckHoles(fullFilePath);
             if (positions.size() / 6 < 5000) { // Refinement
 
                 std::string path = fullTargetPath.string() + file.path().filename().string();
@@ -367,7 +380,7 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
                 std::cout << "Simplification :: " << path << std::endl;
 
                 int maxDeletedVerts = (positions.size() / 6) - 9000;
-                simp.Simplify(file.path(), path, maxDeletedVerts);
+                simp.Simplify(fullFilePath, path);
 				resmapledCount++;
             }
             else {
@@ -563,60 +576,97 @@ void Preprocessing::NormalizeFlipping(std::vector<float>& positions, std::vector
     }
 }
 
-void Preprocessing::CheckNormalOrientation(std::vector<float>& vertices, std::vector<unsigned int>& indices, glm::vec3& barycenter) {
-    const int floatsPerVertex = 6; // 3 position + 3 normal
+void Preprocessing::OrientNormalsOutward(std::vector<float>& positions,
+    std::vector<unsigned int>& indices,
+    const glm::vec3& barycenter)
+{
+    // Each vertex = 6 floats (position + normal)
+    const int stride = 6;
 
-    // Compute barycenter once
+    for (size_t i = 0; i < indices.size(); i += 3) {
+        unsigned int i0 = indices[i + 0];
+        unsigned int i1 = indices[i + 1];
+        unsigned int i2 = indices[i + 2];
 
-    // Flip faces if their normal points inward
-    for (size_t i = 0; i + 2 < indices.size(); i += 3) {
-        unsigned int i1 = indices[i];
-        unsigned int i2 = indices[i + 1];
-        unsigned int i3 = indices[i + 2];
+        // Extract vertex positions
+        glm::vec3 v0(positions[i0 * stride + 0], positions[i0 * stride + 1], positions[i0 * stride + 2]);
+        glm::vec3 v1(positions[i1 * stride + 0], positions[i1 * stride + 1], positions[i1 * stride + 2]);
+        glm::vec3 v2(positions[i2 * stride + 0], positions[i2 * stride + 1], positions[i2 * stride + 2]);
 
-        glm::vec3 v1(vertices[i1 * floatsPerVertex + 0],
-            vertices[i1 * floatsPerVertex + 1],
-            vertices[i1 * floatsPerVertex + 2]);
-        glm::vec3 v2(vertices[i2 * floatsPerVertex + 0],
-            vertices[i2 * floatsPerVertex + 1],
-            vertices[i2 * floatsPerVertex + 2]);
-        glm::vec3 v3(vertices[i3 * floatsPerVertex + 0],
-            vertices[i3 * floatsPerVertex + 1],
-            vertices[i3 * floatsPerVertex + 2]);
+        // Compute face normal
+        glm::vec3 normal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
 
-        glm::vec3 faceNormal = glm::cross(v2 - v1, v3 - v1);
-        glm::vec3 faceCenter = (v1 + v2 + v3) / 3.0f;
+        // Face centroid
+        glm::vec3 faceCenter = (v0 + v1 + v2) / 3.0f;
 
-        if (glm::dot(faceNormal, faceCenter - barycenter) < 0.0f) {
+        // Direction from barycenter to face
+        glm::vec3 toFace = glm::normalize(faceCenter - barycenter);
+
+        // Flip triangle if normal points inward
+        if (glm::dot(normal, toFace) < 0.0f) {
             std::swap(indices[i + 1], indices[i + 2]);
         }
     }
+
+    // Optionally fix per-vertex normals after flipping
+    // Recompute normals if necessary
+    for (size_t i = 0; i < positions.size() / stride; i++) {
+        positions[i * stride + 3] = 0.0f;
+        positions[i * stride + 4] = 0.0f;
+        positions[i * stride + 5] = 0.0f;
+    }
+
+    for (size_t i = 0; i < indices.size(); i += 3) {
+        unsigned int i0 = indices[i + 0];
+        unsigned int i1 = indices[i + 1];
+        unsigned int i2 = indices[i + 2];
+
+        glm::vec3 v0(positions[i0 * stride + 0], positions[i0 * stride + 1], positions[i0 * stride + 2]);
+        glm::vec3 v1(positions[i1 * stride + 0], positions[i1 * stride + 1], positions[i1 * stride + 2]);
+        glm::vec3 v2(positions[i2 * stride + 0], positions[i2 * stride + 1], positions[i2 * stride + 2]);
+
+        glm::vec3 faceNormal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
+
+        for (auto idx : { i0, i1, i2 }) {
+            positions[idx * stride + 3] += faceNormal.x;
+            positions[idx * stride + 4] += faceNormal.y;
+            positions[idx * stride + 5] += faceNormal.z;
+        }
+    }
+
+    // Normalize vertex normals
+    for (size_t i = 0; i < positions.size() / stride; i++) {
+        glm::vec3 n(positions[i * stride + 3], positions[i * stride + 4], positions[i * stride + 5]);
+        n = glm::normalize(n);
+        positions[i * stride + 3] = n.x;
+        positions[i * stride + 4] = n.y;
+        positions[i * stride + 5] = n.z;
+    }
 }
 
-void Preprocessing::CheckHoles(const std::string& filename) {  
-   MR::Mesh mesh = *MR::MeshLoad::fromAnySupportedFormat(filename);  
+void Preprocessing::CheckHoles(const std::string& filename) {
+    auto mesh = MR::MeshLoad::fromAnySupportedFormat(filename);
+    if (!mesh)
+    {
+        std::cerr << "Failed to load mesh from " << filename << std::endl;
+        return;
+    }
 
-   std::vector<MR::EdgeId> holeEdges = mesh.topology.findHoleRepresentiveEdges();  
-   std::cout << "Found " << holeEdges.size() << " holes in the mesh." << std::endl;
-   for (MR::EdgeId e : holeEdges) {  
+    std::vector<MR::EdgeId> holeEdges = mesh->topology.findHoleRepresentiveEdges();
+    std::cout << "Found " << holeEdges.size() << " holes in the mesh." << std::endl;
 
-       MR::FillHoleParams params;  
-       params.metric = MR::getUniversalMetric(mesh);  
-       MR::fillHole(mesh, e, params);  
-   }  
+    for (MR::EdgeId e : holeEdges) {
+        MR::FillHoleParams params;
+        params.metric = MR::getUniversalMetric(*mesh);   // <-- dereference
+        MR::fillHole(*mesh, e, params);                  // <-- dereference
+    }
 
-   if (mesh.volume() < 0) {  
-       std::cout << "Flipping mesh orientation to ensure outward normals..." << std::endl;  
-       mesh.topology.flipOrientation();  
-   }  
- 
-   MR::MeshSave::toAnySupportedFormat(mesh, filename);  
+    MR::MeshSave::toAnySupportedFormat(*mesh, filename);  // <-- dereference
 }
 
 void Preprocessing::NormalizeDatabase(std::string& databasePath) {
 
     FileOrganizer fo;
-    Preprocessing prep;
     fs::path sourcePath = databasePath;
     std::vector<float> positions;
     std::vector<unsigned int> indices;
@@ -637,7 +687,7 @@ void Preprocessing::NormalizeDatabase(std::string& databasePath) {
                 std::cerr << "Failed to load obj" << std::endl;
 
             }
-            glm::vec3 barycenter = prep.ComputeBarycenter(positions);
+            glm::vec3 barycenter = ComputeBarycenter(positions);
             barycenters.push_back(barycenter);
             for (int i = 0; i < positions.size(); i += 6) {
                 positions[i + 0] -= barycenter.x;
@@ -646,21 +696,24 @@ void Preprocessing::NormalizeDatabase(std::string& databasePath) {
             }
 
             // Pose
-            Eigen::Vector3f eigVals = prep.NormalizeAlign(positions, 6, 0);
+            Eigen::Vector3f eigVals = NormalizeAlign(positions, 6, 0);
             eigenValues.push_back(eigVals);
 
 
             // Flipping
-            prep.NormalizeFlipping(positions, indices, 6, 0);
+            NormalizeFlipping(positions, indices, 6, 0);
 
             // Size
-            positions = prep.NormalizeScale(positions, fullFilePath);
-            prep.CheckNormalOrientation(positions, indices, barycenter);
+            positions = NormalizeScale(positions, fullFilePath);
+           
             MeshData data;
             data.positions = positions;
             data.indices = indices;
             fo.WriteNewObj(fullFilePath, data);
+
         }
     }
     fo.WriteCSVAfterNorm(databasePath, "Bary_Eigs.csv", barycenters, eigenValues);
 }
+
+

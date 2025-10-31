@@ -58,6 +58,7 @@ float FeatureExtraction::Rectangularity(std::vector<float> positions, glm::vec3 
 	return shapeVolume / OBBvolume;
 }
 
+
 // 4. Diameter
 float FeatureExtraction::Diameter(std::vector<float>& positions)
 {
@@ -95,7 +96,7 @@ std::vector<float> FeatureExtraction::GenerateConvexHull(std::string filename, s
 
 	MR::Mesh convexHull = MR::makeConvexHull(mesh);
 	//ask Dom how this works
-	MR::MeshSave::toAnySupportedFormat(convexHull, outputDir);
+	//MR::MeshSave::toAnySupportedFormat(convexHull, outputDir);
 
 	convexHull.points.vec_;
 
@@ -749,34 +750,34 @@ float FeatureExtraction::Distance(glm::vec3 v1, glm::vec3 v2)
 }
 
 ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, std::vector<float>& positions) {
-	FeatureExtraction fe;
+
 	FileOrganizer fo;
 	
-	fs::path path = inputFile;
+	fs::path filepath = inputFile;
 	//std::cout << "bary" << std::endl;
-	baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", path.filename().string());
+	baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", filepath.filename().string());
 
 	// InputFile is the full path
 	//std::cout << "surface" << std::endl;
 	// 1. Surface area S
-	float surfaceArea = fe.SurfaceArea(inputFile);
+	float surfaceArea = SurfaceArea(inputFile);
 	//std::cout << "Surface Area: " << surfaceArea << std::endl;
 	// 2. Compactness
-	float volume = fe.Volume(inputFile);
-	float compactness = fe.Compactness(surfaceArea, volume);
+	float volume = Volume(positions);
+	float compactness = Compactness(surfaceArea, volume);
 	//std::cout << "Volume : " << volume << " || Compactness : " << compactness << std::endl;
 	// 3. Recantgularity
 	glm::vec3 barycenter = { info.baryX, info.baryY, info.baryZ };
-	float rectangularity = fe.Rectangularity(positions, barycenter, inputFile, path.filename().string(), "./shape_analysis_resamp.csv");
+	float rectangularity = Rectangularity(positions, barycenter, inputFile, filepath.filename().string(), "./shape_analysis_resamp.csv");
 	//std::cout << "Rectangularity: " << rectangularity << std::endl;
 	// 4. Diameter
-	float diameter = fe.Diameter(positions);
+	float diameter = Diameter(positions);
 	//std::cout << "Diameter: " << diameter << std::endl;
 	// 5. Convexity
-	float convexity = fe.Convexity(positions, barycenter, path.filename().string(), inputFile);
+	float convexity = Convexity(positions, barycenter, filepath.filename().string(), inputFile);
 	//std::cout << "Convexity: " << convexity << std::endl;
 	// 6. Eccentricity
-	float eccentricity = fe.Eccentricity(info.eigLarge, info.eigSmall);
+	float eccentricity = Eccentricity(info.eigLarge, info.eigSmall);
 
 	//std::cout << "Eccentricity: " << eccentricity << std::endl;
 
@@ -794,9 +795,9 @@ ShapeFeatures FeatureExtraction::ExtractFeaturesOneShape(std::string inputFile, 
 
 	std::pair<std::vector<double>, std::vector<double>> d4pair = D4(positions, 1000000, 20);
 	std::vector<double> d4count = d4pair.second;
+	std::string fileName = filepath.filename().string();
 
-
-	return { surfaceArea, volume, compactness, rectangularity, diameter, convexity, eccentricity, a3count, d1count, d2count, d3count, d4count };
+	return { inputFile,fileName, surfaceArea, volume, compactness, rectangularity, diameter, convexity, eccentricity, a3count, d1count, d2count, d3count, d4count };
 }
 
 void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
@@ -926,5 +927,65 @@ void FeatureExtraction::ExtractFeaturesAtoD(const std::string& databasePath) {
 	std::cout << "--- END FEATURE EXTRACTION ---" << std::endl;
 }
 
+void FeatureExtraction::NormProof(std::string databasePath, std::string csvFilename) {
+
+
+	// 1. Get eigen vector aligned bounding volume (which after full normalization is just the axis aligned one) from the csv database
+	shapeInfo info;
+	FileOrganizer fo;
+	vector<float> positions;
+	vector<unsigned int> indices;
+	vector<float> bbVolume;
+	for (const auto& classDir : fs::directory_iterator(databasePath)) {
+		if (!fs::is_directory(classDir)) continue;
+		std::string className = classDir.path().filename().string();
+		// For each obj in the folder, get the information about it
+		std::string classPath = databasePath + className;
+		for (const auto& file : fs::directory_iterator(classDir)) {
+			positions.clear();
+			indices.clear();
+			std::string currentFile = file.path().filename().string();
+			std::string fullFilePath = classPath + "/" + currentFile;
+			info = fo.getShapeFromDatabase(csvFilename, currentFile);
+
+			glm::vec3 OBBp1(info.minX, info.maxY, info.minZ);
+			glm::vec3 OBBp2(info.maxX, info.maxY, info.maxZ);
+			glm::vec3 OBBp3(info.maxX, info.minY, info.minZ);
+			glm::vec3 OBBp4(info.maxX, info.maxY, info.minZ);
+
+			float OBBbase = Distance(OBBp1, OBBp4);
+			float OBBheight = Distance(OBBp3, OBBp4);
+			float OBBdepth = Distance(OBBp4, OBBp2);
+
+			float OBBvolume = OBBbase * OBBheight * OBBdepth;
+			bbVolume.push_back(OBBvolume);
+		}
+	}
+
+	float minVal = 0;
+	float maxVal = *std::max_element(bbVolume.begin(), bbVolume.end());
+	float binWidth = (maxVal - minVal) / 20;
+	std::vector<double> counts(20, 0.0);
+
+	for (float v : bbVolume) {
+		int binIdx = static_cast<int>((v - minVal) / binWidth);
+		if (binIdx < 0) binIdx = 0;
+		if (binIdx >= 20) binIdx = 20 - 1;
+		counts[binIdx]++;
+	}
+
+	// Compute bin centers
+	std::vector<double> bin_centers(20);
+	for (int i = 0; i < 20; ++i) {
+		bin_centers[i] = minVal + (i + 0.5) * binWidth;
+	}
+	plt::bar(bin_centers, counts, "black", "-", 1.0);
+	plt::xlabel("Bounding Box Volume");
+	plt::ylabel("Count");
+	plt::title("Volume");
+
+	plt::grid(true);
+	plt::show();
+}
 
 	

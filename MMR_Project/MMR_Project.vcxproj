@@ -137,6 +137,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\CodeFromProf\MeshDecimator.cpp" />
+    <ClCompile Include="src\Querying.cpp" />
     <ClCompile Include="src\CodeFromProf\Grid.cpp" />
     <ClCompile Include="src\CodeFromProf\ScalarAttributes.cpp" />
     <ClCompile Include="src\CodeFromProf\UnstructuredGrid.cpp" />
@@ -153,8 +155,11 @@
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
     <None Include="res\shaders\Fragment.shader" />
+    <None Include="res\shaders\text_fragment_shader.shader" />
+    <None Include="res\shaders\text_vertex_shader.shader" />
     <None Include="res\shaders\Vertex.shader" />
     <None Include="res\shaders\wireframeFragment.shader" />
+    <None Include="src\CodeFromProf\mdVector.inl" />
     <None Include="src\CodeFromProf\UnstructuredGrid.h~" />
     <None Include="src\CodeFromProf\UnstructuredGrid3D.h~" />
     <None Include="src\MMRLibrary\include\UnstructuredGrid.h~" />
@@ -163,6 +168,10 @@
     <None Include="src\MMRLibrary\refined.ply" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\CodeFromProf\mdSArray.h" />
+    <ClInclude Include="src\CodeFromProf\mdVector.h" />
+    <ClInclude Include="src\CodeFromProf\MeshDecimator.h" />
+    <ClInclude Include="src\Querying.h" />
     <ClInclude Include="src\CodeFromProf\Grid.h" />
     <ClInclude Include="src\CodeFromProf\Point3d.h" />
     <ClInclude Include="src\CodeFromProf\RectilinearGrid.h" />
@@ -195,6 +204,7 @@
     <ClInclude Include="src\Preprocessing.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Camera.h" />
+    <ClInclude Include="src\stb_easy_font.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
