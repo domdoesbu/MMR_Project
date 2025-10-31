@@ -302,24 +302,30 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
         sorted_labels.push_back(labels[i]);
     }
 
- //   plt::bar(x, y);
-	//plt::xticks(x, sorted_labels, { {"rotation", "vertical"} });
- //   plt::xlabel("Classes");
- //   plt::ylabel("Count");
- //   plt::title("Class Histogram");
- //   plt::show();
+    float minVal = 0;
+    float maxVal = *std::max_element(vertexVals.begin(), vertexVals.end());
+    float binWidth = (maxVal - minVal) / 20;
+    std::vector<double> counts(20, 0.0);
 
-	//// 2. Number of vertices
-	////plt::hist(vertexVals, 20);
- //   
- //   // 3. Number of faces
- //    plt::xlabel("Faces");
- //   plt::ylabel("Count");
- //   plt::title("Face Histogram");
- //   plt::hist(faceVals, 20);
+    for (float v : vertexVals) {
+        int binIdx = static_cast<int>((v - minVal) / binWidth);
+        if (binIdx < 0) binIdx = 0;
+        if (binIdx >= 20) binIdx = 20 - 1;
+        counts[binIdx]++;
+    }
 
- //   plt::show();
+    // Compute bin centers
+    std::vector<double> bin_centers(20);
+    for (int i = 0; i < 20; ++i) {
+        bin_centers[i] = minVal + (i + 0.5) * binWidth;
+    }
+    plt::bar(bin_centers, counts, "black", "-", 1.0);
+    plt::xlabel("Number of Vertices");
+    plt::ylabel("Count");
+    plt::title("Vertex Count");
 
+    plt::grid(true);
+    plt::show();
     csvFile.close();
     std::cout << "----- Database Statistics End-----" << std::endl;
 }
@@ -353,13 +359,13 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
                 return -1;
             }
             glm::vec3 barycenter = ComputeBarycenter(positions);
-            OrientNormalsOutward(positions, indices, barycenter);
+            //OrientNormalsOutward(positions, indices, barycenter);
 
-            MeshData data;
+            /*MeshData data;
             data.positions = positions;
             data.indices = indices;
-            fo.WriteNewObj(fullFilePath, data);
-            CheckHoles(fullFilePath);
+            fo.WriteNewObj(fullFilePath, data);*/
+           // CheckHoles(fullFilePath);
             if (positions.size() / 6 < 5000) { // Refinement
 
                 std::string path = fullTargetPath.string() + file.path().filename().string();
@@ -374,7 +380,7 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
                 std::cout << "Simplification :: " << path << std::endl;
 
                 int maxDeletedVerts = (positions.size() / 6) - 9000;
-                simp.Simplify(file.path(), path, maxDeletedVerts);
+                simp.Simplify(fullFilePath, path);
 				resmapledCount++;
             }
             else {

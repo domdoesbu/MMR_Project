@@ -8,13 +8,15 @@
 #include <string>
 #include <filesystem>
 #include <iostream>
+#include "FileOrganizer.h"
+#include "CodeFromProf/MeshDecimator.h"
 
 class Simplification
 {
 public:
 	Simplification() {};
 
-	void Simplify(std::filesystem::path file, std::string& outputDir, int maxDeletedVerts);
+	void Simplify(std::string& inputFile, std::string& outputFile);
 
 
 };
