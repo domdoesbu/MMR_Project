@@ -9,7 +9,7 @@
 #include <limits>
 #include <vector>
 #include <array>
-
+#include <ANN/ANN.h>
 class Querying
 {
 public:
@@ -21,6 +21,7 @@ public:
 
 	// Takes in the path of the shape and returns the k most similar shapes using a naive approach
 	std::pair<std::vector<std::string>, std::vector<float>>  ExecuteQuery(std::string shapePath, std::string databasePath);
+	std::pair<std::vector<std::string>, std::vector<float>>  ExecuteQueryANN(std::string shapePath, std::string databasePath, int k);
 
 private:
 	std::vector<double> GetFeatureVecFromShapeFeatures(ShapeFeatures feats);

@@ -217,6 +217,79 @@ void Querying::NormalizeQueriedShape(ShapeFeatures& shape) {
 }
 
 // Takes in the path of the shape and returns the k most similar shapes using a naive approach
+std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQueryANN(std::string shapePath, std::string databasePath, int k)
+{
+    // load object from path
+    FileOrganizer fo;
+    std::vector<float> positions;
+    std::vector<unsigned int> indices;
+    fo.LoadObj(shapePath.c_str(), positions, indices);
+
+    // extract features of the object
+    FeatureExtraction fe;
+    ShapeFeatures features;
+    features = fe.ExtractFeaturesOneShape(shapePath, positions);
+    NormalizeQueriedShape(features);
+    // transform feat extr. results into one big feat vector
+    std::vector<double> inputFeatureVec;
+    inputFeatureVec = GetFeatureVecFromShapeFeatures(features);
+
+    std::vector<ShapeFeatures> shapeFeatVecs; // save these in order to retrieve the file names later
+
+    // get all of the feature vectors from the csv file
+    std::vector<std::vector<double>> dbFeatureVecs = GetFeatVecFromCsv("feature_extraction_complete_normalized.csv", shapeFeatVecs);
+
+    int n = static_cast<int>(dbFeatureVecs.size()); // number of database points
+    int d = static_cast<int>(inputFeatureVec.size()); // dimentionality
+    ANNpointArray annPts = annAllocPts(n, d);
+
+    for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < d; ++j) {
+            annPts[i][j] = dbFeatureVecs[i][j];
+        }
+    }
+
+    // Built kd-tree
+    ANNkd_tree* kdTree = new ANNkd_tree(annPts, n, d);
+
+    // Query point
+    ANNpoint queryPt = annAllocPt(d);
+    for (int j = 0; j < d; ++j) queryPt[j] = inputFeatureVec[j];
+
+    ANNidxArray nnIdx = new ANNidx[k];
+    ANNdistArray dists = new ANNdist[k];
+
+    double eps = 0.0;
+    kdTree->annkSearch(queryPt, k, nnIdx, dists, eps);
+
+    std::vector<int> minDistIndices;
+    std::vector<float> distanceValues;
+
+    for (int i = 0; i < k; ++i) {
+        minDistIndices.push_back(nnIdx[i]);
+        distanceValues.push_back(static_cast<float>(sqrt(dists[i])));
+    }
+
+    std::vector<std::string> resultFilenames;
+
+    for (int i = 0; i < minDistIndices.size(); ++i)
+    {
+        std::string filePath = shapeFeatVecs[minDistIndices[i]].className + "/" + shapeFeatVecs[minDistIndices[i]].fileName;
+        std::cout << filePath << std::endl;
+        resultFilenames.push_back(filePath); // i am so smart
+    }
+    delete[] nnIdx;
+    delete[] dists;
+    annDeallocPt(queryPt);
+    delete kdTree;
+    annDeallocPts(annPts);
+    annClose(); // free ANN internal memory
+    // return the path of the files
+    return { resultFilenames, distanceValues };
+}
+
+
+// Takes in the path of the shape and returns the k most similar shapes using a naive approach
 std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(std::string shapePath, std::string databasePath)
 {
     // load object from path

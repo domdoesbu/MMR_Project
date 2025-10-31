@@ -276,7 +276,7 @@ int main(void)
         return -1;
     }
 
-    std::pair<std::vector<std::string>, std::vector<float>> resultsAll= q.ExecuteQuery(inputFile, databsePathResampled);
+    std::pair<std::vector<std::string>, std::vector<float>> resultsAll= q.ExecuteQueryANN(inputFile, databsePathResampled, 3);
     std::vector<std::string> queryResults = resultsAll.first;
     std::vector<float> distances = resultsAll.second;
     
@@ -364,14 +364,14 @@ int main(void)
             //    solidShader.use();
             //}
 
-            //if (i > 0 && i - 1 < queryResults.size()) {
-            //    textShader.use();
-            //    glDisable(GL_DEPTH_TEST);
-            //    drawText(queryResults[i - 1], screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File name
-            //    drawText("Distance: " + std::to_string(distances[i - 1]), screenPos.x, screenPos.y + 200.0f, windowWidth, windowHeight, textShader); // Distance
-            //    glEnable(GL_DEPTH_TEST);
-            //    solidShader.use();
-            //}
+            if (i > 0 && i - 1 < queryResults.size()) {
+                textShader.use();
+                glDisable(GL_DEPTH_TEST);
+                drawText(queryResults[i - 1], screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File name
+                drawText("Distance: " + std::to_string(distances[i - 1]), screenPos.x, screenPos.y + 200.0f, windowWidth, windowHeight, textShader); // Distance
+                glEnable(GL_DEPTH_TEST);
+                solidShader.use();
+            }
         }
 
         if (reloadMesh) {

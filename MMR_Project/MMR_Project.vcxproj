@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;VCG_USEPLY;_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\tiny_obj_loader;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\Python\include;$(SolutionDir)Dependencies\numpy;$(SolutionDir)Dependencies\GLUT\include\GL;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\vcg\wrap;$(SolutionDir)Dependencies\vcg\eigenlib;$(SolutionDir)Dependencies\MeshLib\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\tiny_obj_loader;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\Python\include;$(SolutionDir)Dependencies\numpy;$(SolutionDir)Dependencies\GLUT\include\GL;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\vcg\wrap;$(SolutionDir)Dependencies\vcg\eigenlib;$(SolutionDir)Dependencies\MeshLib\include;$(SolutionDir)Dependencies\ANN</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/bigobj /utf8</AdditionalOptions>
     </ClCompile>
@@ -123,7 +123,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;VCG_USEPLY;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\tiny_obj_loader;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\Python\include;$(SolutionDir)Dependencies\numpy;$(SolutionDir)Dependencies\GLUT\include\GL;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\vcg\wrap;$(SolutionDir)Dependencies\vcg\eigenlib;$(SolutionDir)Dependencies\MeshLib\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependencies\tiny_obj_loader;$(SolutionDir)Dependencies\GLFW\include;$(SolutionDir)Dependencies\glm;$(SolutionDir)Dependencies\GLEW\include;$(SolutionDir)Dependencies\Python\include;$(SolutionDir)Dependencies\numpy;$(SolutionDir)Dependencies\GLUT\include\GL;$(SolutionDir)Dependencies\vcg;$(SolutionDir)Dependencies\vcg\wrap;$(SolutionDir)Dependencies\vcg\eigenlib;$(SolutionDir)Dependencies\MeshLib\include;$(SolutionDir)Dependencies\ANN</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/bigobj /utf8</AdditionalOptions>
     </ClCompile>
@@ -137,7 +137,20 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\CodeFromProf\MeshDecimator.cpp" />
+    <ClCompile Include="src\ANN\ANN.cpp" />
+    <ClCompile Include="src\ANN\bd_fix_rad_search.cpp" />
+    <ClCompile Include="src\ANN\bd_pr_search.cpp" />
+    <ClCompile Include="src\ANN\bd_search.cpp" />
+    <ClCompile Include="src\ANN\bd_tree.cpp" />
+    <ClCompile Include="src\ANN\brute.cpp" />
+    <ClCompile Include="src\ANN\kd_dump.cpp" />
+    <ClCompile Include="src\ANN\kd_fix_rad_search.cpp" />
+    <ClCompile Include="src\ANN\kd_pr_search.cpp" />
+    <ClCompile Include="src\ANN\kd_search.cpp" />
+    <ClCompile Include="src\ANN\kd_split.cpp" />
+    <ClCompile Include="src\ANN\kd_tree.cpp" />
+    <ClCompile Include="src\ANN\kd_util.cpp" />
+    <ClCompile Include="src\ANN\perf.cpp" />
     <ClCompile Include="src\Querying.cpp" />
     <ClCompile Include="src\CodeFromProf\Grid.cpp" />
     <ClCompile Include="src\CodeFromProf\ScalarAttributes.cpp" />
@@ -159,7 +172,7 @@
     <None Include="res\shaders\text_vertex_shader.shader" />
     <None Include="res\shaders\Vertex.shader" />
     <None Include="res\shaders\wireframeFragment.shader" />
-    <None Include="src\CodeFromProf\mdVector.inl" />
+    <None Include="src\ANN\Makefile" />
     <None Include="src\CodeFromProf\UnstructuredGrid.h~" />
     <None Include="src\CodeFromProf\UnstructuredGrid3D.h~" />
     <None Include="src\MMRLibrary\include\UnstructuredGrid.h~" />
@@ -168,9 +181,15 @@
     <None Include="src\MMRLibrary\refined.ply" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\CodeFromProf\mdSArray.h" />
-    <ClInclude Include="src\CodeFromProf\mdVector.h" />
-    <ClInclude Include="src\CodeFromProf\MeshDecimator.h" />
+    <ClInclude Include="src\ANN\bd_tree.h" />
+    <ClInclude Include="src\ANN\kd_fix_rad_search.h" />
+    <ClInclude Include="src\ANN\kd_pr_search.h" />
+    <ClInclude Include="src\ANN\kd_search.h" />
+    <ClInclude Include="src\ANN\kd_split.h" />
+    <ClInclude Include="src\ANN\kd_tree.h" />
+    <ClInclude Include="src\ANN\kd_util.h" />
+    <ClInclude Include="src\ANN\pr_queue.h" />
+    <ClInclude Include="src\ANN\pr_queue_k.h" />
     <ClInclude Include="src\Querying.h" />
     <ClInclude Include="src\CodeFromProf\Grid.h" />
     <ClInclude Include="src\CodeFromProf\Point3d.h" />
