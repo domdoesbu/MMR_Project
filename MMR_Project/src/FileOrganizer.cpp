@@ -467,3 +467,19 @@ void FileOrganizer::WriteCSVD3(std::filesystem::path databasePath, std::string c
     }
     csvFile.close();
 }
+
+int FileOrganizer::DatabaseSize(string csvFileName) {
+    std::ifstream csvFile(csvFileName);
+    if (!csvFile.is_open()) {
+        std::cerr << "Failed to open input CSV file: " << csvFileName << std::endl;
+        return -1;
+    }
+    std::string line;
+    int databaseSize = 0;
+    // Skip header
+    std::getline(csvFile, line);
+    while (std::getline(csvFile, line)) {
+        databaseSize++;
+    }
+    return databaseSize;
+}

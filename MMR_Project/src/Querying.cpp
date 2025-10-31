@@ -223,6 +223,7 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQueryAN
     FileOrganizer fo;
     std::vector<float> positions;
     std::vector<unsigned int> indices;
+    std::cout << shapePath << std::endl;
     fo.LoadObj(shapePath.c_str(), positions, indices);
 
     // extract features of the object
@@ -275,7 +276,6 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQueryAN
     for (int i = 0; i < minDistIndices.size(); ++i)
     {
         std::string filePath = shapeFeatVecs[minDistIndices[i]].className + "/" + shapeFeatVecs[minDistIndices[i]].fileName;
-        std::cout << filePath << std::endl;
         resultFilenames.push_back(filePath); // i am so smart
     }
     delete[] nnIdx;

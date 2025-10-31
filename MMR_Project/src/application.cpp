@@ -15,6 +15,7 @@
 #include "Refinement.h"
 #include "FeatureExtraction.h"
 #include "Querying.h"
+#include "Evaluation.h"
 #include "stb_easy_font.h"
 namespace fs = std::filesystem;
 
@@ -223,9 +224,9 @@ int main(void)
     FeatureExtraction fe;
     Preprocessing prep;
     Querying q;
-
-    std::string databsePath = "./ShapeDatabaseFixed/";
-    //std::string databsePath = "./test_objs/";
+    Evaluation e;
+    //std::string databsePath = "./ShapeDatabaseFixed/";
+    std::string databsePath = "./test_objs/";
     std::string databsePathResampled = "./ResampledDatabase/";
 
     /*
@@ -235,32 +236,35 @@ int main(void)
 
     std::cout << "--- PREPROCESSING ---" << std::endl;
 
-    //CSVSetup("./shape_analysis.csv", databsePath);
+    CSVSetup("./shape_analysis.csv", databsePath);
 
     // Remeshing
     std::cout << "--- REMESHING ---" << std::endl;
 
-    //prep.Resampling(databsePath, databsePathResampled);
+    prep.Resampling(databsePath, databsePathResampled);
 
     std::cout << "--- REMESHING END---" << std::endl;
 
-    //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
+    CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
     // -------------------------------------------------------------------------------
     // PREPROCESSING
     std::cout << "--- PREPROCESSING START ---" << std::endl;
 
-    //prep.NormalizeDatabase(databsePathResampled);
-    //CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
+    prep.NormalizeDatabase(databsePathResampled);
+    CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
     std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
     // FEATURE EXTRACTION
-    //fe.ExtractFeaturesOthers(databsePathResampled);
+    fe.ExtractFeaturesOthers(databsePathResampled);
     //fe.ExtractFeaturesAtoD(databsePathResampled);
     
-    //q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
+    q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
 
     // --------------------------------------------------------------------------------- 
+
+    e.EvaluateDatabase(databsePath, 3);
+
 
     std::cout << "Specify path for the desired object:" << std::endl;
 
