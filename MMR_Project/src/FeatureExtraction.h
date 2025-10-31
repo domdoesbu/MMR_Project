@@ -58,6 +58,7 @@ class FeatureExtraction
 public:
 	FeatureExtraction() {};
 
+	void NormProof(std::string databasePath, std::string csvFilename);
 	// 1. Surface area S
 	float SurfaceArea(std::string& fileName);
 

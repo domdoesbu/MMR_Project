@@ -233,7 +233,7 @@ int main(void)
         WE HAVE STATS FOR THE WHOLE DATABASE NOW AND IF YOU UNCOMMENT I HAVE TO RERUN THE WHOLE DATABASEEEEEE
     */
 
-    std::cout << "--- PREPROCESSING ---" << std::endl;
+    //std::cout << "--- PREPROCESSING ---" << std::endl;
 
     //CSVSetup("./shape_analysis.csv", databsePath);
 
@@ -241,29 +241,30 @@ int main(void)
     std::cout << "--- REMESHING ---" << std::endl;
 
     //prep.Resampling(databsePath, databsePathResampled);
-
+    
     std::cout << "--- REMESHING END---" << std::endl;
 
     //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
     // -------------------------------------------------------------------------------
     // PREPROCESSING
-    std::cout << "--- PREPROCESSING START ---" << std::endl;
+    //std::cout << "--- PREPROCESSING START ---" << std::endl;
 
     //prep.NormalizeDatabase(databsePathResampled);
     //CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
-    std::cout << "--- PREPROCESSING END ---" << std::endl;
+    //std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
     // FEATURE EXTRACTION
-    //fe.ExtractFeaturesOthers(databsePathResampled);
+    fe.ExtractFeaturesOthers(databsePathResampled);
     //fe.ExtractFeaturesAtoD(databsePathResampled);
     
-    //q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
+    q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
 
     // --------------------------------------------------------------------------------- 
-
+    //prep.DatabaseStatistics("shape_analysis_resamp_norm.csv");
     std::cout << "Specify path for the desired object:" << std::endl;
-
+    //fe.NormProof(databsePath, "shape_analysis.csv");
+    //fe.NormProof(databsePathResampled, "shape_analysis_resamp_norm.csv");
     std::string userInput;
     std::cin >> userInput;
     std::string inputFile = userInput;
@@ -283,13 +284,13 @@ int main(void)
     meshes.push_back(createMesh(positions, indices));
 
     
-    for (auto& path : queryResults) {
+    /*for (auto& path : queryResults) {
         positions.clear();
         indices.clear();
         if (fo.LoadObj(path.c_str(), positions, indices)) {
             meshes.push_back(createMesh(positions, indices));
         }
-    }
+    }*/
 
     Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
     Shader solidShader("res/shaders/Vertex.shader", "res/shaders/Fragment.shader");
@@ -354,14 +355,14 @@ int main(void)
                 glm::vec4(0, 0, windowWidth, windowHeight));
             screenPos.y -= 100.0f;
             screenPos.x -= 100.0f;
-            if (i == 0) {
-                textShader.use();
-                glDisable(GL_DEPTH_TEST);
-                drawText("Queried Shape", screenPos.x, screenPos.y - 20.0f, windowWidth, windowHeight, textShader);
-                drawText(inputFile, screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File Name
-                glEnable(GL_DEPTH_TEST);
-                solidShader.use();
-            }
+            //if (i == 0) {
+            //    textShader.use();
+            //    glDisable(GL_DEPTH_TEST);
+            //    drawText("Queried Shape", screenPos.x, screenPos.y - 20.0f, windowWidth, windowHeight, textShader);
+            //    drawText(inputFile, screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File Name
+            //    glEnable(GL_DEPTH_TEST);
+            //    solidShader.use();
+            //}
 
             if (i > 0 && i - 1 < queryResults.size()) {
                 textShader.use();
