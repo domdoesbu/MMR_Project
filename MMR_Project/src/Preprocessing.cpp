@@ -319,13 +319,13 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     for (int i = 0; i < 20; ++i) {
         bin_centers[i] = minVal + (i + 0.5) * binWidth;
     }
-    plt::bar(bin_centers, counts, "black", "-", 1.0);
+   /* plt::bar(bin_centers, counts, "black", "-", 1.0);
     plt::xlabel("Number of Vertices");
     plt::ylabel("Count");
     plt::title("Vertex Count");
 
-    plt::grid(true);
-    plt::show();
+    plt::grid(true);*/
+    //plt::show();
     csvFile.close();
     std::cout << "----- Database Statistics End-----" << std::endl;
 }
@@ -443,32 +443,58 @@ std::vector<float> Preprocessing::NormalizeScale(std::vector<float> positions, s
     // MaxCoord needs to be the highest among the maxCoord numbers for every axis so that the object will fit into a 1:1 unit cube 
     // without stretching and changing proportions
 
-    shapeInfo sInfo;
-    AnalyzeShape(filename, sInfo);
 
-    // Find the largest absolute coordinate value
-    float maxAbsCoord = std::max({
-        std::abs(sInfo.maxX), std::abs(sInfo.minX),
-        std::abs(sInfo.maxY), std::abs(sInfo.minY),
-        std::abs(sInfo.maxZ), std::abs(sInfo.minZ)
-        });
+    if (positions.empty()) return positions;
 
-    // Compute scale so that maxAbsCoord maps to 0.5
-    float scale = 0.5f / maxAbsCoord;
-
-    std::vector<float> scaledPositions = positions;
-    for (size_t i = 0; i < positions.size(); i += 6) // 6 floats per vertex: pos(3) + normal(3)
-    {
-        scaledPositions[i] = positions[i] * scale;
-        scaledPositions[i + 1] = positions[i + 1] * scale;
-        scaledPositions[i + 2] = positions[i + 2] * scale;
-        // normals untouched
+    // Make sure the positions length is a multiple of 6 (pos3 + normal3)
+    if (positions.size() % 6 != 0) {
+        std::cerr << "Warning: positions.size() not divisible by 6: "
+            << positions.size() << std::endl;
     }
 
-    return scaledPositions;
+    float minX = FLT_MAX, maxX = -FLT_MAX;
+    float minY = FLT_MAX, maxY = -FLT_MAX;
+    float minZ = FLT_MAX, maxZ = -FLT_MAX;
+
+    // iterate defensively: ensure i+2 is valid
+    for (size_t i = 0; i + 2 < positions.size(); i += 6)
+    {
+        float x = positions[i];
+        float y = positions[i + 1];
+        float z = positions[i + 2];
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+        if (z < minZ) minZ = z;
+        if (z > maxZ) maxZ = z;
+    }
+
+    float maxAbsCoord = std::max({
+        std::abs(maxX), std::abs(minX),
+        std::abs(maxY), std::abs(minY),
+        std::abs(maxZ), std::abs(minZ)
+        });
+
+    if (maxAbsCoord <= 0.0f) {
+        std::cerr << "Warning: maxAbsCoord <= 0, skipping scale." << std::endl;
+        return positions;
+    }
+
+    float scale = 0.5f / maxAbsCoord;
+
+    for (size_t i = 0; i + 2 < positions.size(); i += 6)
+    {
+        positions[i] *= scale;
+        positions[i + 1] *= scale;
+        positions[i + 2] *= scale;
+        // normals left as-is
+    }
+
+    return positions;
 }
 
-Eigen::Vector3f Preprocessing::NormalizeAlign(std::vector<float> &positions, int stride = 6, int posOffset = 0) {
+std::pair<Eigen::Vector3f, std::vector<float>>  Preprocessing::NormalizeAlign(std::vector<float> positions, int stride = 6, int posOffset = 0) {
     
     int vertexCount = positions.size() / stride;
     // 1. Calculate the covariance matrix
@@ -498,7 +524,7 @@ Eigen::Vector3f Preprocessing::NormalizeAlign(std::vector<float> &positions, int
 	Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> solver(covariance);
 	if (solver.info() != Eigen::Success) {
 		std::cerr << "Eigen decomposition failed!" << std::endl;
-		return Eigen::Vector3f::Zero();
+        return { Eigen::Vector3f::Zero(), positions };
 	}
 
 	Eigen::Vector3f eigVals = solver.eigenvalues();
@@ -538,10 +564,10 @@ Eigen::Vector3f Preprocessing::NormalizeAlign(std::vector<float> &positions, int
 		positions[idx + 2] = pRotated.z();
     }
 	
-    return eigVals;
+    return { eigVals, positions };
 }
 
-void Preprocessing::NormalizeFlipping(std::vector<float>& positions, std::vector<unsigned int>& indices, int stride, int posOffset) 
+std::vector<float> Preprocessing::NormalizeFlipping(std::vector<float> positions, std::vector<unsigned int>& indices, int stride, int posOffset) 
 {
     // fi = sum sign(Ct,i)(Ct,i)^2
     // Ct, i = coordinate of the center of traingfle t
@@ -582,6 +608,7 @@ void Preprocessing::NormalizeFlipping(std::vector<float>& positions, std::vector
             }
         }
     }
+    return positions;
 }
 
 void Preprocessing::OrientNormalsOutward(std::vector<float>& positions,
@@ -673,7 +700,7 @@ void Preprocessing::CheckHoles(const std::string& filename) {
 }
 
 void Preprocessing::NormalizeDatabase(std::string& databasePath) {
-
+    MeshData data;
     FileOrganizer fo;
     fs::path sourcePath = databasePath;
     std::vector<float> positions;
@@ -702,19 +729,27 @@ void Preprocessing::NormalizeDatabase(std::string& databasePath) {
                 positions[i + 1] -= barycenter.y;
                 positions[i + 2] -= barycenter.z;
             }
-
-            // Pose
-            Eigen::Vector3f eigVals = NormalizeAlign(positions, 6, 0);
+            data.positions = positions;
+            data.indices = indices;
+            fo.WriteNewObj(fullFilePath, data);
+            
+            std::pair<Eigen::Vector3f, std::vector<float>> results = NormalizeAlign(positions, 6, 0);
+            Eigen::Vector3f eigVals = results.first;
+            positions = results.second;
             eigenValues.push_back(eigVals);
+            data.positions = positions;
+            data.indices = indices;
+            fo.WriteNewObj(fullFilePath, data);
 
-
-            // Flipping
-            NormalizeFlipping(positions, indices, 6, 0);
-
-            // Size
+            //// Flipping
+            positions = NormalizeFlipping(positions, indices, 6, 0);
+            
+            data.positions = positions;
+            data.indices = indices;
+            fo.WriteNewObj(fullFilePath, data);
+            //// Size
             positions = NormalizeScale(positions, fullFilePath);
-           
-            MeshData data;
+            // Pose
             data.positions = positions;
             data.indices = indices;
             fo.WriteNewObj(fullFilePath, data);

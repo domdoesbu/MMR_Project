@@ -66,12 +66,12 @@ public:
 	float Compactness(float surfaceArea, float volume);
 
 	// 3. Recantgularity
-	float Rectangularity(std::vector<float> positions, glm::vec3 barycenter, std::string filePath, std::string shapeFilename, std::string csvFilename);
+	float Rectangularity(std::vector<float>& positions, glm::vec3 barycenter, std::string filePath, std::string shapeFilename, std::string csvFilename);
 	// 4. Diameter
 	float Diameter(std::vector<float>& positions);
 
 	// 5. Convexity
-	float Convexity(std::vector<float> positions, glm::vec3 barycenter, std::string filename, std::string filePath);
+	float Convexity(std::vector<float>& positions, glm::vec3 barycenter, std::string filename, std::string filePath);
 
 	// 6. Eccentricity
 	float Eccentricity(float largeEig, float smallEig);
@@ -105,6 +105,6 @@ private:
 
 	float Distance(glm::vec3 v1, glm::vec3 v2);
 	
-	std::vector<float> GenerateConvexHull(std::string filename, std::string outputDir);
+	float GenerateConvexHull(std::string filename, std::string outputDir);
 };
 

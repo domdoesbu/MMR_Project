@@ -70,9 +70,9 @@ public:
 
 	std::vector<float> NormalizeScale(std::vector<float> positions, std::filesystem::path filename);
 
-	Eigen::Vector3f NormalizeAlign(std::vector<float>& positions, int stride, int posOffset);
+	std::pair<Eigen::Vector3f, std::vector<float>> NormalizeAlign(std::vector<float> positions, int stride, int posOffset);
 
-	void NormalizeFlipping(std::vector<float>& positions, std::vector<unsigned int>& indices, int stride, int posOffset);
+	std::vector<float> NormalizeFlipping(std::vector<float> positions, std::vector<unsigned int>& indices, int stride, int posOffset);
 
 	void CheckNormalOrientation(MR::Mesh& mesh);
 

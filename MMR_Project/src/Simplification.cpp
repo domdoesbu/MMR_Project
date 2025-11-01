@@ -19,8 +19,8 @@ void Simplification::Simplify(std::string& inputFile, std::string& outputFile) {
         
         last = simpGrid->numPoints();
 
-        int decPoints = simpGrid->numPoints() * 0.8;
-        int decCells = simpGrid->numCells() * 0.4;
+        int decPoints = simpGrid->numPoints() * 0.2;
+        int decCells = simpGrid->numCells() * 0.1;
         
         dec.Decimate(decPoints, decCells, maxDecError);
         dec.GetDecimatedOutput(simpGrid);

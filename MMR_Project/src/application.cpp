@@ -237,7 +237,7 @@ int main(void)
 
     std::cout << "--- PREPROCESSING ---" << std::endl;
 
-    CSVSetup("./shape_analysis.csv", databsePath);
+    //CSVSetup("./shape_analysis.csv", databsePath);
 
     // Remeshing
     std::cout << "--- REMESHING ---" << std::endl;
@@ -264,7 +264,7 @@ int main(void)
 
     // --------------------------------------------------------------------------------- 
 
-    e.EvaluateDatabase(databsePath, 3);
+    e.EvaluateDatabase(databsePathResampled, 3);
 
 
     //prep.DatabaseStatistics("shape_analysis_resamp_norm.csv");

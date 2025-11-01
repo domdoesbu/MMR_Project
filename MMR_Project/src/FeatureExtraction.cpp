@@ -34,7 +34,7 @@ float FeatureExtraction::Compactness(float surfaceArea, float volume)
 }
 
 // 3. Rectangularity
-float FeatureExtraction::Rectangularity(std::vector<float> positions, glm::vec3 barycenter, std::string filePath, std::string shapeFilename, std::string csvFilename)
+float FeatureExtraction::Rectangularity(std::vector<float>& positions, glm::vec3 barycenter, std::string filePath, std::string shapeFilename, std::string csvFilename)
 {
 	// 1. Get eigen vector aligned bounding volume (which after full normalization is just the axis aligned one) from the csv database
 	shapeInfo info;
@@ -53,7 +53,7 @@ float FeatureExtraction::Rectangularity(std::vector<float> positions, glm::vec3 
 	float OBBvolume = OBBbase * OBBheight * OBBdepth;
 
 	// 2. Compute the ratio between the mesh volume and that of the bounding volume
-	float shapeVolume = Volume(filePath);
+	float shapeVolume = Volume(positions);
 
 	return shapeVolume / OBBvolume;
 }
@@ -86,7 +86,7 @@ float FeatureExtraction::Diameter(std::vector<float>& positions)
 
 // 5. Convexity
 //// Helper for generation
-std::vector<float> FeatureExtraction::GenerateConvexHull(std::string filename, std::string outputDir)
+float FeatureExtraction::GenerateConvexHull(std::string filename, std::string outputDir)
 {
 	MR::Mesh mesh = *MR::MeshLoad::fromAnySupportedFormat(filename);
 
@@ -96,34 +96,38 @@ std::vector<float> FeatureExtraction::GenerateConvexHull(std::string filename, s
 
 	MR::Mesh convexHull = MR::makeConvexHull(mesh);
 	//ask Dom how this works
-	//MR::MeshSave::toAnySupportedFormat(convexHull, outputDir);
-
+	MR::MeshSave::toAnySupportedFormat(convexHull, outputDir);
+	std::cout << "Convex hull vol :: " << convexHull.volume() << std::endl;
 	convexHull.points.vec_;
 
 	std::vector<float> positions;
-	positions.resize(convexHull.points.size() * 3);
-	for (int i = 0; i < convexHull.points.size(); i++) {
-		positions[i * 3 + 0] = convexHull.points.vec_[i].x;
-		positions[i * 3 + 1] = convexHull.points.vec_[i].y;
-		positions[i * 3 + 2] = convexHull.points.vec_[i].z;
+	positions.resize(convexHull.points.size() * 6);
+	for (int i = 0; i + 6 < convexHull.points.size(); i += 6) {
+		positions[i + 0] = convexHull.points.vec_[i].x;
+		positions[i + 1] = convexHull.points.vec_[i].y;
+		positions[i + 2] = convexHull.points.vec_[i].z;
+		positions[i + 4] = 0;
+		positions[i + 5] = 0;
+		positions[i + 6] = 0;
 	}
 
-	return positions;
+	return convexHull.volume();
 }
 
-float FeatureExtraction::Convexity(std::vector<float> positions, glm::vec3 barycenter, std::string filename, std::string filePath)
+float FeatureExtraction::Convexity(std::vector<float>& positions, glm::vec3 barycenter, std::string filename, std::string filePath)
 {
 	// Generate the convex hull mesh using MeshLib
 	std::string chPath = "./ConvexHulls/" + filename; // I dont like how Im saving these and loading them, feels like a waste of time
-	std::vector<float> chPositions = GenerateConvexHull(filePath, "./ConvexHulls/" + filename);
+	//std::vector<float> chPositions = GenerateConvexHull(filePath, "./ConvexHulls/" + filename);
+	float chVolume = GenerateConvexHull(filePath, "./ConvexHulls/" + filename);
 	FileOrganizer fo;
 	//std::vector<unsigned int> chIndices;
 	//fo.LoadObj(chPath.c_str(), chPositions, chIndices);
 
-	float chVolume = Volume(chPositions);
+	//float chVolume = Volume(chPositions);
 
 	// compute the volume of the shape
-	float shapeVolume = Volume(filePath);
+	float shapeVolume = Volume(positions);
 
 	// return the ratio
 	return shapeVolume / chVolume;
@@ -743,6 +747,8 @@ float FeatureExtraction::Volume(std::vector<float> positions)
     return fabs(fullVolume);
 }
 
+
+
 // Distance
 float FeatureExtraction::Distance(glm::vec3 v1, glm::vec3 v2) 
 {	
@@ -837,6 +843,7 @@ void FeatureExtraction::ExtractFeaturesOthers(const std::string& databasePath) {
 			std::cout << fullFilePath << std::endl;
 			
 			ShapeFeatures features = ExtractFeaturesOneShape(fullFilePath, positions);
+			std::cout << features.convexity << std::endl;
 			surfaceArea.push_back(features.surfaceArea);
 			volume.push_back(features.volume);
 			compactness.push_back(features.compactness);
