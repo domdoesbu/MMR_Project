@@ -16,10 +16,9 @@ void Simplification::Simplify(std::string& inputFile, std::string& outputFile) {
     MeshDecimator dec;
     dec.Initialize(*simpGrid);
     while (simpGrid->numPoints() > 10000) {
-        
         last = simpGrid->numPoints();
 
-        int decPoints = simpGrid->numPoints() * 0.2;
+        int decPoints = simpGrid->numPoints() * 0.5;
         int decCells = simpGrid->numCells() * 0.1;
         
         dec.Decimate(decPoints, decCells, maxDecError);
@@ -27,8 +26,11 @@ void Simplification::Simplify(std::string& inputFile, std::string& outputFile) {
         if (simpGrid->numPoints() == last) {
             break;
         }
+        
     }
-    fo.WriteObjGrid(outputFile.c_str(), simpGrid);
+   
+        fo.WriteObjGrid(outputFile.c_str(), simpGrid);
+    
     delete simpGrid;
 }
 

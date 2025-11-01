@@ -226,8 +226,8 @@ int main(void)
     Querying q;
     Evaluation e;
     //std::string databsePath = "./ShapeDatabaseFixed/";
-    std::string databsePath = "./DatabaseOriginal/";
-    //std::string databsePath = "./test_objs/";
+    //std::string databsePath = "./DatabaseOriginal/";
+    std::string databsePath = "./test_objs/";
     std::string databsePathResampled = "./ResampledDatabase/";
 
     /*
@@ -242,29 +242,29 @@ int main(void)
     // Remeshing
     std::cout << "--- REMESHING ---" << std::endl;
 
-    prep.Resampling(databsePath, databsePathResampled);
+    //prep.Resampling(databsePath, databsePathResampled);
     
     std::cout << "--- REMESHING END---" << std::endl;
 
-    CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
+    //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
     // -------------------------------------------------------------------------------
     // PREPROCESSING
     std::cout << "--- PREPROCESSING START ---" << std::endl;
 
-    prep.NormalizeDatabase(databsePathResampled);
-    CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
+    //prep.NormalizeDatabase(databsePathResampled);
+    //CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
     std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
     // FEATURE EXTRACTION
-    fe.ExtractFeaturesOthers(databsePathResampled);
+    //fe.ExtractFeaturesOthers(databsePathResampled);
     //fe.ExtractFeaturesAtoD(databsePathResampled);
     
-    q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
+    //q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
 
     // --------------------------------------------------------------------------------- 
 
-    e.EvaluateDatabase(databsePathResampled, 3);
+   // e.EvaluateDatabase(databsePathResampled, 3);
 
 
     //prep.DatabaseStatistics("shape_analysis_resamp_norm.csv");
@@ -282,7 +282,8 @@ int main(void)
         return -1;
     }
 
-    std::pair<std::vector<std::string>, std::vector<float>> resultsAll= q.ExecuteQueryANN(inputFile, databsePathResampled, 3);
+   // std::pair<std::vector<std::string>, std::vector<float>> resultsAll= q.ExecuteQueryANN(inputFile, databsePathResampled, 3);
+    std::pair<std::vector<std::string>, std::vector<float>> resultsAll = q.ExecuteQuery(inputFile, databsePathResampled);
     std::vector<std::string> queryResults = resultsAll.first;
     std::vector<float> distances = resultsAll.second;
     
@@ -290,13 +291,13 @@ int main(void)
     meshes.push_back(createMesh(positions, indices));
 
     
-    /*for (auto& path : queryResults) {
+    for (auto& path : queryResults) {
         positions.clear();
         indices.clear();
         if (fo.LoadObj(path.c_str(), positions, indices)) {
             meshes.push_back(createMesh(positions, indices));
         }
-    }*/
+    }
 
     Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
     Shader solidShader("res/shaders/Vertex.shader", "res/shaders/Fragment.shader");
@@ -361,14 +362,14 @@ int main(void)
                 glm::vec4(0, 0, windowWidth, windowHeight));
             screenPos.y -= 100.0f;
             screenPos.x -= 100.0f;
-            //if (i == 0) {
-            //    textShader.use();
-            //    glDisable(GL_DEPTH_TEST);
-            //    drawText("Queried Shape", screenPos.x, screenPos.y - 20.0f, windowWidth, windowHeight, textShader);
-            //    drawText(inputFile, screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File Name
-            //    glEnable(GL_DEPTH_TEST);
-            //    solidShader.use();
-            //}
+            if (i == 0) {
+                textShader.use();
+                glDisable(GL_DEPTH_TEST);
+                drawText("Queried Shape", screenPos.x, screenPos.y - 20.0f, windowWidth, windowHeight, textShader);
+                drawText(inputFile, screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File Name
+                glEnable(GL_DEPTH_TEST);
+                solidShader.use();
+            }
 
             if (i > 0 && i - 1 < queryResults.size()) {
                 textShader.use();

@@ -76,7 +76,7 @@ public:
 
 	void CheckNormalOrientation(MR::Mesh& mesh);
 
-	void CheckHoles(const std::string& filename);
+	void CheckHoles(const std::string& filename, const std::string& fileLocation);
 	void OrientNormalsOutward(std::vector<float>& positions,
 		std::vector<unsigned int>& indices,
 		const glm::vec3& barycenter);

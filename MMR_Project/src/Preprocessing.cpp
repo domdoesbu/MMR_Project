@@ -372,11 +372,12 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
             data.positions = positions;
             data.indices = indices;
             fo.WriteNewObj(fullFilePath, data);*/
-           // CheckHoles(fullFilePath);
+            path = fullTargetPath.string() + file.path().filename().string();
+            //CheckHoles(fullFilePath, path);
             double positionSize = positions.size() / 6;
             if (positionSize < 5000) { // Refinement
 
-                path = fullTargetPath.string() + file.path().filename().string();
+
                 std::cout << "Refinement :: " << path << std::endl;
                 int maxEdgeSplits = 5000 - (positionSize);
 				ref.Refine(fullFilePath, path);
@@ -384,17 +385,18 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
             }
             else if (positionSize > 10000) { //Simplification
 
-                path = fullTargetPath.string() + file.path().filename().string();
+
                 std::cout << "Simplification :: " << path << std::endl;
 
                 int maxDeletedVerts = (positionSize) - 9000;
                 simp.Simplify(fullFilePath, path);
 				resmapledCount++;
             }
-            else {
+            /*else {
 
                 fs::copy(fullFilePath, fullTargetPath, fs::copy_options::overwrite_existing);
-            }
+            }*/
+            
         }
     }
 }
@@ -679,7 +681,7 @@ void Preprocessing::OrientNormalsOutward(std::vector<float>& positions,
     }
 }
 
-void Preprocessing::CheckHoles(const std::string& filename) {
+void Preprocessing::CheckHoles(const std::string& filename, const std::string& fileLocation) {
     auto mesh = MR::MeshLoad::fromAnySupportedFormat(filename);
     if (!mesh)
     {
@@ -696,7 +698,7 @@ void Preprocessing::CheckHoles(const std::string& filename) {
         MR::fillHole(*mesh, e, params);                  // <-- dereference
     }
 
-    MR::MeshSave::toAnySupportedFormat(*mesh, filename);  // <-- dereference
+    MR::MeshSave::toAnySupportedFormat(*mesh, fileLocation);  // <-- dereference
 }
 
 void Preprocessing::NormalizeDatabase(std::string& databasePath) {
