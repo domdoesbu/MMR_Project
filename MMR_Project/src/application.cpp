@@ -226,7 +226,8 @@ int main(void)
     Querying q;
     Evaluation e;
     //std::string databsePath = "./ShapeDatabaseFixed/";
-    std::string databsePath = "./test_objs/";
+    std::string databsePath = "./DatabaseOriginal/";
+    //std::string databsePath = "./test_objs/";
     std::string databsePathResampled = "./ResampledDatabase/";
 
     /*
@@ -234,14 +235,14 @@ int main(void)
         WE HAVE STATS FOR THE WHOLE DATABASE NOW AND IF YOU UNCOMMENT I HAVE TO RERUN THE WHOLE DATABASEEEEEE
     */
 
-    //std::cout << "--- PREPROCESSING ---" << std::endl;
+    std::cout << "--- PREPROCESSING ---" << std::endl;
 
     CSVSetup("./shape_analysis.csv", databsePath);
 
     // Remeshing
     std::cout << "--- REMESHING ---" << std::endl;
 
-    //prep.Resampling(databsePath, databsePathResampled);
+    prep.Resampling(databsePath, databsePathResampled);
     
     std::cout << "--- REMESHING END---" << std::endl;
 
@@ -249,11 +250,11 @@ int main(void)
 
     // -------------------------------------------------------------------------------
     // PREPROCESSING
-    //std::cout << "--- PREPROCESSING START ---" << std::endl;
+    std::cout << "--- PREPROCESSING START ---" << std::endl;
 
-    //prep.NormalizeDatabase(databsePathResampled);
-    //CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
-    //std::cout << "--- PREPROCESSING END ---" << std::endl;
+    prep.NormalizeDatabase(databsePathResampled);
+    CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
+    std::cout << "--- PREPROCESSING END ---" << std::endl;
     // -------------------------------------------------------------------------------
     // FEATURE EXTRACTION
     fe.ExtractFeaturesOthers(databsePathResampled);

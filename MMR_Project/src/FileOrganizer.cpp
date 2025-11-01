@@ -468,7 +468,7 @@ void FileOrganizer::WriteCSVD3(std::filesystem::path databasePath, std::string c
     csvFile.close();
 }
 
-int FileOrganizer::DatabaseSize(string csvFileName) {
+int FileOrganizer::DatabaseSize(std::string csvFileName) {
     std::ifstream csvFile(csvFileName);
     if (!csvFile.is_open()) {
         std::cerr << "Failed to open input CSV file: " << csvFileName << std::endl;

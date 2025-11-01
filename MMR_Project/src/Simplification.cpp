@@ -24,7 +24,6 @@ void Simplification::Simplify(std::string& inputFile, std::string& outputFile) {
         
         dec.Decimate(decPoints, decCells, maxDecError);
         dec.GetDecimatedOutput(simpGrid);
-        std::cout << simpGrid->numPoints() << std::endl;
         if (simpGrid->numPoints() == last) {
             break;
         }

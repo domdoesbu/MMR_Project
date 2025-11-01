@@ -12,6 +12,8 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_split.cpp;C:\Us
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_tree.cpp;C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\x64\Release\kd_tree.obj
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_util.cpp;C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\x64\Release\kd_util.obj
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\perf.cpp;C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\x64\Release\perf.obj
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\MeshDecimator.cpp;C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\x64\Release\MeshDecimator.obj
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Evaluation.cpp;C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\x64\Release\Evaluation.obj
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp;C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\x64\Release\Querying.obj
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\Grid.cpp;C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\x64\Release\Grid.obj
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\ScalarAttributes.cpp;C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\x64\Release\ScalarAttributes.obj

@@ -339,26 +339,33 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
     fs::path targetParent = target;
     std::string databasePath = sourcePath.string();
     int resmapledCount = 0;
+    std::string className = "";
+    fs::path fullTargetPath = "";
+    std::string fullFilePath = "";
+    std::string currentFile = "";
+    std::string path = "";
+    glm::vec3 barycenter;
+    Simplification simp;
+	Refinement ref;
     for (const auto& classDir : fs::directory_iterator(databasePath)) {
         if (!fs::is_directory(classDir)) continue;
-        std::string className = classDir.path().filename().string();
-        fs::path fullTargetPath = targetParent.string() + className + "/";
+        className = classDir.path().filename().string();
+        fullTargetPath = targetParent.string() + className + "/";
         fs::create_directories(fullTargetPath);
         // For each obj in the folder, get the information about it
-        Simplification simp;
-		Refinement ref;
+        
         for (const auto& file : fs::directory_iterator(classDir)) {
 
             positions.clear();
             indices.clear();
-            std::string currentFile = file.path().filename().string();
-            std::string fullFilePath = classDir.path().string() + "/" + currentFile;
+            currentFile = file.path().filename().string();
+            fullFilePath = classDir.path().string() + "/" + currentFile;
             if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
             {
                 std::cerr << "Failed to load obj" << std::endl;
                 return -1;
             }
-            glm::vec3 barycenter = ComputeBarycenter(positions);
+            barycenter = ComputeBarycenter(positions);
             //OrientNormalsOutward(positions, indices, barycenter);
 
             /*MeshData data;
@@ -366,20 +373,21 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
             data.indices = indices;
             fo.WriteNewObj(fullFilePath, data);*/
            // CheckHoles(fullFilePath);
-            if (positions.size() / 6 < 5000) { // Refinement
+            double positionSize = positions.size() / 6;
+            if (positionSize < 5000) { // Refinement
 
-                std::string path = fullTargetPath.string() + file.path().filename().string();
+                path = fullTargetPath.string() + file.path().filename().string();
                 std::cout << "Refinement :: " << path << std::endl;
-                int maxEdgeSplits = 5000 - (positions.size()/6);
+                int maxEdgeSplits = 5000 - (positionSize);
 				ref.Refine(fullFilePath, path);
 				resmapledCount++;
             }
-            else if (positions.size() / 6 > 10000) { //Simplification
+            else if (positionSize > 10000) { //Simplification
 
-                std::string path = fullTargetPath.string() + file.path().filename().string();
+                path = fullTargetPath.string() + file.path().filename().string();
                 std::cout << "Simplification :: " << path << std::endl;
 
-                int maxDeletedVerts = (positions.size() / 6) - 9000;
+                int maxDeletedVerts = (positionSize) - 9000;
                 simp.Simplify(fullFilePath, path);
 				resmapledCount++;
             }
