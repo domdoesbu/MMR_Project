@@ -290,7 +290,7 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQueryAN
 
 
 // Takes in the path of the shape and returns the k most similar shapes using a naive approach
-std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(std::string shapePath, std::string databasePath)
+std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(std::string shapePath, std::string databasePath, int k)
 {
     // load object from path
     FileOrganizer fo;
@@ -324,7 +324,7 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(s
     }
 
     // find the minimum k distances
-    std::pair<std::vector<int>, std::vector<float>> results = GetKSmallestDistanceIndices(distanceVec, 3);
+    std::pair<std::vector<int>, std::vector<float>> results = GetKSmallestDistanceIndices(distanceVec, k);
     std::vector<int> minDistIndices = results.first;
     std::vector<float> distanceValues = results.second;
     std::vector<std::string> resultFilenames;

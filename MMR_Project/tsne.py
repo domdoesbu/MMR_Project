@@ -5,7 +5,7 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import os
 
-csv_path = "feature_extraction_complete_normalized.csv"
+csv_path = "Data\\feature_extraction_complete_normalized.csv"
 
 rows = []
 max_len = 0
@@ -47,5 +47,7 @@ for i, cls in enumerate(unique_classes):
     mask = (class_names.values == cls)
     plt.scatter(embeddings[mask, 0], embeddings[mask, 1], label=cls, s=30, alpha=0.7, color=colors(i))
 
+
 plt.title("t-SNE Projection of Shape Features")
+plt.legend(bbox_to_anchor=(1.2, 1), loc=1, fontsize= 'small', labelspacing = 0.1)
 plt.show()

@@ -264,7 +264,7 @@ int main(void)
 
     // --------------------------------------------------------------------------------- 
 
-   // e.EvaluateDatabase(databsePathResampled, 3);
+    //e.EvaluateDatabase(databsePathResampled, 6);
 
 
     //prep.DatabaseStatistics("shape_analysis_resamp_norm.csv");
@@ -283,7 +283,7 @@ int main(void)
     }
 
    // std::pair<std::vector<std::string>, std::vector<float>> resultsAll= q.ExecuteQueryANN(inputFile, databsePathResampled, 3);
-    std::pair<std::vector<std::string>, std::vector<float>> resultsAll = q.ExecuteQuery(inputFile, databsePathResampled);
+    std::pair<std::vector<std::string>, std::vector<float>> resultsAll = q.ExecuteQuery(inputFile, databsePathResampled, 6);
     std::vector<std::string> queryResults = resultsAll.first;
     std::vector<float> distances = resultsAll.second;
     
@@ -291,13 +291,13 @@ int main(void)
     meshes.push_back(createMesh(positions, indices));
 
     
-    for (auto& path : queryResults) {
+  /*  for (auto& path : queryResults) {
         positions.clear();
         indices.clear();
         if (fo.LoadObj(path.c_str(), positions, indices)) {
             meshes.push_back(createMesh(positions, indices));
         }
-    }
+    }*/
 
     Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
     Shader solidShader("res/shaders/Vertex.shader", "res/shaders/Fragment.shader");
@@ -338,17 +338,17 @@ int main(void)
         glClearColor(1.0, 1.0, 1.0, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        float x = 2.75f;
+        float x = 0;
         for (size_t i = 0; i < meshes.size(); ++i) {
 
             const auto& m = meshes[i];
             glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(x, 0.0f, 0.0f));
-            x -= 1.5f;
+            //x -= 1.5f;
 
             glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
             glBindVertexArray(m.vao);
+            
             glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, nullptr);
-
             if (drawWireframe) {
                 wireframeShader.use();
                 glUniformMatrix4fv(glGetUniformLocation(wireframeShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
@@ -356,29 +356,30 @@ int main(void)
                 glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, nullptr);
                 solidShader.use();
             }
-
+           
+                
             glm::vec3 meshCenter = glm::vec3(model * glm::vec4(0, 0, 0, 1));
             glm::vec3 screenPos = glm::project(meshCenter, camera.GetViewMatrix(), camera.GetProjectionMatrix(),
                 glm::vec4(0, 0, windowWidth, windowHeight));
             screenPos.y -= 100.0f;
             screenPos.x -= 100.0f;
-            if (i == 0) {
-                textShader.use();
-                glDisable(GL_DEPTH_TEST);
-                drawText("Queried Shape", screenPos.x, screenPos.y - 20.0f, windowWidth, windowHeight, textShader);
-                drawText(inputFile, screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File Name
-                glEnable(GL_DEPTH_TEST);
-                solidShader.use();
-            }
+            //if (i == 0) {
+            //    textShader.use();
+            //    glDisable(GL_DEPTH_TEST);
+            //    drawText("Queried Shape", screenPos.x, screenPos.y - 20.0f, windowWidth, windowHeight, textShader);
+            //    drawText(inputFile, screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File Name
+            //    glEnable(GL_DEPTH_TEST);
+            //    solidShader.use();
+            //}
 
-            if (i > 0 && i - 1 < queryResults.size()) {
-                textShader.use();
-                glDisable(GL_DEPTH_TEST);
-                drawText(queryResults[i - 1], screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File name
-                drawText("Distance: " + std::to_string(distances[i - 1]), screenPos.x, screenPos.y + 200.0f, windowWidth, windowHeight, textShader); // Distance
-                glEnable(GL_DEPTH_TEST);
-                solidShader.use();
-            }
+            //if (i > 0 && i - 1 < queryResults.size()) {
+            //    textShader.use();
+            //    glDisable(GL_DEPTH_TEST);
+            //    drawText(queryResults[i - 1], screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File name
+            //    drawText("Distance: " + std::to_string(distances[i - 1]), screenPos.x, screenPos.y + 200.0f, windowWidth, windowHeight, textShader); // Distance
+            //    glEnable(GL_DEPTH_TEST);
+            //    solidShader.use();
+            //}
         }
 
         if (reloadMesh) {

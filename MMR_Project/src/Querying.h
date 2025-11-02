@@ -20,7 +20,7 @@ public:
 	void NormalizeQueriedShape(ShapeFeatures& shape);
 
 	// Takes in the path of the shape and returns the k most similar shapes using a naive approach
-	std::pair<std::vector<std::string>, std::vector<float>>  ExecuteQuery(std::string shapePath, std::string databasePath);
+	std::pair<std::vector<std::string>, std::vector<float>>  ExecuteQuery(std::string shapePath, std::string databasePath, int k);
 	std::pair<std::vector<std::string>, std::vector<float>>  ExecuteQueryANN(std::string shapePath, std::string databasePath, int k);
 
 private:

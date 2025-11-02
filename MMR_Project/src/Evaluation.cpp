@@ -83,7 +83,7 @@ void Evaluation::EvaluateDatabase(string databasePath, int k) {
             totalRecall += recall;
             totalF1 += f1;
             totalQueries++;
-            csv << currentFile << "," << accuracy << "," << precision << "," << recall << "," << f1 << "\n";
+            csv << file.path().string() << "," << accuracy << "," << precision << "," << recall << "," << f1 << "\n";
         }
     }
 
