@@ -273,10 +273,15 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQueryAN
 
     std::vector<std::string> resultFilenames;
 
+    std::vector<float> finalDistances;
     for (int i = 0; i < minDistIndices.size(); ++i)
     {
         std::string filePath = shapeFeatVecs[minDistIndices[i]].className + "/" + shapeFeatVecs[minDistIndices[i]].fileName;
-        resultFilenames.push_back(filePath); // i am so smart
+        if (filePath != shapePath) {
+            resultFilenames.push_back(filePath); // i am so smart
+            finalDistances.push_back(distanceValues[i]);
+        }
+
     }
     delete[] nnIdx;
     delete[] dists;
@@ -285,7 +290,7 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQueryAN
     annDeallocPts(annPts);
     annClose(); // free ANN internal memory
     // return the path of the files
-    return { resultFilenames, distanceValues };
+    return { resultFilenames, finalDistances };
 }
 
 
@@ -324,20 +329,24 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(s
     }
 
     // find the minimum k distances
-    std::pair<std::vector<int>, std::vector<float>> results = GetKSmallestDistanceIndices(distanceVec, k);
+    // do k+1 so that it ignores the first value
+    std::pair<std::vector<int>, std::vector<float>> results = GetKSmallestDistanceIndices(distanceVec, k + 1);
     std::vector<int> minDistIndices = results.first;
     std::vector<float> distanceValues = results.second;
     std::vector<std::string> resultFilenames;
-
+    std::vector<float> finalDistances;
     for (int i = 0; i < minDistIndices.size(); ++i)
     {
         std::string filePath = shapeFeatVecs[minDistIndices[i]].className + "/" + shapeFeatVecs[minDistIndices[i]].fileName;
-        std::cout << filePath << std::endl;
-        resultFilenames.push_back(filePath); // i am so smart
+        if (filePath != shapePath) {
+            resultFilenames.push_back(filePath); // i am so smart
+            finalDistances.push_back(distanceValues[i]);
+        }
+            
     }
 
     // return the path of the files
-    return { resultFilenames, distanceValues };
+    return { resultFilenames, finalDistances };
 }
 
 std::vector<double> Querying::GetFeatureVecFromShapeFeatures(ShapeFeatures feats)

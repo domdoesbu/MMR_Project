@@ -11,20 +11,20 @@ class_stats = df.groupby('class')[['accuracy', 'recall']].mean().reset_index()
 
 classes = df['class'].unique()
 
-# for c in classes:
-#     subset = df[df['class'] == c]
+for c in classes:
+    subset = df[df['class'] == c]
 
-#     plt.figure(figsize=(6, 5))
-#     plt.scatter(subset['recall'], subset['precision'], alpha=0.7)
-#     plt.title(f'Precision–Recall Plot for {c}')
-#     plt.xlabel('Recall')
-#     plt.ylabel('Precision')
-#     plt.xlim(0, 1)
-#     plt.ylim(0, 1)
-#     plt.grid(True)
-#     plt.tight_layout()
-#     plt.plot(subset['recall'], subset['precision'])
-#     plt.savefig(fname=c)
+    plt.figure(figsize=(6, 5))
+    plt.scatter(subset['recall'], subset['precision'], alpha=0.7)
+    plt.title(f'Precision–Recall Plot for {c}')
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+    plt.grid(True)
+    plt.tight_layout()
+    plt.plot(subset['recall'], subset['precision'])
+    plt.savefig(fname=c)
 
 plt.figure(figsize=(8, 6))
 
@@ -41,5 +41,4 @@ plt.ylim(0, 1)
 plt.legend(title='Class')
 plt.grid(True)
 plt.tight_layout()
-#plt.savefig(fname='Precision_Recall_All')
-plt.show()
+plt.savefig(fname='Precision_Recall_All')

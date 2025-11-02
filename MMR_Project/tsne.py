@@ -5,7 +5,7 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import os
 
-csv_path = "Data\\feature_extraction_complete_normalized.csv"
+csv_path = "feature_extraction_complete.csv"
 
 rows = []
 max_len = 0
