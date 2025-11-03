@@ -54,7 +54,7 @@ void Evaluation::EvaluateDatabase(string databasePath, int k) {
             
             
             std::string path = databasePath + className + "/" + currentFile;
-            auto resultsAll = q.ExecuteQuery(path, databasePath, k);
+            auto resultsAll = q.ExecuteQuery(path, databasePath, k, 0.05);
             std::vector<std::string> labels = resultsAll.first;
 
             int TP = 0;
