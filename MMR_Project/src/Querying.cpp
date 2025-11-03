@@ -295,7 +295,7 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQueryAN
 
 
 // Takes in the path of the shape and returns the k most similar shapes using a naive approach
-std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(std::string shapePath, std::string databasePath, int k)
+std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(std::string shapePath, std::string databasePath, int k, float thresh)
 {
     // load object from path
     FileOrganizer fo;
@@ -330,7 +330,7 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(s
 
     // find the minimum k distances
     // do k+1 so that it ignores the first value
-    std::pair<std::vector<int>, std::vector<float>> results = GetKSmallestDistanceIndices(distanceVec, k + 1);
+    std::pair<std::vector<int>, std::vector<float>> results = GetKSmallestDistanceIndices(distanceVec, k + 1, thresh);
     std::vector<int> minDistIndices = results.first;
     std::vector<float> distanceValues = results.second;
     std::vector<std::string> resultFilenames;
@@ -499,7 +499,7 @@ double Querying::nDimEuDistance(std::vector<double> feat1, std::vector<double> f
 }
 
 // this gets a distance vector and returns the k indices of the shapes with the smallest distance
-std::pair <std::vector<int>, std::vector<float>> Querying::GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k) 
+std::pair <std::vector<int>, std::vector<float>> Querying::GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k, float t) 
 {
     // initialize index vector that we'll use to keep track of shape indices during sorting to get filenames later
     std::vector<int> indexVec(distanceVec.size());
@@ -527,13 +527,18 @@ std::pair <std::vector<int>, std::vector<float>> Querying::GetKSmallestDistanceI
             break; // already sorted
     }
 
-    // get the first k elements and return them
+    // get at most the first k elements with distance < t and return them
     std::vector<int> outIndices;
     for (int i = 0; i < k; ++i)
     {
         distanceValues.push_back(distanceVec[i]);
-        std::cout << distanceVec[i] << std::endl;
-        outIndices.push_back(indexVec[i]);
+        if (distanceVec[i] < t) 
+        {
+            std::cout << distanceVec[i] << std::endl;
+            outIndices.push_back(indexVec[i]);
+        }
+        else
+            break;
     }
     return { outIndices, distanceValues };
 }
