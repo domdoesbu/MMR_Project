@@ -330,7 +330,7 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(s
 
     // find the minimum k distances
     // do k+1 so that it ignores the first value
-    std::pair<std::vector<int>, std::vector<float>> results = GetKSmallestDistanceIndices(distanceVec, k + 1, thresh);
+    std::pair<std::vector<int>, std::vector<float>> results = GetKSmallestDistanceIndices(distanceVec, k + 1, 1);
     std::vector<int> minDistIndices = results.first;
     std::vector<float> distanceValues = results.second;
     std::vector<std::string> resultFilenames;
@@ -532,13 +532,10 @@ std::pair <std::vector<int>, std::vector<float>> Querying::GetKSmallestDistanceI
     for (int i = 0; i < k; ++i)
     {
         distanceValues.push_back(distanceVec[i]);
-        if (distanceVec[i] < t) 
-        {
-            std::cout << distanceVec[i] << std::endl;
-            outIndices.push_back(indexVec[i]);
-        }
-        else
-            break;
+
+        std::cout << distanceVec[i] << std::endl;
+        outIndices.push_back(indexVec[i]);
+
     }
     return { outIndices, distanceValues };
 }

@@ -5,7 +5,7 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import os
 
-csv_path = "feature_extraction_complete.csv"
+csv_path = "feature_extraction_complete_normalized.csv"
 
 rows = []
 max_len = 0
@@ -42,11 +42,21 @@ embeddings = tsne.fit_transform(features)
 plt.figure(figsize=(10, 8))
 unique_classes = np.unique(class_names)
 colors = plt.cm.get_cmap('tab20', len(unique_classes))
-
+input_class = "Humanoid"
 for i, cls in enumerate(unique_classes):
     mask = (class_names.values == cls)
-    plt.scatter(embeddings[mask, 0], embeddings[mask, 1], label=cls, s=30, alpha=0.7, color=colors(i))
-
+    
+    # If this is the input class → red; otherwise → gray
+    color = 'red' if cls == input_class else 'gray'
+    
+    plt.scatter(
+        embeddings[mask, 0],
+        embeddings[mask, 1],
+        label=cls,
+        s=30,
+        alpha=0.7,
+        color=color
+    )
 
 plt.title("t-SNE Projection of Shape Features")
 plt.legend(bbox_to_anchor=(1.2, 1), loc=1, fontsize= 'small', labelspacing = 0.1)

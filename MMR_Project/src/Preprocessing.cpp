@@ -392,10 +392,10 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
                 simp.Simplify(fullFilePath, path);
 				resmapledCount++;
             }
-            /*else {
+            else {
 
                 fs::copy(fullFilePath, fullTargetPath, fs::copy_options::overwrite_existing);
-            }*/
+            }
             
         }
     }

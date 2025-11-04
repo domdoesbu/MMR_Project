@@ -51,10 +51,10 @@ void Evaluation::EvaluateDatabase(string databasePath, int k) {
             if (!fs::is_regular_file(file)) continue;
 
             std::string currentFile = file.path().filename().string();
-            
+            std::cout << currentFile << std::endl;
             
             std::string path = databasePath + className + "/" + currentFile;
-            auto resultsAll = q.ExecuteQuery(path, databasePath, k, 0.05);
+            auto resultsAll = q.ExecuteQuery(path, databasePath, k, 1);
             std::vector<std::string> labels = resultsAll.first;
 
             int TP = 0;
