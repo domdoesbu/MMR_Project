@@ -132,4 +132,4 @@ orig_shapes = get_shape_info(orig_df)
 resamp_shapes = get_shape_info(resamp_df)
 norm_shapes = get_shape_info(norm_shapes)
 
-plot_resampling_diff()
+plot_normalization_diff()

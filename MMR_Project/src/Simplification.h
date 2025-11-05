@@ -10,6 +10,7 @@
 #include <iostream>
 #include "FileOrganizer.h"
 #include "CodeFromProf/MeshDecimator.h"
+#include "FeatureExtraction.h"
 
 class Simplification
 {

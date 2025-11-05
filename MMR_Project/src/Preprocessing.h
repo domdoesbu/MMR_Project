@@ -81,5 +81,7 @@ public:
 		std::vector<unsigned int>& indices,
 		const glm::vec3& barycenter);
 
+	bool ValidMesh(const std::string& filePath, const std::string& resampledFile);
+
 };
 

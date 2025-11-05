@@ -1,44 +1,4 @@
 ﻿cl : command line  warning D9002: ignoring unknown option '/utf8'
-  Evaluation.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/Evaluation.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/Evaluation.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Evaluation.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(46,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Evaluation.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(47,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Evaluation.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(48,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Evaluation.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(49,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Evaluation.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(50,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Evaluation.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Evaluation.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Evaluation.cpp(39,23): warning C4244: 'initializing': conversion from '__int64' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
-  (compiling source file 'src/Evaluation.cpp')
-      C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
-      the template instantiation context (the oldest one first) is
-          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
-          see reference to function template instantiation 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' being compiled
-  
   application.cpp
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
   (compiling source file 'src/application.cpp')
@@ -46,11 +6,6 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\Unstructu
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
   (compiling source file 'src/application.cpp')
   
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\minwindef.h(130,9): warning C4005: 'APIENTRY': macro redefinition
-  (compiling source file 'src/application.cpp')
-      C:\Users\Dom\Documents\GitHub\MMR_Project\Dependencies\GLFW\include\GLFW\glfw3.h(123,11):
-      see previous definition of 'APIENTRY'
-  
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'initializing': truncation from 'double' to 'float'
   (compiling source file 'src/application.cpp')
   
@@ -72,11 +27,16 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(50
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'initializing': truncation from 'double' to 'float'
   (compiling source file 'src/application.cpp')
   
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\minwindef.h(130,9): warning C4005: 'APIENTRY': macro redefinition
+  (compiling source file 'src/application.cpp')
+      C:\Users\Dom\Documents\GitHub\MMR_Project\Dependencies\GLFW\include\GLFW\glfw3.h(123,11):
+      see previous definition of 'APIENTRY'
+  
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(108,28): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(286,125): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(307,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(308,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(320,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(283,125): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(304,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(305,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(317,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
@@ -90,9 +50,10 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,4
   
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  0 of 2766 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
+C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(397): warning C4715: 'Preprocessing::Resampling': not all control paths return a value
+  1883 of 5494 functions (34.3%) were compiled, the rest were copied from previous compilation.
+    1 functions were new in current compilation
+    124 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\vc120.pdb'; linking object as if no debug info
   MMR_Project.vcxproj -> C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\MMR_Project.exe
