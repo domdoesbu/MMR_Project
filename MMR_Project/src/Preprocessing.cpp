@@ -714,6 +714,7 @@ void Preprocessing::NormalizeDatabase(std::string& databasePath) {
     std::vector<float> positions;
     std::vector<unsigned int> indices;
     std::vector<glm::vec3> barycenters;
+    std::vector <glm::vec3> barycentersAfter;
     std::vector<Eigen::Vector3f> eigenValues;
     for (const auto& classDir : fs::directory_iterator(sourcePath)) {
         if (!fs::is_directory(classDir)) continue;
@@ -762,9 +763,20 @@ void Preprocessing::NormalizeDatabase(std::string& databasePath) {
             data.indices = indices;
             fo.WriteNewObj(fullFilePath, data);
 
+            positions.clear();
+            indices.clear();
+            if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
+            {
+                std::cerr << "Failed to load obj" << std::endl;
+
+            }
+            glm::vec3 barycenter2 = ComputeBarycenter(positions);
+            barycentersAfter.push_back(barycenter2);
+            
         }
     }
     fo.WriteCSVAfterNorm(databasePath, "Bary_Eigs.csv", barycenters, eigenValues);
+    fo.WriteCSVAfterNorm(databasePath, "Bary_Eigs_AfterNorm.csv", barycentersAfter, eigenValues);
 }
 
 

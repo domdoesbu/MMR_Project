@@ -51,9 +51,9 @@ C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,4
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
 C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(397): warning C4715: 'Preprocessing::Resampling': not all control paths return a value
-  1883 of 5494 functions (34.3%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
-    124 functions had inline decision re-evaluated but remain unchanged
+  2007 of 5440 functions (36.9%) were compiled, the rest were copied from previous compilation.
+    15 functions were new in current compilation
+    319 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
 glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\vc120.pdb'; linking object as if no debug info
   MMR_Project.vcxproj -> C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\MMR_Project.exe

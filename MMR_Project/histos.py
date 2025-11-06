@@ -58,9 +58,9 @@ def plot_resampling_diff():
     vert_counts_resamp = []
     
     for shape in orig_shapes:
-        vert_counts_orig.append(shape.vertexNum)
+        vert_counts_orig.append(shape.faceNum)
     for shape in resamp_shapes:
-        vert_counts_resamp.append(shape.vertexNum)
+        vert_counts_resamp.append(shape.faceNum)
 
     max_orig =max(vert_counts_orig)
     bins_orig = np.linspace(0, max_orig, num=20)
@@ -70,10 +70,38 @@ def plot_resampling_diff():
     fig, (ax1, ax2) = plt.subplots(1, 2)
     fig.set_figheight(8)
     fig.set_figwidth(16)
-    fig.suptitle('Number of vertices before and after resampling')
+    fig.suptitle('Number of faces')
     ax1.hist(vert_counts_orig,bins_orig)
     ax2.hist(vert_counts_resamp,bins_resamp)
 
+    
+    ax1.set_title('Before Resampling')
+    ax1.set_xlabel('Number of faces')
+    ax1.set_ylabel('Count')
+
+    ax2.set_title('After Resampling')
+    ax2.set_xlabel('Number of faces')
+    ax2.set_ylabel('Count')
+
+
+
+    plt.show()
+
+def zoomIn():
+    vert_counts_resamp = [] 
+
+    for shape in resamp_shapes:
+        vert_counts_resamp.append(shape.vertexNum)
+
+
+    max_resamp = 20000
+    bins_resamp = np.linspace(0, max_resamp, num=20)
+
+    plt.title("Zoomed-In Histogram of Vertex Count After Resampling")
+    plt.xlabel("Number of vertices")
+    plt.ylabel("Count")
+    plt.xlim(0, max_resamp)
+    plt.hist(vert_counts_resamp,bins_resamp)
     plt.show()
 
 def euDist3d(p1:list, p2:list) -> float:
@@ -106,9 +134,19 @@ def plot_normalization_diff():
     fig.set_figheight(8)
     fig.set_figwidth(16)
     
-    fig.suptitle('Max edge length of axis aligned b. b. before and after scale normalization')
+    fig.suptitle('Max edge length of axis aligned bounding box')
     ax1.hist(max_edge_len_resamp, bins_resamp)
+
     ax2.hist(max_edge_len_norm, bins_norm)
+
+
+    ax1.set_title('Before Normalization')
+    ax1.set_xlabel('Max Edge Length')
+    ax1.set_ylabel('Count')
+
+    ax2.set_title('After Normalization')
+    ax2.set_xlabel('Max Edge Length')
+    ax2.set_ylabel('Count')
 
     plt.show()
         
@@ -132,4 +170,4 @@ orig_shapes = get_shape_info(orig_df)
 resamp_shapes = get_shape_info(resamp_df)
 norm_shapes = get_shape_info(norm_shapes)
 
-plot_normalization_diff()
+plot_resampling_diff()
