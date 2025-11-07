@@ -4,7 +4,7 @@ import re
 import numpy as np
 import sklearn
 
-df = pd.read_csv("MMR_Project/evaluation_results.csv")
+df = pd.read_csv("evaluation_results.csv")
 
 df['class'] = df['query'].apply(lambda x: re.search(r'ResampledDatabase[/\\]([^/\\]+)', x).group(1))
 
@@ -122,6 +122,7 @@ total_precision = sum(avg_prec) / len(class_names)
 total_recall = sum(avg_rec) / len(class_names)
 
 for i in range(len(class_names)):
+    print('-' * 8)
     print('Average precision for class ' + class_names[i] + ': ' + str(avg_prec[i]) + '\n')
     print('Average recall for class ' + class_names[i] + ': ' + str(avg_rec[i]) + '\n')
     print('Average accuracy for class ' + class_names[i] + ': ' + str(avg_acc[i]) + '\n')

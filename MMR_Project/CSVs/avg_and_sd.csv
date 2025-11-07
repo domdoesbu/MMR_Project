@@ -1,0 +1,2 @@
+avgArea,stdDevArea,avgVolume,stdDevVolume,avgCompactness,stdDevCompactness,avgRectangularity,stdDevRectangularity,avgDiameter,stdDevDiameter,avgConvexity,stdDevConvexity,avgEccentricity,stdDevEccentricity
+1.61853,2.55091,0.0169352,0.0337327,1.00624e+07,3.13957e+08,0.00808276,0.0122972,0.940341,0.138569,0.171632,0.19085,177162,7.91895e+06
