@@ -35,5 +35,10 @@ private:
 
 	std::pair <std::vector<int>, std::vector<float>> GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k, float t);
 
+	std::pair <std::vector<int>, std::vector<float>> GetRNN(std::vector<double> distanceVec, float threshold);
+
+	std::vector<int> SortDist(std::vector<double>& distanceVec);
+
+
 };
 
