@@ -33,7 +33,7 @@ private:
 	// calculates euclidean distance between two feature vectors of the same size
 	double nDimEuDistance(std::vector<double> feat1, std::vector<double> feat2);
 
-	std::pair <std::vector<int>, std::vector<float>> GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k, float t);
+	std::pair <std::vector<int>, std::vector<float>> GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k);
 
 	std::pair <std::vector<int>, std::vector<float>> GetRNN(std::vector<double> distanceVec, float threshold);
 

@@ -1,7 +1,7 @@
 #include "Evaluation.h"
 namespace fs = filesystem;
 
-void Evaluation::EvaluateDatabase(string databasePath, int k) {
+void Evaluation::EvaluateDatabase(string databasePath, int k, std::string csvPath) {
 
 	// I think accuracy is the best choice since it ignores the query size but im gonna do p/r as well for now
 
@@ -21,7 +21,10 @@ void Evaluation::EvaluateDatabase(string databasePath, int k) {
     FileOrganizer fo;
     Querying q;
 
-    std::ofstream csv("evaluation_results.csv");
+
+    std::fstream csv;
+    
+    csv.open(csvPath, std::ios::out | std::ios::app);
     csv << "query,accuracy,precision,recall,f1, r1, r2, r3, r4, r5, r6\n";
 
     int databaseSize = fo.DatabaseSize("feature_extraction_complete_normalized.csv");
@@ -85,8 +88,12 @@ void Evaluation::EvaluateDatabase(string databasePath, int k) {
             totalRecall += recall;
             totalF1 += f1;
             totalQueries++;
-            csv << file.path().string() << "," << accuracy << "," << precision << "," << recall << "," << f1 << ","
-                << labels[0] << "," << labels[1] << "," << labels[2] << "," << labels[3] << "," << labels[4] << "," << labels[5] << "\n";
+            csv << file.path().string() << "," << accuracy << "," << precision << "," << recall << "," << f1;
+            for (int i = 0; i < labels.size(); ++i) 
+            {
+                csv << "," << labels[i];
+            }
+            csv << "\n";
         }
     }
 

@@ -330,7 +330,7 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(s
 
     // find the minimum k distances
     // do k+1 so that it ignores the first value
-    std::pair<std::vector<int>, std::vector<float>> results = GetRNN(distanceVec, 1.500);
+    std::pair<std::vector<int>, std::vector<float>> results = GetKSmallestDistanceIndices(distanceVec, k+1);
     std::vector<int> minDistIndices = results.first;
     std::vector<float> distanceValues = results.second;
     std::vector<std::string> resultFilenames;
@@ -521,7 +521,7 @@ std::pair <std::vector<int>, std::vector<float>> Querying::GetRNN(std::vector<do
 }
 
 // this gets a distance vector and returns the k indices of the shapes with the smallest distance
-std::pair <std::vector<int>, std::vector<float>> Querying::GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k, float t) 
+std::pair <std::vector<int>, std::vector<float>> Querying::GetKSmallestDistanceIndices(std::vector<double> distanceVec, int k) 
 {
     std::vector<float> distanceValues;
     std::vector<int> indexVec = SortDist(distanceVec);
