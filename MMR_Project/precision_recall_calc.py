@@ -27,9 +27,6 @@ def get_prec_rec(labels, predictions):
         class_labels[j] = current_class_labels
         class_predictions[j] = current_class_predictions
 
-
-    class_counts = []
-
     for i in range(len(class_names)):
         TP_curr_class = []
         FP_curr_class = []
@@ -160,4 +157,4 @@ df_out['precision'] = precisions
 df_out['recall'] = recalls
 
 df_out.to_csv('metrics_142.csv', ',')
-        
+
