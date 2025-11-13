@@ -1,339 +1,334 @@
-﻿cl : command line  warning D9002: ignoring unknown option '/utf8'
-  ANN.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\ANN.cpp(51,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\ANN.cpp(52,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\ANN.cpp(53,2): warning C5033: 'register' is no longer a supported storage class
-  bd_fix_rad_search.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue_k.h(103,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/bd_fix_rad_search.cpp')
+﻿  cl : warning della riga di comando D9002 : l'opzione sconosciuta '/utf8' verrà ignorata
+  Evaluation.cpp
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/Evaluation.cpp')
   
-  bd_pr_search.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue.h(89,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/bd_pr_search.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/Evaluation.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue.h(91,5): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/bd_pr_search.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Evaluation.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue.h(108,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/bd_pr_search.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(46,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Evaluation.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue.h(109,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/bd_pr_search.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(47,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Evaluation.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue.h(110,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/bd_pr_search.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(48,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Evaluation.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue_k.h(103,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/bd_pr_search.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(49,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Evaluation.cpp')
   
-  bd_search.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue_k.h(103,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/bd_search.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(50,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Evaluation.cpp')
   
-  bd_tree.cpp
-  brute.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue_k.h(103,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/brute.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Evaluation.cpp')
   
-  kd_dump.cpp
-  kd_fix_rad_search.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue_k.h(103,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/kd_fix_rad_search.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Evaluation.cpp(40,23): warning C4244: 'inizializzazione': conversione da '__int64' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
+  (compilazione del file di origine 'src/Evaluation.cpp')
+      C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
+      il contesto di creazione dell'istanza del modello (prima il meno recente) è
+          C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
+          vedere il riferimento all'istanza 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' della funzione modello di cui è in corso la compilazione
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_fix_rad_search.cpp(150,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_fix_rad_search.cpp(151,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_fix_rad_search.cpp(152,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_fix_rad_search.cpp(153,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_fix_rad_search.cpp(154,2): warning C5033: 'register' is no longer a supported storage class
-  kd_pr_search.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue.h(89,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/kd_pr_search.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue.h(91,5): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/kd_pr_search.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue.h(108,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/kd_pr_search.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue.h(109,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/kd_pr_search.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue.h(110,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/kd_pr_search.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue_k.h(103,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/kd_pr_search.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_pr_search.cpp(183,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_pr_search.cpp(184,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_pr_search.cpp(185,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_pr_search.cpp(186,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_pr_search.cpp(187,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_pr_search.cpp(188,2): warning C5033: 'register' is no longer a supported storage class
-  kd_search.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\pr_queue_k.h(103,4): warning C5033: 'register' is no longer a supported storage class
-  (compiling source file 'src/ANN/kd_search.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_search.cpp(174,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_search.cpp(175,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_search.cpp(176,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_search.cpp(177,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_search.cpp(178,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_search.cpp(179,2): warning C5033: 'register' is no longer a supported storage class
-  kd_split.cpp
-  kd_tree.cpp
-  kd_util.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_util.cpp(130,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_util.cpp(131,2): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_util.cpp(133,7): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_util.cpp(241,3): warning C5033: 'register' is no longer a supported storage class
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\ANN\kd_util.cpp(242,3): warning C5033: 'register' is no longer a supported storage class
-  perf.cpp
-  Querying.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/Querying.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/Querying.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Querying.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(46,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Querying.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(47,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Querying.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(48,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Querying.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(49,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Querying.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(50,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Querying.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/Querying.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(27,20): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(60,26): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(61,28): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(62,33): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(63,36): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(64,30): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(65,31): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(66,34): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(519,47): warning C4244: 'argument': conversion from '_Ty' to '_Ty', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(519,47): warning C4244:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(519,47): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(519,47): warning C4244:             _Ty=double
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(519,47): warning C4244:         ]
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(519,47): warning C4244:         and
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(519,47): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(519,47): warning C4244:             _Ty=tinyobj::real_t
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Querying.cpp(519,47): warning C4244:         ]
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
-  (compiling source file 'src/Querying.cpp')
-      C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
-      the template instantiation context (the oldest one first) is
-          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
-          see reference to function template instantiation 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' being compiled
-  
-  Grid.cpp
-  ScalarAttributes.cpp
-  UnstructuredGrid.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/CodeFromProf/UnstructuredGrid.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/CodeFromProf/UnstructuredGrid.cpp')
-  
-  UnstructuredGrid3D.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/CodeFromProf/UnstructuredGrid3D.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/CodeFromProf/UnstructuredGrid3D.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid3D.cpp(51,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid3D.cpp(52,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid3D.cpp(53,11): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
   FeatureExtraction.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/FeatureExtraction.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/FeatureExtraction.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/FeatureExtraction.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(46,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/FeatureExtraction.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(46,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(47,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/FeatureExtraction.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(47,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(48,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/FeatureExtraction.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(48,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(49,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/FeatureExtraction.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(49,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(50,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/FeatureExtraction.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(50,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/FeatureExtraction.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(25,19): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(33,51): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(207,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(208,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(237,27): warning C4244: 'initializing': conversion from '_Ty' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(237,27): warning C4244:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(237,27): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(237,27): warning C4244:             _Ty=double
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(237,27): warning C4244:         ]
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(439,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(440,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(546,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(547,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(663,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(664,8): warning C4244: 'initializing': conversion from 'double' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(724,21): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
-  (compiling source file 'src/FeatureExtraction.cpp')
-      C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
-      the template instantiation context (the oldest one first) is
-          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
-          see reference to function template instantiation 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' being compiled
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(25,19): warning C4244: 'return': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(33,51): warning C4244: 'return': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(99,16): warning C4834: eliminazione in corso del valore restituito della funzione con attributo [[nodiscard]]
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(114,26): warning C4244: 'return': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(204,18): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(205,8): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(234,27): warning C4244: 'inizializzazione': conversione da '_Ty' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(234,27): warning C4244:         with
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(234,27): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(234,27): warning C4244:             _Ty=double
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(234,27): warning C4244:         ]
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(423,18): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(424,8): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(528,18): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(529,8): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(643,18): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(644,8): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(704,21): warning C4244: 'return': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
+      C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
+      il contesto di creazione dell'istanza del modello (prima il meno recente) è
+          C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
+          vedere il riferimento all'istanza 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' della funzione modello di cui è in corso la compilazione
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1006,55): warning C4244: 'argument': conversion from 'const double' to 'long', possible loss of data
-  (compiling source file 'src/FeatureExtraction.cpp')
-      C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1006,55):
-      the template instantiation context (the oldest one first) is
-          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(183,8):
-          see reference to function template instantiation 'bool matplotlibcpp::scatter<double,double>(const std::vector<double,std::allocator<double>> &,const std::vector<double,std::allocator<double>> &,const double,const std::map<std::string,std::string,std::less<std::string>,std::allocator<std::pair<const std::string,std::string>>> &)' being compiled
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1006,55): warning C4244: 'argomento': conversione da 'const double' a 'long'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/FeatureExtraction.cpp')
+      C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1006,55):
+      il contesto di creazione dell'istanza del modello (prima il meno recente) è
+          C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.cpp(182,8):
+          vedere il riferimento all'istanza 'bool matplotlibcpp::scatter<double,double>(const std::vector<double,std::allocator<double>> &,const std::vector<double,std::allocator<double>> &,const double,const std::map<std::string,std::string,std::less<std::string>,std::allocator<std::pair<const std::string,std::string>>> &)' della funzione modello di cui è in corso la compilazione
   
-  Compiling...
-  Refinement.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/Refinement.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/Refinement.cpp')
-  
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Refinement.cpp(188,20): warning C4305: 'initializing': truncation from 'double' to 'float'
-  Simplification.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Simplification.cpp(27,19): warning C4834: discarding return value of function with [[nodiscard]] attribute
   FileOrganizer.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/FileOrganizer.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/FileOrganizer.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/FileOrganizer.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/FileOrganizer.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FileOrganizer.cpp(162,96): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FileOrganizer.cpp(162,75): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FileOrganizer.cpp(165,24): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FileOrganizer.cpp(169,23): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FileOrganizer.cpp(162,96): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FileOrganizer.cpp(162,75): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FileOrganizer.cpp(165,24): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FileOrganizer.cpp(169,23): warning C4267: 'argomento': conversione da 'size_t' a 'int'. Possibile perdita di dati.
   Preprocessing.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/Preprocessing.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/Preprocessing.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/Preprocessing.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/Preprocessing.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(78,25): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(79,23): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(203,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(208,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(261,33): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(263,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(267,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(367,35): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(376,37): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(459,21): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\Preprocessing.cpp(658,19): warning C4834: discarding return value of function with [[nodiscard]] attribute
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
-  (compiling source file 'src/Preprocessing.cpp')
-      C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
-      the template instantiation context (the oldest one first) is
-          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
-          see reference to function template instantiation 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' being compiled
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Preprocessing.cpp')
   
-  Shader.cpp
-  Camera.cpp
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(46,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Preprocessing.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(47,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Preprocessing.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(48,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Preprocessing.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(49,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Preprocessing.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(50,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Preprocessing.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Preprocessing.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(78,25): warning C4267: '=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(79,23): warning C4267: '=': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(200,26): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(205,25): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(258,33): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(260,29): warning C4244: '=': conversione da 'float' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(264,29): warning C4244: '=': conversione da 'float' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(303,18): warning C4244: 'inizializzazione': conversione da 'int' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(307,30): warning C4244: 'inizializzazione': conversione da '_Ty' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(307,30): warning C4244:         with
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(307,30): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(307,30): warning C4244:             _Ty=int
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(307,30): warning C4244:         ]
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(371,33): warning C4244: 'inizializzazione': conversione da 'unsigned __int64' a 'double'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(490,21): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Preprocessing.cpp(690,19): warning C4834: eliminazione in corso del valore restituito della funzione con attributo [[nodiscard]]
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
+  (compilazione del file di origine 'src/Preprocessing.cpp')
+      C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
+      il contesto di creazione dell'istanza del modello (prima il meno recente) è
+          C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
+          vedere il riferimento all'istanza 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' della funzione modello di cui è in corso la compilazione
+  
+  Querying.cpp
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/Querying.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/Querying.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Querying.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(46,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Querying.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(47,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Querying.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(48,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Querying.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(49,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Querying.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(50,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Querying.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Querying.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(25,20): warning C4267: 'inizializzazione': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(58,26): warning C4244: '+=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(59,28): warning C4244: '+=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(60,33): warning C4244: '+=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(61,36): warning C4244: '+=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(62,30): warning C4244: '+=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(63,31): warning C4244: '+=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(64,34): warning C4244: '+=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(512,51): warning C4244: 'argomento': conversione da '_Ty' a '_Ty'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(512,51): warning C4244:         with
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(512,51): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(512,51): warning C4244:             _Ty=double
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(512,51): warning C4244:         ]
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(512,51): warning C4244:         and
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(512,51): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(512,51): warning C4244:             _Ty=tinyobj::real_t
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(512,51): warning C4244:         ]
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(533,47): warning C4244: 'argomento': conversione da '_Ty' a '_Ty'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(533,47): warning C4244:         with
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(533,47): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(533,47): warning C4244:             _Ty=double
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(533,47): warning C4244:         ]
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(533,47): warning C4244:         and
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(533,47): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(533,47): warning C4244:             _Ty=tinyobj::real_t
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Querying.cpp(533,47): warning C4244:         ]
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
+  (compilazione del file di origine 'src/Querying.cpp')
+      C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
+      il contesto di creazione dell'istanza del modello (prima il meno recente) è
+          C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
+          vedere il riferimento all'istanza 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' della funzione modello di cui è in corso la compilazione
+  
+  Simplification.cpp
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/Simplification.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/Simplification.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Simplification.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(46,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Simplification.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(47,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Simplification.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(48,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Simplification.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(49,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Simplification.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(50,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Simplification.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/Simplification.cpp')
+  
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Simplification.cpp(35,23): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\Simplification.cpp(36,22): warning C4244: 'inizializzazione': conversione da 'double' a 'int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
+  (compilazione del file di origine 'src/Simplification.cpp')
+      C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
+      il contesto di creazione dell'istanza del modello (prima il meno recente) è
+          C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
+          vedere il riferimento all'istanza 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' della funzione modello di cui è in corso la compilazione
+  
   application.cpp
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/application.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(23,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/application.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversion from 'size_t' to 'int', possible loss of data
-  (compiling source file 'src/application.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\CodeFromProf\UnstructuredGrid.h(26,27): warning C4267: 'return': conversione da 'size_t' a 'int'. Possibile perdita di dati.
+  (compilazione del file di origine 'src/application.cpp')
   
-C:\Program Files (x86)\Windows Kits\10\Include\10.0.26100.0\shared\minwindef.h(130,9): warning C4005: 'APIENTRY': macro redefinition
-  (compiling source file 'src/application.cpp')
-      C:\Users\Dom\Documents\GitHub\MMR_Project\Dependencies\GLFW\include\GLFW\glfw3.h(123,11):
-      see previous definition of 'APIENTRY'
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/application.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(45,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/application.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(46,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/application.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(46,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/application.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(47,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/application.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(47,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/application.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(48,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/application.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(48,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/application.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(49,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/application.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(49,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/application.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(50,16): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/application.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(50,16): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/application.cpp')
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'inizializzazione': troncamento da 'double' a 'float'
+  (compilazione del file di origine 'src/application.cpp')
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\FeatureExtraction.h(53,17): warning C4305: 'initializing': truncation from 'double' to 'float'
-  (compiling source file 'src/application.cpp')
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\shared\minwindef.h(130,9): warning C4005: 'APIENTRY': ridefinizione macro
+  (compilazione del file di origine 'src/application.cpp')
+      C:\Users\leonp\Uni\Courses\MMR\MMR_Project\Dependencies\GLFW\include\GLFW\glfw3.h(123,11):
+      vedi la precedente definizione di 'APIENTRY'
   
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(107,28): warning C4267: '=': conversion from 'size_t' to 'unsigned int', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(299,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(300,23): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\application.cpp(312,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversion from 'size_t' to '_Ty', possible loss of data
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
-C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
-  (compiling source file 'src/application.cpp')
-      C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
-      the template instantiation context (the oldest one first) is
-          C:\Users\Dom\Documents\GitHub\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
-          see reference to function template instantiation 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' being compiled
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\application.cpp(108,28): warning C4267: '=': conversione da 'size_t' a 'unsigned int'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\application.cpp(287,125): warning C4305: 'argomento': troncamento da 'double' a 'float'
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\application.cpp(307,24): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\application.cpp(308,23): warning C4244: 'inizializzazione': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\application.cpp(320,34): warning C4244: '=': conversione da 'double' a 'float'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244: '=': conversione da 'size_t' a '_Ty'. Possibile perdita di dati.
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         with
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         [
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:             _Ty=double
+C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48): warning C4244:         ]
+  (compilazione del file di origine 'src/application.cpp')
+      C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(1813,48):
+      il contesto di creazione dell'istanza del modello (prima il meno recente) è
+          C:\Users\leonp\Uni\Courses\MMR\MMR_Project\MMR_Project\src\matplotlibcpp.h(2877,12):
+          vedere il riferimento all'istanza 'bool matplotlibcpp::plot<double>(const std::vector<double,std::allocator<double>> &,const std::string &)' della funzione modello di cui è in corso la compilazione
   
-LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
-  Generating code
-  210 of 2745 functions ( 7.7%) were compiled, the rest were copied from previous compilation.
-    110 functions were new in current compilation
-    116 functions had inline decision re-evaluated but remain unchanged
-  Finished generating code
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\vc120.pdb'; linking object as if no debug info
-  MMR_Project.vcxproj -> C:\Users\Dom\Documents\GitHub\MMR_Project\x64\Release\MMR_Project.exe
-  'pwsh.exe' is not recognized as an internal or external command,
-  operable program or batch file.
+LINK : warning LNK4098: la libreria predefinita 'LIBCMT' è in conflitto con l'utilizzo di altre librerie; usare /NODEFAULTLIB:libreria
+  Generazione codice in corso...
+  6 of 2742 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    32 functions had inline decision re-evaluated but remain unchanged
+  Generazione codice terminata
+glew32s.lib(glew.obj) : warning LNK4099: impossibile trovare il PDB '' con 'glew32s.lib(glew.obj)' o in ''; oggetto collegato senza informazioni di debug
+  MMR_Project.vcxproj -> C:\Users\leonp\Uni\Courses\MMR\MMR_Project\x64\Release\MMR_Project.exe

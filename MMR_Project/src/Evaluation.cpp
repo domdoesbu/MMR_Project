@@ -1,9 +1,7 @@
 #include "Evaluation.h"
 namespace fs = filesystem;
 
-void Evaluation::EvaluateDatabase(string databasePath, int k) {
-
-	// I think accuracy is the best choice since it ignores the query size but im gonna do p/r as well for now
+void Evaluation::EvaluateDatabase(string databasePath, int k, std::string csvPath) {
 
 	// for every shape in the database, query it
 	// Compute the measurement value
@@ -21,8 +19,11 @@ void Evaluation::EvaluateDatabase(string databasePath, int k) {
     FileOrganizer fo;
     Querying q;
 
-    std::ofstream csv("evaluation_results.csv");
-    csv << "query,accuracy,precision,recall,f1\n";
+
+    std::fstream csv;
+    
+    csv.open(csvPath, std::ios::out | std::ios::app);
+    csv << "query,accuracy,precision,recall,f1, r1, r2, r3, r4, r5, r6\n";
 
     int databaseSize = fo.DatabaseSize("feature_extraction_complete_normalized.csv");
 
@@ -51,8 +52,10 @@ void Evaluation::EvaluateDatabase(string databasePath, int k) {
             if (!fs::is_regular_file(file)) continue;
 
             std::string currentFile = file.path().filename().string();
-
-            auto resultsAll = q.ExecuteQueryANN(file.path().string(), databasePath, k);
+            std::cout << currentFile << std::endl;
+            
+            std::string path = databasePath + className + "/" + currentFile;
+            auto resultsAll = q.ExecuteQuery(path, databasePath, k, 1, true);
             std::vector<std::string> labels = resultsAll.first;
 
             int TP = 0;
@@ -83,7 +86,12 @@ void Evaluation::EvaluateDatabase(string databasePath, int k) {
             totalRecall += recall;
             totalF1 += f1;
             totalQueries++;
-            csv << currentFile << "," << accuracy << "," << precision << "," << recall << "," << f1 << "\n";
+            csv << file.path().string() << "," << accuracy << "," << precision << "," << recall << "," << f1;
+            for (int i = 0; i < labels.size(); ++i) 
+            {
+                csv << "," << labels[i];
+            }
+            csv << "\n";
         }
     }
 

@@ -151,6 +151,8 @@
     <ClCompile Include="src\ANN\kd_tree.cpp" />
     <ClCompile Include="src\ANN\kd_util.cpp" />
     <ClCompile Include="src\ANN\perf.cpp" />
+    <ClCompile Include="src\CodeFromProf\MeshDecimator.cpp" />
+    <ClCompile Include="src\Evaluation.cpp" />
     <ClCompile Include="src\Querying.cpp" />
     <ClCompile Include="src\CodeFromProf\Grid.cpp" />
     <ClCompile Include="src\CodeFromProf\ScalarAttributes.cpp" />
@@ -173,6 +175,7 @@
     <None Include="res\shaders\Vertex.shader" />
     <None Include="res\shaders\wireframeFragment.shader" />
     <None Include="src\ANN\Makefile" />
+    <None Include="src\CodeFromProf\mdVector.inl" />
     <None Include="src\CodeFromProf\UnstructuredGrid.h~" />
     <None Include="src\CodeFromProf\UnstructuredGrid3D.h~" />
     <None Include="src\MMRLibrary\include\UnstructuredGrid.h~" />
@@ -190,6 +193,10 @@
     <ClInclude Include="src\ANN\kd_util.h" />
     <ClInclude Include="src\ANN\pr_queue.h" />
     <ClInclude Include="src\ANN\pr_queue_k.h" />
+    <ClInclude Include="src\CodeFromProf\mdSArray.h" />
+    <ClInclude Include="src\CodeFromProf\mdVector.h" />
+    <ClInclude Include="src\CodeFromProf\MeshDecimator.h" />
+    <ClInclude Include="src\Evaluation.h" />
     <ClInclude Include="src\Querying.h" />
     <ClInclude Include="src\CodeFromProf\Grid.h" />
     <ClInclude Include="src\CodeFromProf\Point3d.h" />

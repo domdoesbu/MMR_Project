@@ -5,7 +5,7 @@
 *.slo
 *.lo
 *.o
-*.obj
+#*.obj
 
 # Precompiled Headers
 *.gch
@@ -28,7 +28,7 @@
 *.exe
 *.out
 *.app
-*.csv
+#*.csv
 .vs/
 
 Dependencies/MeshLib/app/Debug/meshlib/mrmeshpy.pyd
@@ -48,11 +48,12 @@ MMR_Project/x64/Debug/MRMesh.ilk
 MMR_Project/x64/Debug/MRViewer.ilk
 MMR_Project/x64/Debug/MRVoxels.ilk
 MMR_Project/x64/Release/meshlib/mrmeshpy.pyd
-MMR_Project/ConvexHulls/*
+#MMR_Project/ConvexHulls/*
 x64/Debug/meshlib/mrmeshpy.pyd
 x64/Debug/MeshLibC2.ilk
 x64/Debug/MRMesh.ilk
 x64/Debug/MRViewer.ilk
 x64/Debug/MRVoxels.ilk
 x64/Release/meshlib/mrmeshpy.pyd
-MMR_Project/MMR_Project/ResampledDatabase
+#MMR_Project/MMR_Project/ResampledDatabase
+#/MMR_Project/ConvexHulls

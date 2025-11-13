@@ -727,10 +727,7 @@ namespace MeshDecimation
 			if (qem < 0.0) qem = 0.0;
 			else           qem = sqrt(qem) * invDiag;
 		}
-        std::cout << "Vertices: " << m_nVertices << std::endl;
-        std::cout << "Target: " << targetNVertices << std::endl;
-        std::cout << "m_nEdges: " << m_nEdges << std::endl;
-        std::cout << "Priority queue: " << m_pqueue.size() << std::endl;
+
 
         if (m_callBack)
         {

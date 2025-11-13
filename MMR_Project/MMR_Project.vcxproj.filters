@@ -96,6 +96,12 @@
     <ClCompile Include="src\ANN\perf.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Evaluation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\CodeFromProf\MeshDecimator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\Basic.shader" />
@@ -111,6 +117,9 @@
     <None Include="res\shaders\text_vertex_shader.shader" />
     <None Include="res\shaders\text_fragment_shader.shader" />
     <None Include="src\ANN\Makefile" />
+    <None Include="src\CodeFromProf\mdVector.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h">
@@ -240,6 +249,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ANN\pr_queue_k.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Evaluation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\mdSArray.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\mdVector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\CodeFromProf\MeshDecimator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

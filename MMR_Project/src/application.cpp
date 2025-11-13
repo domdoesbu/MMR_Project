@@ -225,51 +225,52 @@ int main(void)
     Preprocessing prep;
     Querying q;
     Evaluation e;
-    //std::string databsePath = "./ShapeDatabaseFixed/";
-    std::string databsePath = "./test_objs/";
+
+    std::string databsePath = "./DatabaseOriginal/";
     std::string databsePathResampled = "./ResampledDatabase/";
 
-    /*
-        DO NOT UNCOMMENT!!!!!!!
-        WE HAVE STATS FOR THE WHOLE DATABASE NOW AND IF YOU UNCOMMENT I HAVE TO RERUN THE WHOLE DATABASEEEEEE
-    */
+    // ---------------------------------------------------------------------------------
+    //                  DATABASE SETUP: run to process a new database
+    // ---------------------------------------------------------------------------------
 
     //std::cout << "--- PREPROCESSING ---" << std::endl;
 
-    CSVSetup("./shape_analysis.csv", databsePath);
+    //CSVSetup("./shape_analysis.csv", databsePath);
 
-    // Remeshing
-    std::cout << "--- REMESHING ---" << std::endl;
+    //// Remeshing
+    //std::cout << "--- REMESHING ---" << std::endl;
 
     //prep.Resampling(databsePath, databsePathResampled);
-    
-    std::cout << "--- REMESHING END---" << std::endl;
+    //
+    //std::cout << "--- REMESHING END---" << std::endl;
 
-    CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
+    //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
-    // -------------------------------------------------------------------------------
-    // PREPROCESSING
+    //// -------------------------------------------------------------------------------
+    //// PREPROCESSING
     //std::cout << "--- PREPROCESSING START ---" << std::endl;
 
     //prep.NormalizeDatabase(databsePathResampled);
     //CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
     //std::cout << "--- PREPROCESSING END ---" << std::endl;
-    // -------------------------------------------------------------------------------
-    // FEATURE EXTRACTION
-    fe.ExtractFeaturesOthers(databsePathResampled);
+    //// -------------------------------------------------------------------------------
+    //// FEATURE EXTRACTION
+    //fe.ExtractFeaturesOthers(databsePathResampled);
     //fe.ExtractFeaturesAtoD(databsePathResampled);
-    
-    q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
+    //
+    //q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
 
-    // --------------------------------------------------------------------------------- 
+    //// --------------------------------------------------------------------------------- 
+    //// Evaluate Queries over whole database with query size = 142
+    //int maxK = 142;
+    //e.EvaluateDatabase(databsePathResampled, maxK, "evaluation_results_142.csv");
 
-    e.EvaluateDatabase(databsePath, 3);
+    // ---------------------------------------------------------------------------------
+    //                              END OF DATABASE SETUP
+    // ---------------------------------------------------------------------------------
 
-
-    //prep.DatabaseStatistics("shape_analysis_resamp_norm.csv");
     std::cout << "Specify path for the desired object:" << std::endl;
-    //fe.NormProof(databsePath, "shape_analysis.csv");
-    //fe.NormProof(databsePathResampled, "shape_analysis_resamp_norm.csv");
+
     std::string userInput;
     std::cin >> userInput;
     std::string inputFile = userInput;
@@ -281,21 +282,24 @@ int main(void)
         return -1;
     }
 
-    std::pair<std::vector<std::string>, std::vector<float>> resultsAll= q.ExecuteQueryANN(inputFile, databsePathResampled, 3);
+    // Uncomment next line and comment 281 to execute query with ANN
+    // std::pair<std::vector<std::string>, std::vector<float>> resultsAll= q.ExecuteQueryANN(inputFile, databsePathResampled, 3);
+
+    // last parameter -> false for Manhattan dist, true for Euclidean dist
+    std::pair<std::vector<std::string>, std::vector<float>> resultsAll = q.ExecuteQuery(inputFile, databsePathResampled, 6, 0.05, false);
     std::vector<std::string> queryResults = resultsAll.first;
     std::vector<float> distances = resultsAll.second;
     
     std::vector<Mesh> meshes;
     meshes.push_back(createMesh(positions, indices));
-
     
-    /*for (auto& path : queryResults) {
+    for (auto& path : queryResults) {
         positions.clear();
         indices.clear();
         if (fo.LoadObj(path.c_str(), positions, indices)) {
             meshes.push_back(createMesh(positions, indices));
         }
-    }*/
+    }
 
     Shader wireframeShader("res/shaders/Vertex.shader", "res/shaders/wireframeFragment.shader");
     Shader solidShader("res/shaders/Vertex.shader", "res/shaders/Fragment.shader");
@@ -345,29 +349,37 @@ int main(void)
 
             glUniformMatrix4fv(glGetUniformLocation(solidShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
             glBindVertexArray(m.vao);
+            
             glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, nullptr);
-
             if (drawWireframe) {
+                glEnable(GL_POLYGON_OFFSET_LINE);
+                glPolygonOffset(-1.0f, -1.0f);
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                glLineWidth(1.0f);
                 wireframeShader.use();
                 glUniformMatrix4fv(glGetUniformLocation(wireframeShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+                glUniformMatrix4fv(glGetUniformLocation(wireframeShader.ID, "view"), 1, GL_FALSE, glm::value_ptr(viewMatrix));
+                glUniformMatrix4fv(glGetUniformLocation(wireframeShader.ID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+                glUniform3f(glGetUniformLocation(wireframeShader.ID, "wireColor"), 0.0f, 0.0f, 0.0f);
                 glBindVertexArray(m.vao);
                 glDrawElements(GL_TRIANGLES, m.indexCount, GL_UNSIGNED_INT, nullptr);
                 solidShader.use();
             }
-
+           
+                
             glm::vec3 meshCenter = glm::vec3(model * glm::vec4(0, 0, 0, 1));
             glm::vec3 screenPos = glm::project(meshCenter, camera.GetViewMatrix(), camera.GetProjectionMatrix(),
                 glm::vec4(0, 0, windowWidth, windowHeight));
             screenPos.y -= 100.0f;
             screenPos.x -= 100.0f;
-            //if (i == 0) {
-            //    textShader.use();
-            //    glDisable(GL_DEPTH_TEST);
-            //    drawText("Queried Shape", screenPos.x, screenPos.y - 20.0f, windowWidth, windowHeight, textShader);
-            //    drawText(inputFile, screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File Name
-            //    glEnable(GL_DEPTH_TEST);
-            //    solidShader.use();
-            //}
+            if (i == 0) {
+                textShader.use();
+                glDisable(GL_DEPTH_TEST);
+                drawText("Queried Shape", screenPos.x, screenPos.y - 20.0f, windowWidth, windowHeight, textShader);
+                drawText(inputFile, screenPos.x, screenPos.y, windowWidth, windowHeight, textShader); // File Name
+                glEnable(GL_DEPTH_TEST);
+                solidShader.use();
+            }
 
             if (i > 0 && i - 1 < queryResults.size()) {
                 textShader.use();
@@ -377,9 +389,11 @@ int main(void)
                 glEnable(GL_DEPTH_TEST);
                 solidShader.use();
             }
+            
         }
 
         if (reloadMesh) {
+            drawWireframe = false;
             reloadMesh = false;
             std::cout << "Enter new mesh path: ";
             std::string newPath;

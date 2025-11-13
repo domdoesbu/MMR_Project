@@ -190,6 +190,6 @@ void Refinement::Refine(std::string& inputFile, std::string& outputFile) {
         avg_area = computeAverageCell(grid);
         subdivide(grid, grid2, avg_area * fraction);
     }
-        
+   
 	fo.WriteObjGrid(outputFile.c_str(), grid);
 }

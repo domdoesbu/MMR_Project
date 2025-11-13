@@ -89,7 +89,6 @@ void Preprocessing::AnalyzeShape(std::filesystem::path filename, shapeInfo & out
 void Preprocessing::AnalyzeShapes(const std::string& databasePath, const std::string& outputCsv)
 {
     // Excel file for all the data
-    
 
     // Check if database actually exists
     if (!fs::exists(databasePath) || !fs::is_directory(databasePath)) {
@@ -133,7 +132,7 @@ void Preprocessing::AnalyzeShapes(const std::string& databasePath, const std::st
 
 void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     /*
-    2.2: Statisitcs
+    2.2: Statistics
         1. Average shape in the database (in terms of number of vertices and faces)
         2. Significant Outliers from the average
         3. Show as a hisogram counting how many shapes in the database for every range of possible interest
@@ -155,7 +154,6 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
 	std::unordered_map<std::string, int> classNames;
     std::string line;
     
-       
     int currentClassCount = 0;
     // Skip header
     std::vector<std::string> classHist;
@@ -181,7 +179,6 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
 		vertexVals.push_back(info.vertexNum);
         shapes.push_back(info);
     }
-   
     
     if (shapes.empty()) {
         std::cerr << "No shape data found in file." << std::endl;
@@ -338,53 +335,49 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
     fs::path sourcePath = source;
     fs::path targetParent = target;
     std::string databasePath = sourcePath.string();
-    int resmapledCount = 0;
+
+    std::string className = "";
+    fs::path fullTargetPath = "";
+    std::string fullFilePath = "";
+    std::string currentFile = "";
+    std::string path = "";
+    glm::vec3 barycenter;
+    Simplification simp;
+	Refinement ref;
+
     for (const auto& classDir : fs::directory_iterator(databasePath)) {
         if (!fs::is_directory(classDir)) continue;
-        std::string className = classDir.path().filename().string();
-        fs::path fullTargetPath = targetParent.string() + className + "/";
+        className = classDir.path().filename().string();
+        fullTargetPath = targetParent.string() + className + "/";
         fs::create_directories(fullTargetPath);
         // For each obj in the folder, get the information about it
-        Simplification simp;
-		Refinement ref;
+        
         for (const auto& file : fs::directory_iterator(classDir)) {
 
             positions.clear();
             indices.clear();
-            std::string currentFile = file.path().filename().string();
-            std::string fullFilePath = classDir.path().string() + "/" + currentFile;
+            currentFile = file.path().filename().string();
+            fullFilePath = classDir.path().string() + "/" + currentFile;
             if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
             {
                 std::cerr << "Failed to load obj" << std::endl;
                 return -1;
             }
-            glm::vec3 barycenter = ComputeBarycenter(positions);
-            //OrientNormalsOutward(positions, indices, barycenter);
+            barycenter = ComputeBarycenter(positions);
+            OrientNormalsOutward(positions, indices, barycenter);
 
-            /*MeshData data;
-            data.positions = positions;
-            data.indices = indices;
-            fo.WriteNewObj(fullFilePath, data);*/
-           // CheckHoles(fullFilePath);
-            if (positions.size() / 6 < 5000) { // Refinement
-
-                std::string path = fullTargetPath.string() + file.path().filename().string();
+            path = fullTargetPath.string() + file.path().filename().string();
+            CheckHoles(fullFilePath, path);
+            double positionSize = positions.size() / 6;
+            if (positionSize < 5000) { // Refinement
                 std::cout << "Refinement :: " << path << std::endl;
-                int maxEdgeSplits = 5000 - (positions.size()/6);
-				ref.Refine(fullFilePath, path);
-				resmapledCount++;
+				 ref.Refine(fullFilePath, path);
             }
-            else if (positions.size() / 6 > 10000) { //Simplification
-
-                std::string path = fullTargetPath.string() + file.path().filename().string();
+            else if (positionSize > 10000) { //Simplification
                 std::cout << "Simplification :: " << path << std::endl;
-
-                int maxDeletedVerts = (positions.size() / 6) - 9000;
                 simp.Simplify(fullFilePath, path);
-				resmapledCount++;
             }
             else {
-
                 fs::copy(fullFilePath, fullTargetPath, fs::copy_options::overwrite_existing);
             }
         }
@@ -401,7 +394,6 @@ glm::vec3 Preprocessing::ComputeBarycenter(std::vector<float> positions)
         glm::vec3 v2(positions[i + 6], positions[i + 7], positions[i + 8]);
         glm::vec3 v3(positions[i + 12], positions[i + 13], positions[i + 14]);
         glm::vec3 localBarycenter(0.0f);
-        //glm::vec3 localBarycenter = (v1 + v2 + v3) / 3.0f;
         localBarycenter.x = (positions[i + 0] + positions[i + 6 + 0] + positions[i + 12 + 0]) / 3.0f;
         localBarycenter.y = (positions[i + 1] + positions[i + 6 + 1] + positions[i + 12 + 1]) / 3.0f;
         localBarycenter.z = (positions[i + 2] + positions[i + 6 + 2] + positions[i + 12 + 2]) / 3.0f;
@@ -412,9 +404,6 @@ glm::vec3 Preprocessing::ComputeBarycenter(std::vector<float> positions)
         glm::vec3 cross = glm::cross(e1, e2);
 
         float localArea = glm::length(cross) * 0.5f; // triangle area
-
-        // sum (x * area)
-        // / sum area
 
         sumOfAreas += localArea;
         barycenter += localBarycenter * localArea;
@@ -430,37 +419,73 @@ glm::vec3 Preprocessing::ComputeBarycenter(std::vector<float> positions)
 
 std::vector<float> Preprocessing::NormalizeScale(std::vector<float> positions, std::filesystem::path filename)
 {
-    // we need to scale the positions to fit into a 1:1 unit cube
-    // use formula y = x / maxcoord where x is the vertex position, to get new vertex position y. i.e. newMaxcoord = maxcoord / maxcoord = 1
-    // MaxCoord needs to be the highest among the maxCoord numbers for every axis so that the object will fit into a 1:1 unit cube 
-    // without stretching and changing proportions
+    if (positions.empty()) return positions;
 
-    shapeInfo sInfo;
-    AnalyzeShape(filename, sInfo);
-
-    // Find the largest absolute coordinate value
-    float maxAbsCoord = std::max({
-        std::abs(sInfo.maxX), std::abs(sInfo.minX),
-        std::abs(sInfo.maxY), std::abs(sInfo.minY),
-        std::abs(sInfo.maxZ), std::abs(sInfo.minZ)
-        });
-
-    // Compute scale so that maxAbsCoord maps to 0.5
-    float scale = 0.5f / maxAbsCoord;
-
-    std::vector<float> scaledPositions = positions;
-    for (size_t i = 0; i < positions.size(); i += 6) // 6 floats per vertex: pos(3) + normal(3)
-    {
-        scaledPositions[i] = positions[i] * scale;
-        scaledPositions[i + 1] = positions[i + 1] * scale;
-        scaledPositions[i + 2] = positions[i + 2] * scale;
-        // normals untouched
+    // Make sure the positions length is a multiple of 6 (pos3 + normal3)
+    if (positions.size() % 6 != 0) {
+        std::cerr << "Warning: positions.size() not divisible by 6: "
+            << positions.size() << std::endl;
     }
 
-    return scaledPositions;
+    float minX = FLT_MAX, maxX = -FLT_MAX;
+    float minY = FLT_MAX, maxY = -FLT_MAX;
+    float minZ = FLT_MAX, maxZ = -FLT_MAX;
+
+    for (size_t i = 0; i + 2 < positions.size(); i += 6)
+    {
+        float x = positions[i];
+        float y = positions[i + 1];
+        float z = positions[i + 2];
+        if (x < minX) minX = x;
+        if (x > maxX) maxX = x;
+        if (y < minY) minY = y;
+        if (y > maxY) maxY = y;
+        if (z < minZ) minZ = z;
+        if (z > maxZ) maxZ = z;
+    }
+
+    float maxAbsCoord = std::max({
+        std::abs(maxX), std::abs(minX),
+        std::abs(maxY), std::abs(minY),
+        std::abs(maxZ), std::abs(minZ)
+        });
+
+    if (maxAbsCoord <= 0.0f) {
+        std::cerr << "Warning: maxAbsCoord <= 0, skipping scale." << std::endl;
+        return positions;
+    }
+
+    float extentX = maxX - minX;
+    float extentY = maxY - minY;
+    float extentZ = maxZ - minZ;
+
+    // Find the largest dimension (the diameter)
+    float maxExtent = std::max({ extentX, extentY, extentZ });
+    if (maxExtent <= 0.0f) {
+        std::cerr << "Warning: maxExtent <= 0, skipping scale." << std::endl;
+        return positions;
+    }
+
+    // Compute center of the bounding box
+    float centerX = (maxX + minX) * 0.5f;
+    float centerY = (maxY + minY) * 0.5f;
+    float centerZ = (maxZ + minZ) * 0.5f;
+
+    // Scale so the largest diameter becomes exactly 1
+    float scale = 1.0f / maxExtent;
+
+    // Normalize: center + scale
+    for (size_t i = 0; i + 2 < positions.size(); i += 6) {
+        positions[i] = (positions[i] - centerX) * scale;
+        positions[i + 1] = (positions[i + 1] - centerY) * scale;
+        positions[i + 2] = (positions[i + 2] - centerZ) * scale;
+        // normals unchanged
+    }
+
+    return positions;
 }
 
-Eigen::Vector3f Preprocessing::NormalizeAlign(std::vector<float> &positions, int stride = 6, int posOffset = 0) {
+std::pair<Eigen::Vector3f, std::vector<float>>  Preprocessing::NormalizeAlign(std::vector<float> positions, int stride = 6, int posOffset = 0) {
     
     int vertexCount = positions.size() / stride;
     // 1. Calculate the covariance matrix
@@ -490,7 +515,7 @@ Eigen::Vector3f Preprocessing::NormalizeAlign(std::vector<float> &positions, int
 	Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> solver(covariance);
 	if (solver.info() != Eigen::Success) {
 		std::cerr << "Eigen decomposition failed!" << std::endl;
-		return Eigen::Vector3f::Zero();
+        return { Eigen::Vector3f::Zero(), positions };
 	}
 
 	Eigen::Vector3f eigVals = solver.eigenvalues();
@@ -530,10 +555,10 @@ Eigen::Vector3f Preprocessing::NormalizeAlign(std::vector<float> &positions, int
 		positions[idx + 2] = pRotated.z();
     }
 	
-    return eigVals;
+    return { eigVals, positions };
 }
 
-void Preprocessing::NormalizeFlipping(std::vector<float>& positions, std::vector<unsigned int>& indices, int stride, int posOffset) 
+std::vector<float> Preprocessing::NormalizeFlipping(std::vector<float> positions, std::vector<unsigned int>& indices, int stride, int posOffset) 
 {
     // fi = sum sign(Ct,i)(Ct,i)^2
     // Ct, i = coordinate of the center of traingfle t
@@ -574,6 +599,7 @@ void Preprocessing::NormalizeFlipping(std::vector<float>& positions, std::vector
             }
         }
     }
+    return positions;
 }
 
 void Preprocessing::OrientNormalsOutward(std::vector<float>& positions,
@@ -644,7 +670,7 @@ void Preprocessing::OrientNormalsOutward(std::vector<float>& positions,
     }
 }
 
-void Preprocessing::CheckHoles(const std::string& filename) {
+void Preprocessing::CheckHoles(const std::string& filename, const std::string& fileLocation) {
     auto mesh = MR::MeshLoad::fromAnySupportedFormat(filename);
     if (!mesh)
     {
@@ -657,20 +683,21 @@ void Preprocessing::CheckHoles(const std::string& filename) {
 
     for (MR::EdgeId e : holeEdges) {
         MR::FillHoleParams params;
-        params.metric = MR::getUniversalMetric(*mesh);   // <-- dereference
-        MR::fillHole(*mesh, e, params);                  // <-- dereference
+        params.metric = MR::getUniversalMetric(*mesh);
+        MR::fillHole(*mesh, e, params);               
     }
 
-    MR::MeshSave::toAnySupportedFormat(*mesh, filename);  // <-- dereference
+    MR::MeshSave::toAnySupportedFormat(*mesh, fileLocation);
 }
 
 void Preprocessing::NormalizeDatabase(std::string& databasePath) {
-
+    MeshData data;
     FileOrganizer fo;
     fs::path sourcePath = databasePath;
     std::vector<float> positions;
     std::vector<unsigned int> indices;
     std::vector<glm::vec3> barycenters;
+    std::vector <glm::vec3> barycentersAfter;
     std::vector<Eigen::Vector3f> eigenValues;
     for (const auto& classDir : fs::directory_iterator(sourcePath)) {
         if (!fs::is_directory(classDir)) continue;
@@ -694,26 +721,45 @@ void Preprocessing::NormalizeDatabase(std::string& databasePath) {
                 positions[i + 1] -= barycenter.y;
                 positions[i + 2] -= barycenter.z;
             }
-
-            // Pose
-            Eigen::Vector3f eigVals = NormalizeAlign(positions, 6, 0);
+            data.positions = positions;
+            data.indices = indices;
+            fo.WriteNewObj(fullFilePath, data);
+            
+            std::pair<Eigen::Vector3f, std::vector<float>> results = NormalizeAlign(positions, 6, 0);
+            Eigen::Vector3f eigVals = results.first;
+            positions = results.second;
             eigenValues.push_back(eigVals);
-
-
-            // Flipping
-            NormalizeFlipping(positions, indices, 6, 0);
-
-            // Size
-            positions = NormalizeScale(positions, fullFilePath);
-           
-            MeshData data;
             data.positions = positions;
             data.indices = indices;
             fo.WriteNewObj(fullFilePath, data);
 
+            // Flipping
+            positions = NormalizeFlipping(positions, indices, 6, 0);
+            
+            data.positions = positions;
+            data.indices = indices;
+            fo.WriteNewObj(fullFilePath, data);
+            // Size
+            positions = NormalizeScale(positions, fullFilePath);
+            // Pose
+            data.positions = positions;
+            data.indices = indices;
+            fo.WriteNewObj(fullFilePath, data);
+
+            positions.clear();
+            indices.clear();
+            if (!fo.LoadObj(fullFilePath.c_str(), positions, indices))
+            {
+                std::cerr << "Failed to load obj" << std::endl;
+
+            }
+            glm::vec3 barycenter2 = ComputeBarycenter(positions);
+            barycentersAfter.push_back(barycenter2);
+            
         }
     }
     fo.WriteCSVAfterNorm(databasePath, "Bary_Eigs.csv", barycenters, eigenValues);
+    fo.WriteCSVAfterNorm(databasePath, "Bary_Eigs_AfterNorm.csv", barycentersAfter, eigenValues);
 }
 
 

@@ -193,7 +193,7 @@ void FileOrganizer::WriteNewObj(std::string destinationFilename, MeshData result
             unsigned int i0 = results.indices[i + 0] + 1;
             unsigned int i1 = results.indices[i + 1] + 1;
             unsigned int i2 = results.indices[i + 2] + 1;
-            // If you want normals: use format "f v1//n1 v2//n2 v3//n3"
+            
             out << "f " << i0 << "//" << i0 << " "
                 << i1 << "//" << i1 << " "
                 << i2 << "//" << i2 << "\n";
@@ -240,8 +240,6 @@ shapeInfo FileOrganizer::getShapeFromDatabase(std::string csvFilename, std::stri
         return outInfo;
     }
     std::string line;
-
-    
 
     while (std::getline(csvFile, line)) {
         std::istringstream iss(line);
@@ -299,7 +297,6 @@ baryAndEigInfo FileOrganizer::getBaryAndEigFromCSV(std::string csvFilename, std:
 void FileOrganizer::WriteCSVAfterNorm(std::filesystem::path databasePath, std::string csvFilename,std::vector<glm::vec3> barycenter, std::vector<Eigen::Vector3f> eigVals )
 {
     // Excel file for all the data
-
 
     // Check if database actually exists
     if (!fs::exists(databasePath) || !fs::is_directory(databasePath)) {
@@ -468,7 +465,7 @@ void FileOrganizer::WriteCSVD3(std::filesystem::path databasePath, std::string c
     csvFile.close();
 }
 
-int FileOrganizer::DatabaseSize(string csvFileName) {
+int FileOrganizer::DatabaseSize(std::string csvFileName) {
     std::ifstream csvFile(csvFileName);
     if (!csvFile.is_open()) {
         std::cerr << "Failed to open input CSV file: " << csvFileName << std::endl;

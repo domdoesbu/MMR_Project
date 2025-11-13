@@ -10,5 +10,5 @@ class Evaluation {
 
 public:
 	Evaluation() {};
-	void EvaluateDatabase(string databasePath, int k);
+	void EvaluateDatabase(string databasePath, int k, std::string csvPath);
 };

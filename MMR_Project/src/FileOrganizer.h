@@ -75,6 +75,6 @@ public:
 		std::vector<std::vector<double>> d4);
 	void WriteCSVD3(std::filesystem::path databasePath, std::string csvFilename,
 		std::vector<std::vector<float>> bins, std::vector<std::vector<float>> counts);
-	int DatabaseSize(string csvFile);
+	int DatabaseSize(std::string csvFile);
 };
 
