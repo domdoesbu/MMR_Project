@@ -117,14 +117,8 @@ float FeatureExtraction::GenerateConvexHull(std::string filename, std::string ou
 float FeatureExtraction::Convexity(std::vector<float>& positions, glm::vec3 barycenter, std::string filename, std::string filePath)
 {
 	// Generate the convex hull mesh using MeshLib
-	std::string chPath = "./ConvexHulls/" + filename; // I dont like how Im saving these and loading them, feels like a waste of time
-	//std::vector<float> chPositions = GenerateConvexHull(filePath, "./ConvexHulls/" + filename);
+	std::string chPath = "./ConvexHulls/" + filename;
 	float chVolume = GenerateConvexHull(filePath, "./ConvexHulls/" + filename);
-	FileOrganizer fo;
-	//std::vector<unsigned int> chIndices;
-	//fo.LoadObj(chPath.c_str(), chPositions, chIndices);
-
-	//float chVolume = Volume(chPositions);
 
 	// compute the volume of the shape
 	float shapeVolume = Volume(positions);
@@ -200,10 +194,8 @@ void FeatureExtraction::ExtractA3Features(std::string& classPath) {
 	plt::save(outputFile.string());
 
 	std::cout << "Saved A3 plot to: " << outputFile.string() << std::endl;
-
-	// Optional: clear the figure
-	plt::clf();
 }
+
 std::pair< std::vector<double>, std::vector<double>>  FeatureExtraction::A3(std::vector<float>& positions, int samples, int bins)
 {
 	// Pick 3 random points on the surface and find the angle between them
@@ -281,7 +273,6 @@ void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 			std::cerr << "Failed to load obj" << std::endl;
 		}
 
-		//baryAndEigInfo info = fo.getBaryAndEigFromCSV("Bary_Eigs.csv", currentFile);
 		glm::vec3 barycenter = { 0.0,0.0,0.0 };
 
 		std::pair<std::vector<double>, std::vector<double>> results = D1(positions, barycenter, 30);
@@ -304,8 +295,6 @@ void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 	std::string className = sourcePath.filename().string();
 
 	// Create class-specific subfolder
-
-
 	plt::figure();
 	for (size_t i = 0; i < d1Results.size(); ++i) {
 		auto& bins = d1Results[i].first;
@@ -328,11 +317,8 @@ void FeatureExtraction::ExtractD1Features(std::string& classPath) {
 	plt::save(outputFile.string());
 
 	std::cout << "Saved D1 plot to: " << outputFile.string() << std::endl;
-
-	// Optional: clear the figure
-	plt::clf();
-
 }
+
 std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D1(std::vector<float>& positions, glm::vec3 barycenter, int bins)
 {
 	// Pick a random point on the surface and find the distance to the barycenter
@@ -407,9 +393,6 @@ void FeatureExtraction::ExtractD2Features(std::string& classPath) {
 	// Get class name from path
 	std::string className = sourcePath.filename().string();
 
-
-
-
 	plt::figure();
 	for (size_t i = 0; i < d2Results.size(); ++i) {
 		auto& bins = d2Results[i].first;
@@ -431,12 +414,8 @@ void FeatureExtraction::ExtractD2Features(std::string& classPath) {
 	plt::save(outputFile.string());
 
 	std::cout << "Saved D2 plot to: " << outputFile.string() << std::endl;
-
-	// Optional: clear the figure
-	plt::clf();
-
-	
 }
+
 std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D2(std::vector<float>& positions, int samples, int bins)
 {
 	// Pick 2 random points on the surface and find the distance between them
@@ -540,10 +519,8 @@ void FeatureExtraction::ExtractD3Features(std::string& classPath) {
 	plt::save(outputFile.string());
 
 	std::cout << "Saved D3 plot to: " << outputFile.string() << std::endl;
-
-	// Optional: clear the figure
-	plt::clf();
 }
+
 std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D3(std::vector<float>& positions, int samples, int bins)
 {
 	// Pick 3 random points on the surface and find the area of the triangle they form
@@ -658,10 +635,8 @@ void FeatureExtraction::ExtractD4Features(std::string& classPath) {
 	plt::save(outputFile.string());
 
 	std::cout << "Saved D4 plot to: " << outputFile.string() << std::endl;
-
-	// Optional: clear the figure
-	plt::clf();
 }
+
 std::pair< std::vector<double>, std::vector<double>> FeatureExtraction::D4(std::vector<float>& positions, int samples, int bins)
 {
 	std::vector<float> vertexVals;

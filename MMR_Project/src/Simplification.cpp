@@ -13,8 +13,6 @@ void Simplification::Simplify(std::string& inputFile, std::string& outputFile) {
     simpGrid = fo.LoadObjGrid(inputFile.c_str());                           //6.  Read a 3D mesh stored in a file in the PLY format
     UnstructuredGrid3D* simpGridOriginal = fo.LoadObjGrid(inputFile.c_str());
     
-    
-    //DumpGridStats(grid);
     simpGrid->normalize();									//7.  Normalize the mesh in the [-1,1] cube. This makes setting the OpenGL projection easier.
     simpGrid->computeFaceNormals();							//8.  Compute face and vertex normals for the mesh. This allows us to shade the mesh next.
     simpGrid->computeVertexNormals();

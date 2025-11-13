@@ -3,8 +3,6 @@ namespace fs = filesystem;
 
 void Evaluation::EvaluateDatabase(string databasePath, int k, std::string csvPath) {
 
-	// I think accuracy is the best choice since it ignores the query size but im gonna do p/r as well for now
-
 	// for every shape in the database, query it
 	// Compute the measurement value
 	// Aggregate
@@ -57,7 +55,7 @@ void Evaluation::EvaluateDatabase(string databasePath, int k, std::string csvPat
             std::cout << currentFile << std::endl;
             
             std::string path = databasePath + className + "/" + currentFile;
-            auto resultsAll = q.ExecuteQuery(path, databasePath, k, 1);
+            auto resultsAll = q.ExecuteQuery(path, databasePath, k, 1, true);
             std::vector<std::string> labels = resultsAll.first;
 
             int TP = 0;

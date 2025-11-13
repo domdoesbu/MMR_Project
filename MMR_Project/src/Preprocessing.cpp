@@ -89,7 +89,6 @@ void Preprocessing::AnalyzeShape(std::filesystem::path filename, shapeInfo & out
 void Preprocessing::AnalyzeShapes(const std::string& databasePath, const std::string& outputCsv)
 {
     // Excel file for all the data
-    
 
     // Check if database actually exists
     if (!fs::exists(databasePath) || !fs::is_directory(databasePath)) {
@@ -133,7 +132,7 @@ void Preprocessing::AnalyzeShapes(const std::string& databasePath, const std::st
 
 void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     /*
-    2.2: Statisitcs
+    2.2: Statistics
         1. Average shape in the database (in terms of number of vertices and faces)
         2. Significant Outliers from the average
         3. Show as a hisogram counting how many shapes in the database for every range of possible interest
@@ -155,7 +154,6 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
 	std::unordered_map<std::string, int> classNames;
     std::string line;
     
-       
     int currentClassCount = 0;
     // Skip header
     std::vector<std::string> classHist;
@@ -181,7 +179,6 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
 		vertexVals.push_back(info.vertexNum);
         shapes.push_back(info);
     }
-   
     
     if (shapes.empty()) {
         std::cerr << "No shape data found in file." << std::endl;
@@ -319,13 +316,13 @@ void Preprocessing::DatabaseStatistics(const std::string& shapeAnalysisFile) {
     for (int i = 0; i < 20; ++i) {
         bin_centers[i] = minVal + (i + 0.5) * binWidth;
     }
-   /* plt::bar(bin_centers, counts, "black", "-", 1.0);
+    plt::bar(bin_centers, counts, "black", "-", 1.0);
     plt::xlabel("Number of Vertices");
     plt::ylabel("Count");
     plt::title("Vertex Count");
 
-    plt::grid(true);*/
-    //plt::show();
+    plt::grid(true);
+    plt::show();
     csvFile.close();
     std::cout << "----- Database Statistics End-----" << std::endl;
 }
@@ -367,14 +364,10 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
                 return -1;
             }
             barycenter = ComputeBarycenter(positions);
-            //OrientNormalsOutward(positions, indices, barycenter);
+            OrientNormalsOutward(positions, indices, barycenter);
 
-            /*MeshData data;
-            data.positions = positions;
-            data.indices = indices;
-            fo.WriteNewObj(fullFilePath, data);*/
             path = fullTargetPath.string() + file.path().filename().string();
-            //CheckHoles(fullFilePath, path);
+            CheckHoles(fullFilePath, path);
             double positionSize = positions.size() / 6;
             if (positionSize < 5000) { // Refinement
                 std::cout << "Refinement :: " << path << std::endl;
@@ -387,11 +380,6 @@ int Preprocessing::Resampling(const std::string& source, const std::string& targ
             else {
                 fs::copy(fullFilePath, fullTargetPath, fs::copy_options::overwrite_existing);
             }
-
-
-
-
-            
         }
     }
 }
@@ -406,7 +394,6 @@ glm::vec3 Preprocessing::ComputeBarycenter(std::vector<float> positions)
         glm::vec3 v2(positions[i + 6], positions[i + 7], positions[i + 8]);
         glm::vec3 v3(positions[i + 12], positions[i + 13], positions[i + 14]);
         glm::vec3 localBarycenter(0.0f);
-        //glm::vec3 localBarycenter = (v1 + v2 + v3) / 3.0f;
         localBarycenter.x = (positions[i + 0] + positions[i + 6 + 0] + positions[i + 12 + 0]) / 3.0f;
         localBarycenter.y = (positions[i + 1] + positions[i + 6 + 1] + positions[i + 12 + 1]) / 3.0f;
         localBarycenter.z = (positions[i + 2] + positions[i + 6 + 2] + positions[i + 12 + 2]) / 3.0f;
@@ -417,9 +404,6 @@ glm::vec3 Preprocessing::ComputeBarycenter(std::vector<float> positions)
         glm::vec3 cross = glm::cross(e1, e2);
 
         float localArea = glm::length(cross) * 0.5f; // triangle area
-
-        // sum (x * area)
-        // / sum area
 
         sumOfAreas += localArea;
         barycenter += localBarycenter * localArea;
@@ -447,7 +431,6 @@ std::vector<float> Preprocessing::NormalizeScale(std::vector<float> positions, s
     float minY = FLT_MAX, maxY = -FLT_MAX;
     float minZ = FLT_MAX, maxZ = -FLT_MAX;
 
-    // iterate defensively: ensure i+2 is valid
     for (size_t i = 0; i + 2 < positions.size(); i += 6)
     {
         float x = positions[i];
@@ -700,11 +683,11 @@ void Preprocessing::CheckHoles(const std::string& filename, const std::string& f
 
     for (MR::EdgeId e : holeEdges) {
         MR::FillHoleParams params;
-        params.metric = MR::getUniversalMetric(*mesh);   // <-- dereference
-        MR::fillHole(*mesh, e, params);                  // <-- dereference
+        params.metric = MR::getUniversalMetric(*mesh);
+        MR::fillHole(*mesh, e, params);               
     }
 
-    MR::MeshSave::toAnySupportedFormat(*mesh, fileLocation);  // <-- dereference
+    MR::MeshSave::toAnySupportedFormat(*mesh, fileLocation);
 }
 
 void Preprocessing::NormalizeDatabase(std::string& databasePath) {
@@ -750,13 +733,13 @@ void Preprocessing::NormalizeDatabase(std::string& databasePath) {
             data.indices = indices;
             fo.WriteNewObj(fullFilePath, data);
 
-            //// Flipping
+            // Flipping
             positions = NormalizeFlipping(positions, indices, 6, 0);
             
             data.positions = positions;
             data.indices = indices;
             fo.WriteNewObj(fullFilePath, data);
-            //// Size
+            // Size
             positions = NormalizeScale(positions, fullFilePath);
             // Pose
             data.positions = positions;

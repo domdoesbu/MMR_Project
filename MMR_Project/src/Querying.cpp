@@ -1,13 +1,11 @@
 #include "Querying.h"
 
-
 namespace fs = std::filesystem;
-// massive horrible function from hell to normalize the single value features
+
 void Querying::Normalization(std::string databasePath, std::string csvFilename)
 {
     std::ifstream csvFile(csvFilename);
 
-	
     if (!csvFile.is_open()) {
         std::cerr << "Failed to open input CSV file: " << csvFilename << std::endl;
         return;
@@ -98,8 +96,6 @@ void Querying::Normalization(std::string databasePath, std::string csvFilename)
         d4.push_back(totalFeatures[i].D4);
     }
 
-
-  
     std::ofstream csvFileAvg("avg_and_sd.csv");
     if (!csvFile.is_open()) {
         std::cerr << "Failed to open output CSV file: avg_and_sd"<< std::endl;
@@ -107,7 +103,6 @@ void Querying::Normalization(std::string databasePath, std::string csvFilename)
     }
 
     csvFileAvg << "avgArea,stdDevArea,avgVolume,stdDevVolume,avgCompactness,stdDevCompactness,avgRectangularity,stdDevRectangularity,avgDiameter,stdDevDiameter,avgConvexity,stdDevConvexity,avgEccentricity,stdDevEccentricity\n";
-
 
     csvFileAvg << avgArea << "," <<
             stdDevArea << "," <<
@@ -125,7 +120,6 @@ void Querying::Normalization(std::string databasePath, std::string csvFilename)
             stdDevEccentricity 
             << "\n";
 
-    
     FileOrganizer fo;
     
     fo.WriteCSVFeatureExtraction(databasePath, "feature_extraction_complete_normalized.csv",
@@ -142,7 +136,6 @@ void Querying::Normalization(std::string databasePath, std::string csvFilename)
         d3,
         d4
     );
-
 }
 
 void Querying::NormalizeQueriedShape(ShapeFeatures& shape) {
@@ -166,7 +159,6 @@ void Querying::NormalizeQueriedShape(ShapeFeatures& shape) {
     float stdDevDiameter = 0.0;
     float stdDevConvexity = 0.0;
     float stdDevEccentricity = 0.0;
-
 
     std::string line;
     std::getline(csvFile, line);
@@ -213,7 +205,6 @@ void Querying::NormalizeQueriedShape(ShapeFeatures& shape) {
     shape.eccentricity = (shape.eccentricity - avgEccentricity) / stdDevEccentricity;
 
     csvFile.close();
-
 }
 
 // Takes in the path of the shape and returns the k most similar shapes using a naive approach
@@ -281,7 +272,6 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQueryAN
             resultFilenames.push_back(filePath); // i am so smart
             finalDistances.push_back(distanceValues[i]);
         }
-
     }
     delete[] nnIdx;
     delete[] dists;
@@ -293,9 +283,8 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQueryAN
     return { resultFilenames, finalDistances };
 }
 
-
 // Takes in the path of the shape and returns the k most similar shapes using a naive approach
-std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(std::string shapePath, std::string databasePath, int k, float thresh)
+std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(std::string shapePath, std::string databasePath, int k, float thresh, bool euc)
 {
     // load object from path
     FileOrganizer fo;
@@ -325,7 +314,10 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(s
     // compute the distance between each of them and the input
     for (int i = 0; i < dbFeatureVecs.size(); ++i)
     {
-        distanceVec[i] = nDimEuDistance(inputFeatureVec, dbFeatureVecs[i]);
+        if(euc)
+            distanceVec[i] = nDimEuDistance(inputFeatureVec, dbFeatureVecs[i]);
+        else
+            distanceVec[i] = nDimManDistance(inputFeatureVec, dbFeatureVecs[i]);
     }
 
     // find the minimum k distances
@@ -342,7 +334,6 @@ std::pair<std::vector<std::string>, std::vector<float>> Querying::ExecuteQuery(s
             resultFilenames.push_back(filePath); // i am so smart
             finalDistances.push_back(distanceValues[i]);
         }
-            
     }
 
     // return the path of the files
@@ -487,7 +478,6 @@ std::vector<ShapeFeatures> Querying::ReadShapeFeaturesFromCsv(std::string csvFil
 }
 
 // calculates euclidean distance between two feature vectors of the same size
-// hope this shit is right
 double Querying::nDimEuDistance(std::vector<double> feat1, std::vector<double> feat2)
 {
     double sumOfSquares = 0.0;
@@ -496,6 +486,16 @@ double Querying::nDimEuDistance(std::vector<double> feat1, std::vector<double> f
         sumOfSquares += pow(feat1[i] - feat2[i], 2.0);
     }
     return sqrt(sumOfSquares);
+}
+
+double Querying::nDimManDistance(std::vector<double> feat1, std::vector<double> feat2)
+{
+    double sumOfSquares = 0.0;
+    for (int i = 0; i < feat1.size(); ++i)
+    {
+        sumOfSquares += abs(feat1[i] - feat2[i]);
+    }
+    return sumOfSquares;
 }
 
 std::pair <std::vector<int>, std::vector<float>> Querying::GetRNN(std::vector<double> distanceVec, float threshold)
@@ -548,7 +548,6 @@ std::vector<int> Querying::SortDist(std::vector<double>&distanceVec)
         indexVec[i] = i;
     }
 
-    // Chat implementation of bubblesort cause I cant even implement bubblesort correctly on my own I am going to cry
     bool swapped;
     for (int i = 0; i < distanceVec.size() - 1; ++i)
     {

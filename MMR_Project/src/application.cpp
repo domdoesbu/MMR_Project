@@ -225,47 +225,49 @@ int main(void)
     Preprocessing prep;
     Querying q;
     Evaluation e;
-    //std::string databsePath = "./ShapeDatabaseFixed/";
+
     std::string databsePath = "./DatabaseOriginal/";
-    //std::string databsePath = "./test_objs/";
     std::string databsePathResampled = "./ResampledDatabase/";
 
-    /*
-        DO NOT UNCOMMENT!!!!!!!
-        WE HAVE STATS FOR THE WHOLE DATABASE NOW AND IF YOU UNCOMMENT I HAVE TO RERUN THE WHOLE DATABASEEEEEE
-    */
+    // ---------------------------------------------------------------------------------
+    //                  DATABASE SETUP: run to process a new database
+    // ---------------------------------------------------------------------------------
 
-    std::cout << "--- PREPROCESSING ---" << std::endl;
+    //std::cout << "--- PREPROCESSING ---" << std::endl;
 
     //CSVSetup("./shape_analysis.csv", databsePath);
 
-    // Remeshing
-    std::cout << "--- REMESHING ---" << std::endl;
+    //// Remeshing
+    //std::cout << "--- REMESHING ---" << std::endl;
 
     //prep.Resampling(databsePath, databsePathResampled);
-    
-    std::cout << "--- REMESHING END---" << std::endl;
+    //
+    //std::cout << "--- REMESHING END---" << std::endl;
 
     //CSVSetup("./shape_analysis_resamp.csv", databsePathResampled);
 
-    // -------------------------------------------------------------------------------
-    // PREPROCESSING
-    std::cout << "--- PREPROCESSING START ---" << std::endl;
+    //// -------------------------------------------------------------------------------
+    //// PREPROCESSING
+    //std::cout << "--- PREPROCESSING START ---" << std::endl;
 
     //prep.NormalizeDatabase(databsePathResampled);
     //CSVSetup("./shape_analysis_resamp_norm.csv", databsePathResampled);
-    std::cout << "--- PREPROCESSING END ---" << std::endl;
-    // -------------------------------------------------------------------------------
-    // FEATURE EXTRACTION
+    //std::cout << "--- PREPROCESSING END ---" << std::endl;
+    //// -------------------------------------------------------------------------------
+    //// FEATURE EXTRACTION
     //fe.ExtractFeaturesOthers(databsePathResampled);
     //fe.ExtractFeaturesAtoD(databsePathResampled);
-    
+    //
     //q.Normalization(databsePathResampled, "feature_extraction_complete.csv");
 
-    // --------------------------------------------------------------------------------- 
+    //// --------------------------------------------------------------------------------- 
+    //// Evaluate Queries over whole database with query size = 142
+    //int maxK = 142;
+    //e.EvaluateDatabase(databsePathResampled, maxK, "evaluation_results_142.csv");
 
-    int maxK = 142;
-    e.EvaluateDatabase(databsePathResampled, maxK, "evaluation_results_142.csv");
+    // ---------------------------------------------------------------------------------
+    //                              END OF DATABASE SETUP
+    // ---------------------------------------------------------------------------------
 
     std::cout << "Specify path for the desired object:" << std::endl;
 
@@ -280,14 +282,16 @@ int main(void)
         return -1;
     }
 
-   // std::pair<std::vector<std::string>, std::vector<float>> resultsAll= q.ExecuteQueryANN(inputFile, databsePathResampled, 3);
-    std::pair<std::vector<std::string>, std::vector<float>> resultsAll = q.ExecuteQuery(inputFile, databsePathResampled, 6, 0.05);
+    // Uncomment next line and comment 281 to execute query with ANN
+    // std::pair<std::vector<std::string>, std::vector<float>> resultsAll= q.ExecuteQueryANN(inputFile, databsePathResampled, 3);
+
+    // last parameter -> false for Manhattan dist, true for Euclidean dist
+    std::pair<std::vector<std::string>, std::vector<float>> resultsAll = q.ExecuteQuery(inputFile, databsePathResampled, 6, 0.05, false);
     std::vector<std::string> queryResults = resultsAll.first;
     std::vector<float> distances = resultsAll.second;
     
     std::vector<Mesh> meshes;
     meshes.push_back(createMesh(positions, indices));
-
     
     for (auto& path : queryResults) {
         positions.clear();

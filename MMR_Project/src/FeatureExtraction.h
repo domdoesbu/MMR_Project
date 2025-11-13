@@ -40,7 +40,7 @@ struct ShapeFeatures {
 	std::vector<double> D4;
 
 
-	// these weights all together add up to 1 (single value feats = 0.336 + histoW * 5 = 0.66) idk if this makes sense
+	// these weights all together add up to 1 (single value feats = 0.336 + histoW * 5 = 0.66)
 	// Weights for single value features 
 	float areaW = 0.056;
 	float compW = 0.056;
