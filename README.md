@@ -7,5 +7,7 @@
 3. Run **application.cpp**
 
 The code is setup to execute queries on the provided database, which is already resampled, normalized, has feature extration completed.
-To re-run the set up of the database, you need to uncomment the code in the "DATABASE SETUP" section (Lines 232-270 in **application.cpp**)
+To re-run the set up of the database, you need to uncomment the code in the "DATABASE SETUP" section (Lines 232-270 in **application.cpp**).
 
+## Statistics
+To run get the plots of different metrics, the files are located in the *statistics* folder, which are all python scripts.
