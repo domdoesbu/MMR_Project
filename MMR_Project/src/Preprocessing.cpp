@@ -634,8 +634,7 @@ void Preprocessing::OrientNormalsOutward(std::vector<float>& positions,
         }
     }
 
-    // Optionally fix per-vertex normals after flipping
-    // Recompute normals if necessary
+    // Recompute normals
     for (size_t i = 0; i < positions.size() / stride; i++) {
         positions[i * stride + 3] = 0.0f;
         positions[i * stride + 4] = 0.0f;
